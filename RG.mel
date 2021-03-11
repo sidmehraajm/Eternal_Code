@@ -1,0 +1,5159 @@
+RGctrl 1;
+
+global proc RGctrl(int $YN)
+{
+
+    if($YN == 1)
+    {
+        if(`dockControl -ex rgdock `){deleteUI rgdock; } 
+        if(`window -ex RGctrl`){deleteUI RGctrl;};
+         
+        RGctrlWIN;
+
+
+    }
+    else 
+    {
+        if(`dockControl -ex rgdock `){deleteUI rgdock; } 
+        if(`window -ex RGctrl`){deleteUI RGctrl;};
+        RGctrlWIN;
+    }
+
+}
+
+
+//////////////////////////// RGctrIWIN ///////////////////////////
+/////////////////////////////////////////////////////////////////
+string $csel[] = `ls -sl`; 
+select -cl;
+
+global proc RGctrlWIN()
+{ 
+    if(` window -ex RGctrl`){deleteUI RGctrl;}; 
+    window -title "RG Controller v5.1" -s 5 RGctrl; 
+    formLayout topLayout;
+        //////////// Zone 3
+        columnLayout -p topLayout -bgc 0.4 0.4 0.4 -adj 1 ColClm; 
+            text -al left -bgc 0 0.1 0.2 -l " Color " cntTxt;
+            button -l " N " -c "overrideColor(0)";
+            button -l "" -bgc .8 0 0.2 -c "overrideColor(4)"; 
+            button -l "" -bgc 0 0 .4 -c "overrideColor(5)"; 
+            button -l "" -bgc 0 0 1 -c "overrideColor(6)"; 
+            button -l "" -bgc 0 .3 0 -c "overrideColor(7)";
+            button -l "" -bgc .159 .030 0.356 -c "overrideColor(8)"; 
+            button -l "" -bgc .8 0 .8 -c "overrideColor(9)";
+            button -l "" -bgc 0.6 0.3 0.2 -c "overrideColor(10)"; 
+            button -l "" -bgc 0.25 0.13 0.13 -c "overrideColor(11)"; 
+            button -l "" -bgc 0.7 .2 0 -c "overrideColor(12)"; 
+            button -l "" -bgc 1 0 0 -c "overrideColor(13)";
+            button -l "" -bgc 0 1 0 -c "overrideColor(14)";
+            button -l "" -bgc 0 0.3 0.6 -c"overrideColor(15)"; 
+            button -l "" -bgc 1 1 0 -c "overrideColor(17)"; 
+            button -l "" -bgc 0 1 1 -c "overrideColor(18)";
+            button -l "" -bgc 0 1 .8 -c "overrideColor(19)"; 
+            button -l "" -bgc 1 .7 .7 -c "overrideColor(20)"; 
+            button -l "" -bgc 0.9 .7 .5 -c "overrideColor(21)"; 
+            button -l "" -bgc 0 0.7 .4 -c "overrideColor(23)";
+            button -l "" -bgc .6 .4 .2 -c "overrideColor(24)";
+            button -l "" -bgc .63 .63 .17 -c "overrideColor(25)"; 
+            button -l "" -bgc 0.2 0 0.3 -c "overrideColor(30)";
+
+
+        //////////// Zone 2
+        columnLayout -p topLayout -bgc 0.4 0.4 0.4 -adj 1 wireCnt;
+            text -al left -bgc 0 0.1 0.2 -l " ---:CONTROLLER: ---  " cntTxt; 
+            button -bgc 0.2 0.2 0.3 -l "Triangle" -c "cntWireNw Triangle";
+            button -bgc 0.2 0.2 0.3 -l "Circle" -c "cntWireNw Circle"; 
+            button -bgc 0.2 0.2 0.3 -l "Square" -c "cntWireNw Square";
+            button -bgc 0.2 0.2 0.3 -l "Fat Cross" -c "cntWireNw FatCross"; 
+            button -bgc 0.2 0.2 0.3 -l "Pyramid" -c "cntWireNw Pyramid"; 
+            button -bgc 0.2 0.2 0.3 -l "Cube" -c "cntWireNw Cube";
+            button -bgc 0.2 0.2 0.3 -l "Sphere" -c "cntWireNw Sphere"; 
+            button -bgc 0.2 0.2 0.3 -l "Cone" -c "cntWireNw Cone"; 
+            button -bgc 0.2 0.2 0.3 -l "Rombus" -c "cntWireNw Rombus";
+            button -bgc 0.2 0.2 0.3 -l "Single Normal" -c "cntWireNw SingleNormal"; 
+            button -bgc 0.2 0.2 0.3 -l "Four Normal" -c "cntWireNw FourNormal"; 
+            button -bgc 0.2 0.2 0.3 -l "Dumbell" -c "cntWireNw Dumbell";
+            button -bgc 0.2 0.2 0.3 -l "Arrow On Ball" -c "cntWireNw ArrowOnBall"; 
+            button -bgc 0.2 0.2 0.3 -l "Pin" -c "cntWireNw Pin";
+
+
+            text -al left -bgc 0 0.1 0.2 -l " Axis : " axsTxt;
+            checkBox -v 1 -l "Orient Child" orntCB;
+            button -l "Y UP" -bgc 0 0.5 0.5 -c "orientint YUP" yUpBtt ;
+            button -l "Y DN" -bgc 0 0.5 0.5 -c "orientJnt YDN" yDnBtt ;
+            button -l "Z UP" -bgc 0 0.5 0.5 -c "orientJnt ZUP" zUpBtt ;
+            button -l "Z DN" -bgc 0 0.5 0.5 -c "orientJnt ZDN" zDnBtt ;
+            button -l "None" -bgc 0 0.5 0.5 -c "orientJnt NONE" nonBtt ; 
+            button -l "Mirror Ctrl" -bgc 0 0.5 0.5 -c "mirrorCtrl" smB;
+            button -l "ADDPolyColor" -bgc 0 0.5 0.5 -c "addPolyVertexColor()" smC;
+    //////////////// Zone 1
+    formLayout -p topLayout mainLayout;
+        text -p mainLayout -al left -bgc 0 0.1 0.2 -l "\t -- RG TOOL v1.2--" ownTxt; 
+        text -p mainLayout -al left -bgc 0 0.1 0.2 -l " -- RG TOOL v5.1-- : " jntTxt;
+
+        formLayout -p mainLayout -bgc 0.4 0.4 0.4 jntgrid;
+            checkBox -v 1 -l "Uv Axis" uvAxisCB;
+            button -l "Jnt @ Center" -bgc 0 0.5 0.5 -c RGjntAtCntr FKCB; 
+            button -l "Component" -bgc 0 0.5 0.5 -c cmpntlntCreator Cmpnt ; 
+            button -l "Volume" -bgc 0 0.5 0.5 -c jntAtCntr Vim ;
+
+            text -p mainLayout -al left -bgc 0 0.1 0.2 -l " Constaints :" lbTxt;
+            gridLayout -p mainLayout -bgc 0.4 0.4 0.4 -cr 1 -numberOfColumns 5 -cellWidthHeight 55 20 radiogrid; 
+                radioCollection cnst;
+                radioButton -label "Point" pnt;
+                radioButton -label "Orient" ort;
+                radioButton -sl -label "Parent" prnt;
+                text -l "";
+                checkBox  -v 0 -l "Scale" sclCB;
+
+            text -p mainLayout -al left -bgc 0 0.1 0.2 -l " ATTRIBUTES:" jntTxts; 
+            formLayout -p mainLayout -bgc 0.4 0.4 0.4 jntgrids;
+            textField -text "TYPE_ATTRIBUTES_NAME" -bgc 0.2 0.2 0.3 -w 275 attrTF;
+
+            gridLayout -p mainLayout -bgc 0.4 0.4 0.4 -cr 1 -numberOfColumns 5 -cellWidthHeight 55 20 radiogrids; 
+                button -label "On / Off" -bgc 0 0.1 0.2 -w 90 -h 24 -c "dkAddAttr enum" enumB;
+                button -label "0 - 1" -bgc 0 0.1 0.2 -w 90 -h 24 -c "dkAddAttr floatA" floatAB;
+                button -label "0 - 10" -bgc 0 0.1 0.2 -w 90-h 24 -c "dkAddAttr floatB" floatBB;
+                button -label "10 - 10" -bgc 0 0.1 0.2 -w 90-h 24 -c "dkAddAttr floatC" floatBC;
+                button -label "Float" -bgc 0 0.1 0.2 -w 90-h 24 -c "dkAddAttr floatD" floatCD;
+            
+            text -p mainLayout -al left -bgc 0 0.1 0.2 -l " Constaints Axis :" lbTxt2;
+            gridLayout -bgc 0.4 0.4 0.4 -p mainLayout -cr 1 -numberOfColumns 5 -cellWidthHeight 55 20 axisGrid;
+                radioCollection ax;
+                radioButton -label "X" x; 
+                //text -l "";
+                radioButton -sl -label "Y" y; 
+                //text -l "";
+                radioButton -label "Z" z;
+                
+                
+                // Translate Checkboxes
+                //text -l "";
+                checkBox -v 0 -l "Proxy" -cc RGprxCB pxCB;
+                //text -l "";
+                checkBox -en 0 -v 0 -l "Neg Trans" negCB;
+                //text -l "";
+                
+        text -p mainLayout -al left -bgc 0 0.1 0.2 -l " MackConstaints :" Mack;
+        gridLayout -p mainLayout -bgc 0.4 0.4 0.4 -cr 1 -numberOfColumns 2 -cellWidthHeight 55 23 Mack1; 
+            button -p mainLayout -l "Float" -bgc 0 0.5 0.5 -c ("doIt 0") cnt ;
+            button -p mainLayout -l "FK" -bgc 0 0.5 0.5 -c  ("doIt 1") prxcnt ;
+
+        gridLayout -p mainLayout -bgc 0.4 0.4 0.4 -cr 1 -numberOfColumns 5 -cellWidthHeight 55 25 FKbatton;
+
+            checkBox -label "Tra - X" -cc "unCheck(\"trans\")" transX; 
+            checkBox -label "Tra - Y" -cc "unCheck(rtrans\")" transY; 
+            checkBox -label "Tra - Z" -cc "unCheck(\"trans\")" transZ; 
+            text -l "";
+            checkBox -label "All Tra" -cc "SelectAllTrans()" allTrans;
+
+            // Rotate Checkboxes
+
+            checkBox -label "Rot - X" -cc "unCheck(Vrotr)" rotX; 
+            checkBox -label "Rot - Y" -cc "unCheck(Vrot\")" rotY; 
+            checkBox -label "Rot - Z" -cc "unCheck(Vrot\")" rotZ;
+            text -l "";
+            checkBox -label "All Rot" -cc "SelectAllRots()" allRots;
+
+
+            // Scale Checkboxes
+
+            checkBox -label "Sca - X" -cc "unCheck(\"sc\")" scX; 
+            checkBox -label "Sca - Y" -cc "unCheck(\"sc\")" scY; 
+            checkBox -label "Sca - Z" -cc "unCheck(\"sc\")" scZ; 
+            text -l "";
+            checkBox -label "All Scale" -cc "SelectAllScs()" allScs;
+
+            // Visibility Checkbox
+
+            checkBox -label "Vis" -cc "unCheck(\"vis\")" vis;
+            // Select All / DeSelect All Checkbox
+            text -l ""; 
+            text -l ""; 
+            text -l "";
+            checkBox -label "Se/DeSeAll" -cc "SelectDeselectAll()" SelectDeselect;
+            button -label "Lock" -bgc 0 0.3 0.5 -c "lockAttributes(0, 1, 0, 0)"; 
+            button -label "Unlock" -bgc 0 0.3 0.5 -c "lockAttributes(0, 0, 0, 1)"; 
+            button -label "UnlockAll" -bgc 0 0.3 0.5 -c "lockAttributes(1, 0, 0, 1)"; 
+            button -label "Hide" -bgc 0 0.3 0.5 -c "HideAttributes(0, 0)";
+            button -label "UnHide" -bgc 0 0.3 0.5 -c "HideAttributes(0, 1)";
+
+    // Extra Layout
+
+    formLayout -p topLayout -bgc 0.4 0.4 0.4 -numberOfDivisions 100 xtraLay; 
+    string $columnLX = `columnLayout -p xtraLay -adjustableColumn true` ; 
+    button -l "Fk Parnt" -bgc 0 0.4 0.5 -c prntFk;
+    button -l "Folicle" -bgc 0 0.4 0.5 -c RGuvFlc;
+    button -label "Select Joints" -bgc 0 0.4 0.5 -c "jointsShow(\"selectAllJoint\")";
+    
+    button -label "Lock `n Hide" -bgc 0 0.4 0.5 -c "lockAttributes(0, 1, 1, 0)"; 
+    button -bgc 0 0.2 0.5 -l "Shape Replacer" -c "shpRplc";
+    string $columnRX = `columnLayout -p xtraLay -adjustableColumn true` ; 
+    button -l "Zero Out" -bgc 0 0.5 0.5 -c RGzeroOut;
+    button -l "Re-Skin" -bgc 0 0.5 0.5 -c RGreSkin;
+    button -label "Show Joints" -bgc 0 0.5 0.5 -c "jointsShow(\"showAllJoint\")"; 
+    button -label "Hide Joints" -bgc 0 0.5 0.5 -c "jointsShow(\"hideAllJoint\")"; 
+    button -label "Unused Nodes" -bgc 0 0.2 0.5 -c "deleteUnusedNodes";
+
+
+    formLayout -edit
+        -attachForm     $columnLX    "top" 2 
+        -attachForm     $columnLX    "left" 2 
+        -attachForm     $columnLX    "bottom" 1 
+        -attachPosition $columnLX    "right" 1 50
+    
+        -attachForm     $columnRX    "top" 2 
+        -attachPosition $columnRX    "left" 1 50 
+        -attachForm     $columnRX    "bottom" 1 
+        -attachForm     $columnRX    "right" 2
+    
+    
+    xtraLay;
+
+
+    // Dynamic Layout
+    text -p mainLayout -al left -bgc 0 0.1 0.2 -l " Dynamics :" dnyTxt; 
+    formLayout -p mainLayout -bgc 0.4 0.4 0.4 -numberOfDivisions 100 shp; 
+    string $columnL = `columnLayout -p shp -adjustableColumn true` ; 
+    button -l "Add Dynamic" -bgc 0 0.5 0.5 -c dynaSetup;
+    button -l "Add Dyna" -bgc 0 0.5 0.5 -c addDyna;
+    checkBox -v 1 -l "With Nucleus" -h 23 -bgc 0 0.5 0.5 Ncb;
+    //separator -height 1 -st none;
+    button -label "AttributeMan" -bgc 0 0.5 0.5 -c "attributeMan";
+    button -label "SkinWrap" -bgc 0 0.5 0.5 -c "dkSkinWrap";
+    button -label "NameDuplicateNodes" -bgc 0 0.5 0.5 -c "NameDuplicateNodes()"; 
+    button -label "UV Driver" -bgc 0 0.4 0.5 -c "uvDriver()";
+    button -label "AnimSet" -bgc 0 0.4 0.5 -c aset;
+    button -label "RenderSet" -bgc 0 0.4 0.5 -c rset;
+    button -label "CacheSet" -bgc 0 0.4 0.5 -c cset;
+
+    //separator -height 6 -st none;
+    string $columnR = `columnLayout -p shp -adjustableColumn true` ; 
+    button -l "Remove Dynamic" -bgc 0 0.5 0.5 -c rmDynaSetup; 
+    button -l "Add PropA" -bgc 0 0.5 0.5 -c addPropA;
+    button -l "Conned nucleus" -bgc 0 0.5 0.5 -c CN;
+    string $close = ` button -p shp -bgc 0.2 0.2 0.3 -l "Transfer Attribute" -c transAtt` ; 
+    separator -height 1 -st none;
+    button -label "SkinXfer" -bgc 0 0.5 0.5 -c "skinXfer";
+    button -label "Transfer BS Connections" -bgc 0 0.5 0.5 -c "tBsConnections()"; 
+    button -label "Rivet" -bgc 0 0.5 0.5 -c "rivet ( )";
+    button -label "PropControl" -bgc 0 0.4 0.5 -c "PropControl()"; 
+    button -label "Add To AnimSet" -bgc 0 0.4 0.5 -c aaset; 
+    button -label "Add To RenderSet" -bgc 0 0.4 0.5 -c bset; 
+    button -label "Add To CacheSet" -bgc 0 0.4 0.5 -c ccset;
+
+    formLayout -edit
+        -attachForm    $columnL    "top" 2
+        -attachForm    $columnL    "left" 2 
+        -attachControl $columnL    "bottom" 2 $close 
+        -attachPosition$columnL    "right" 2 50
+        
+        -attachForm    $columnR    "top" 2
+        -attachPosition $columnR   "left" 0 50
+        -attachControl $columnR    "bottom" 2 $close
+        -attachForm    $columnR    "right" 2
+        
+        -attachNone   $close    "top"
+        -attachForm   $close    "left" 2
+        -attachForm   $close    "bottom" 2
+        -attachForm   $close    "right" 2
+
+    shp;
+
+
+    formLayout -edit
+
+        -attachForm    ownTxt     "top" 2
+        -attachForm    ownTxt     "left" 2 
+        -attachControl ownTxt    "bottom" 4 jntgrid 
+        -attachForm    ownTxt     "right" 2
+        
+        -attachNone    jntTxt    "top"
+        -attachForm    jntTxt    "left" 2
+        -attachControl jntTxt    "bottom" 4 jntgrid 
+        -attachForm    jntTxt    "right" 2
+        
+        -attachNone    jntgrid   "top"
+        -attachForm    jntgrid   "left" 2
+        -attachControl jntgrid   "bottom" 4 lbTxt 
+        -attachForm    jntgrid   "right" 2
+        
+        -attachNone    lbTxt    "top"
+        -attachForm    lbTxt    "left" 2
+        -attachControl lbTxt    "bottom" 2 radiogrid
+        -attachForm    lbTxt    "right" 2
+        
+        -attachNone    radiogrid   "top"
+        -attachForm    radiogrid   "left" 2
+        -attachControl radiogrid   "bottom" 2 lbTxt2
+        -attachForm    radiogrid   "right" 2
+          
+        -attachNone    lbTxt2   "top"
+        -attachForm    lbTxt2   "left" 2
+        -attachControl lbTxt2   "bottom" 2 axisGrid 
+        -attachForm    lbTxt2   "right" 2
+        
+        -attachNone    axisGrid   "top"
+        -attachForm    axisGrid   "left" 2
+        -attachControl axisGrid  "bottom" 2 Mack 
+        -attachForm    axisGrid   "right" 2
+        
+        -attachNone    Mack     "top"
+        -attachForm    Mack     "left" 2
+        -attachControl Mack     "bottom" 2 Mack1
+        -attachForm    Mack     "right" 2
+        
+        -attachNone    Mack1     "top"
+        -attachForm    Mack1     "left" 2
+        -attachControl Mack1    "bottom" 2 FKbatton 
+        -attachForm    Mack1     "right" 2
+        
+        -attachNone     cnt      "top"
+        -attachForm     cnt      "left" 2
+        -attachControl  cnt      "bottom" 2 FKbatton
+        -attachPosition cnt    "right" 2 50
+        
+        -attachNone    prxcnt   "top"
+        -attachControl prxcnt   "left" 2 cnt
+        -attachControl prxcnt   "bottom" 2 FKbatton
+        -attachForm    prxcnt   "right" 2
+
+        -attachNone    FKbatton   "top"
+        -attachForm    FKbatton   "left" 2
+        -attachControl FKbatton     "bottom" 2 jntTxts 
+        -attachForm    FKbatton     "right" 2
+
+        -attachNone    jntTxts    "top"
+        -attachForm    jntTxts    "left" 2
+        -attachControl jntTxts    "bottom" 2 jntgrids 
+        -attachForm    jntTxts    "right" 2
+        
+        -attachNone    jntgrids   "top"
+        -attachForm    jntgrids   "left" 2
+        -attachControl jntgrids   "bottom" 2 radiogrids 
+        -attachForm    jntgrids   "right" 2
+        
+        -attachNone    radiogrids "top"
+        -attachForm    radiogrids "left" 2
+        -attachControl radiogrids "bottom" 2 dnyTxt 
+        -attachForm    radiogrids "right" 2
+        
+        -attachNone    dnyTxt     "top"
+        -attachForm    dnyTxt     "left" 2
+        -attachControl dnyTxt   "bottom" 2 shp 
+        -attachForm    dnyTxt     "right" 2
+        
+        -attachNone    shp      "top"
+        -attachForm    shp      "left" 2
+        -attachForm    shp      "bottom" 2
+        -attachForm    shp      "right" 2
+
+    mainLayout;
+
+    formLayout -edit
+
+        -attachForm    uvAxisCB     "top" 2
+        -attachForm    uvAxisCB    "left" 2 
+        -attachNone    uvAxisCB    "bottom" 
+        -attachForm    uvAxisCB    "right" 2
+        
+        -attachForm     FKCB        "top" 2 
+        -attachPosition FKCB      "left" 2 50 
+        -attachNone     FKCB        "bottom"
+        -attachForm     FKCB        "right" 2
+        
+        -attachControl Cmpnt       "top" 8 uvAxisCB 
+        -attachForm    Cmpnt       "left" 2
+        -attachForm    Cmpnt       "bottom" 2
+        -attachControl Cmpnt       "right" 2 Vim
+        
+        -attachControl  Vim       "top" 2 FKCB
+        -attachPosition Vim       "left" 2 50 
+        -attachForm     Vim       "bottom" 2 
+        -attachForm     Vim       "right" 2
+
+
+    jntgrid;
+
+
+    formLayout -edit
+
+        -attachForm    mainLayout  "top" 2 
+        -attachForm    mainLayout  "left" 2 
+        -attachNone    mainLayout  "bottom" 
+        -attachNone    mainLayout  "right"
+        
+        -attachForm    wireCnt   "top" 0
+        -attachControl wireCnt   "left" 0 mainLayout
+        -attachNone    wireCnt   "bottom"
+        -attachControl wireCnt   "right" 0 ColClm
+        
+        -attachForm    ColClm    "top" 2 
+        -attachNone    ColClm    "left"
+        -attachNone    ColClm    "bottom" 
+        -attachForm    ColClm    "right" 2
+        
+        -attachControl xtraLay   "top" 2 ColClm 
+        -attachControl xtraLay   "left" 2 mainLayout 
+        -attachForm    xtraLay  "bottom" 2
+        -attachForm    xtraLay  "right" 2
+
+    topLayout;
+
+showWindow RGctrl;
+
+}
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////RGprxCB///////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc RGprxCB()
+{
+    int $val =`checkBox  -q -v pxCB`; 
+    if($val == 1)
+    {
+        checkBox  -e -en 1 -v 1 negCB;  
+    }
+    else
+    {
+        checkBox  -e -en 0 -v 0 negCB;          
+    }  
+}
+
+
+global proc RGjntAtCntr()
+{
+    string $sel[] =`ls -sl`;
+    if(`size $sel` != 0)
+    {
+        for ($each in $sel)
+        {
+           
+            float $center[]={};
+            float $bbox[] = `exactWorldBoundingBox $each`;
+            $center[0] = ( $bbox[0] + $bbox[3] )/2;
+            $center[1] = ( $bbox[1] + $bbox[4] )/2;
+            $center[2] = ( $bbox[2] + $bbox[5] )/2;   
+            select -cl  ;
+            joint -p $center[0] $center[1] $center[2] -n ($each + "_Jnt");
+        }     
+    }
+    else
+    {
+        error "Nakari ki nakari hi rahegi Select multiple Objects";
+    }
+}
+
+
+
+global proc RGzeroOut()
+{
+    string $sel[] =`ls -sl`;
+    if(`size $sel` != 0)
+    {
+        for ($each in $sel)
+        {
+          string $grp = `group -em -n ($each + "_grp")`;  
+          float $pos[] =`xform -q -ws -rp $each`;
+          float $rot[] =`xform -q -ws -ro $each`;
+          xform -ws -t $pos[0] $pos[1] $pos[2] $grp;
+          xform -ws -ro $rot[0] $rot[1] $rot[2] $grp;
+          string $prnt[] =`listRelatives -p $each`;
+          
+          if(`size($prnt)` != 0)
+          {
+              parent $grp $prnt[0];
+              parent $each $grp;
+          }
+          else
+          {
+              parent $each $grp;              
+          }
+          
+        }
+    }
+    else
+    {
+        error "school nahi gaye kya pata nahi Zero Out kya hai";
+    }
+}        
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////  Re-Skin Object  /////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+
+global proc RGreSkin ()
+{
+string $sel[]=`ls -sl`;
+    
+    if(`size $sel` != 0)
+    {
+
+        for($i = 0; $i<`size($sel)`; $i++)
+        {
+            
+            string $skinclst  = `findRelatedSkinCluster($sel[$i])`;
+            
+            if($skinclst != "")
+            {
+                string $shp[] =`ls -dag -s $sel[$i]`;
+                string $jnts[] =`skinCluster -q -inf $skinclst`;
+                skinCluster -e  -ubk $shp[0];
+                catchQuiet(`delete "*bindPose*"`);
+                skinCluster $jnts $shp[0];
+            }
+            else
+            {
+                error "dub mar jake select skin object";
+            }
+ 
+        }
+    }
+    else
+    {
+        error "dub mar jake select skin object";
+    }
+}    
+    
+//////////////////////////////////////////////////////////////////////
+////////////////////////////  Display LRA  ///////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+global proc RGLRA ()
+{
+string $sel[]=`ls -sl`;
+    for($i = 0; $i<`size($sel)`; $i++)
+    {
+        if(`objectType -isType "joint" $sel[$i]`)
+        {
+            float $val= `getAttr ($sel[$i] + ".displayLocalAxis")`;
+            if($val == 0)
+                setAttr ($sel[$i] + ".displayLocalAxis") 1;
+            else
+                setAttr ($sel[$i] + ".displayLocalAxis") 0;
+
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+///////////////////////////  orient Joint  //////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+global proc orientJnt (string $TYPE)
+{
+string $sel[]=`ls -sl`;
+    for($i = 0; $i<`size($sel)`; $i++)
+    {
+        if(`objectType -isType "joint" $sel[$i]`)
+        {
+            string $cld[] =`listRelatives -c $sel[$i]`;
+            if(`size($cld)` != 0)
+            {
+                 int $val=`checkBox -q -v orntCB`;
+
+                if($val == 0)
+                {
+                    switch ($TYPE)
+                    {
+                        case "YUP" :
+                            joint -e  -oj xyz -secondaryAxisOrient yup $sel[$i];
+                        break ; 
+                        
+                        case "YDN" :
+                            joint -e  -oj xyz -secondaryAxisOrient ydown $sel[$i];
+                        break ; 
+                        
+                        case "ZUP" :
+                            joint -e  -oj xzy -secondaryAxisOrient yup $sel[$i];
+                        break ; 
+                        
+                        case "ZDN" :
+                            joint -e  -oj xzy -secondaryAxisOrient ydown $sel[$i];
+                        break ;  
+                        
+                        case "NONE" :
+                            joint -e  -oj none $sel[$i];
+                        break ;  
+                    } 
+                }
+                else
+                {
+                    switch ($TYPE)
+                    {
+                        case "YUP" :
+                            joint -e -ch -oj xyz -secondaryAxisOrient yup $sel[$i];
+                        break ; 
+                        
+                        case "YDN" :
+                            joint -e -ch  -oj xyz -secondaryAxisOrient ydown $sel[$i];
+                        break ; 
+                        
+                        case "ZUP" :
+                            joint -e -ch  -oj xzy -secondaryAxisOrient yup $sel[$i];
+                        break ; 
+                        
+                        case "ZDN" :
+                            joint -e -ch  -oj xzy -secondaryAxisOrient ydown $sel[$i];
+                        break ;  
+                        
+                        case "NONE" :
+                            joint -e -ch  -oj none $sel[$i];
+                        break ;  
+                    } 
+                }              
+               
+            }
+            else
+            {
+                 switch ($TYPE)
+                {
+                    case "NONE" :
+                        joint -e  -oj none $sel[$i];
+                    break ;  
+                } 
+            }         
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////  override Color  /////////////////////////
+/////////////////////////////////////////////////////////////////////
+
+global proc overrideColor(int $Index) {
+    string $selected[]=`ls -sl`;
+    int $amount=`size($selected)`;
+    for ($n=0; $n<$amount; $n++) {
+        setAttr ($selected[$n] + ".overrideEnabled") 1;
+    };
+
+    for ($n=0; $n<$amount; $n++) {
+        setAttr ($selected[$n] + ".overrideColor") $Index;
+    };
+}
+
+//////////////////////////////////////////////////////////////////////
+////////////////////////  Parent FK Hierarchy  ///////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc prntFk()
+{
+    string $sel[] =`ls -os`;
+    
+    if(`size($sel)` != 1)
+    {
+        for($i = (size($sel)-1); $i>0; $i--)
+        {
+            parent $sel[$i] $sel[$i-1];
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////  Component Joint Creator  /////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc cmpntJntCreator()
+{
+    string $sel[] =`ls -fl -os`;
+    int $uvChk = `checkBox -q -v uvAxisCB`;
+    
+    if(`size($sel)` == 0)
+    {
+         error "sharam kar abhi tak etana bhi nahi path select component";
+    }
+    else
+    {
+    for($i = 0; $i<`size($sel)`; $i++)
+    {
+        
+            if($uvChk == 1)
+            {
+                string $converted[] =`polyListComponentConversion -fv -fe -ff -fvf -fuv -tuv $sel[$i]`;
+                    if(`gmatch $sel[$i] "*.vtx*"` || `gmatch $sel[$i] "*.map*"`){
+                        float $uv[] =`polyEditUV -q $converted[0]`;
+                        uvJnt $converted[0] $uv[0] $uv[1];
+                    }
+                    
+                    if(`gmatch $sel[$i] "*.e*"`){
+                        string $flatCom[] =`ls -fl $converted`;
+                        float $uv[] =`polyEditUV -q $flatCom[0]`;
+                        uvJnt $flatCom[0] $uv[0] $uv[1];
+                        
+                        if($i == size($sel)-1)
+                        {
+                            float $uv[] =`polyEditUV -q $flatCom[1]`;
+                            uvJnt $flatCom[1] $uv[0] $uv[1];
+                        }
+                    } 
+                          
+                    if(`gmatch $sel[$i] "*.f*"`){
+                        string $flatCom[] =`componentFlatOut $converted`;
+                        float $u= 0;
+                        float $v= 0;
+                        for($r = 0; $r <`size($flatCom)`; $r++)
+                        {
+                            float $uv[] =`polyEditUV -q $flatCom[$r]`;
+                            $u+=$uv[0];
+                            $v+=$uv[1];
+                        }
+                       uvJnt $converted[0] ($u/size($flatCom)) ($v/size($flatCom));
+                    }
+            }
+            else
+            {
+                string $converted[] =`polyListComponentConversion -fv -fe -ff -fvf -fuv -tv $sel[$i]`;
+                string $flatCom[] =`componentFlatOut $converted`;
+        
+                    if(`gmatch $sel[$i] "*.vtx*"` || `gmatch $sel[$i] "*.map*"`){
+                    
+                    float $pos[] =`xform -q -ws -t $flatCom[0]`;
+                    select -cl  ;
+                    string $jnt=`joint -p $pos[0] $pos[1] $pos[2] `;
+                    select -cl  ;
+        
+                    }
+        
+                    if(`gmatch $sel[$i] "*.e*"`){
+                        
+                            float $pos[] =`xform -q -ws -t $flatCom[0]`;
+                            select -cl  ;
+                            string $jnt=`joint -p $pos[0] $pos[1] $pos[2] `;
+                            select -cl  ;
+                        if($i == size($sel)-1)
+                        {
+                            float $pos[] =`xform -q -ws -t $flatCom[1]`;
+                            select -cl  ;
+                            string $jnt=`joint -p $pos[0] $pos[1] $pos[2] `;
+                            select -cl  ;
+                        }
+                    } 
+        
+                    if(`gmatch $sel[$i] "*.f*"`){
+                        float $x= 0;
+                        float $y= 0;
+                        float $z= 0;
+        
+                        for($r = 0; $r <`size($flatCom)`; $r++)
+                        {
+                            float $pos[] =`xform -q -ws -t $flatCom[$r]`;
+                            $x+=$pos[0];
+                            $y+=$pos[1];
+                            $z+=$pos[2];
+        
+                        }
+                            select -cl  ;
+                            string $jnt=`joint -p ($x/size($flatCom)) ($y/size($flatCom)) ($z/size($flatCom)) `;
+                            select -cl  ;
+                    }
+            }
+        
+        }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+///////////////////////  Joint At Controller  ////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc jntAtCntr()
+{
+    string $sel[] =`ls -fl -os`;
+    
+    if(`size($sel)` != 0)
+    { 
+    
+        float $pos[]=`BBcenter $sel`;
+        select -cl  ;
+        joint -p $pos[0] $pos[1] $pos[2];
+        select -r $sel;
+    
+    }
+    else
+    {
+        error "Bimad estamal kiya karo error ke bharose mat raho";
+    }
+
+}
+
+//////////////////////////////////////////////////////////////////////
+////////////////////////  Component Flat Out  ///////////////////////
+//////////////////////////////////////////////////////////////////////
+global proc string[] componentFlatOut(string $cmpnt[])
+{
+
+string $return[] = {};
+int $incr = 0;
+    for($i = 0; $i < `size($cmpnt)`; $i++)
+    {
+
+        if(`gmatch $cmpnt[$i] "*:*"`){
+            
+        string $buffer[] ={};
+        $numTokens = `tokenize $cmpnt[$i] "[" $buffer`;
+        string $objNm = $buffer[0];
+        $numTokens = `tokenize $buffer[1] "]" $buffer`;
+        $numTokens = `tokenize $buffer[0] ":" $buffer`;
+        int $start = $buffer[0];
+        int $end = $buffer[1];
+        
+            for($r = $start; $r <= $end; $r++)
+            {
+              $return[$incr]= ($objNm + "[" + $r + "]" ); 
+              $incr++;
+            }
+        
+        }
+        else
+        {
+              $return[$incr]=  $cmpnt[$i]; 
+              $incr++;            
+        }
+    }
+    return $return; 
+}
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////  UV Folicle Button  ////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+
+global proc RGuvFlc()
+{
+string $sel[] =`filterExpand -ex 1 -sm 31 -sm 35`;
+string $folicle = "";
+if(`size($sel)` == 0)
+{
+     error "riger ka naam kharab kar rahe ho select UV or Vertex";
+}
+else
+{
+    for($i = 0; $i<`size($sel)`; $i++)
+    {
+        
+        string $shp[]=`listRelatives -p -s $sel[$i]`;
+        string $converted[] =`polyListComponentConversion -fv -fe -ff -fvf -fuv -tuv $sel[$i]`;
+        if(`gmatch $converted[0] "*.map*"`){
+            float $uv[] =`polyEditUV -q $converted[0]`;
+            $folicle =`uvFolicle $shp[0] $uv[0] $uv[1]`; 
+        }
+    }
+}
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////  UV Joint  ////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc uvJnt(string $objNm,float $u, float $v)
+{
+    string $shp[]=`listRelatives -p -s $objNm`;
+    string $folicle =`uvFolicle $shp[0] $u $v`; 
+    select -cl  ;
+    string $jnt=`joint`;
+    parent $jnt $folicle;
+    xform -os -t 0 0 0 $jnt;
+    xform -os -ro 0 0 0 $jnt;
+    makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 -jointOrient $jnt;
+    parent  -w $jnt;
+    delete $folicle;
+    select -cl  ;
+}
+
+//////////////////////////////////////////////////////////////////////
+///////////////////////  BoundingBox Center  ////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc float[]  BBcenter(string $objs[])
+{
+
+    float $center[]={};
+    float $bbox[] = `exactWorldBoundingBox $objs`;
+    $center[0] = ( $bbox[0] + $bbox[3] )/2;
+    $center[1] = ( $bbox[1] + $bbox[4] )/2;
+    $center[2] = ( $bbox[2] + $bbox[5] )/2;   
+    
+    return $center;
+
+}
+
+
+//////////////////////////////////////////////////////////////////////
+////////////////////////////  UV Folicle  ////////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc string uvFolicle(string $shp, float $uVal, float $vVal)
+{
+    string $hsys = `createNode hairSystem`;
+    int $ind[0] ;
+    $ind[0] = 0;
+    int $i;
+    float $v = 0;
+    float $u = $i/10.0;
+    string $newHair = createHairCurveNode( $hsys, $shp, $uVal,$vVal,2, 
+    false, false, false, false, "", 1.0, $ind, "","",1);
+    delete `listRelatives -p $hsys`;
+    return $newHair;
+}
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////    LOCK AND HIDE    ////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc int  LNH (string $obj,int $tx,int $ty,int $tz,int $rx,int $ry,int $rz,int $sx,int $sy,int $sz,int $v)
+{
+int $attrVal[];
+$attrVal[0] =$tx;$attrVal[1] =$ty;$attrVal[2] =$tz;
+$attrVal[3] =$rx;$attrVal[4] =$ry;$attrVal[5] =$rz;
+$attrVal[6] =$sx;$attrVal[7] =$sy;$attrVal[8] =$sz;
+$attrVal[9] =$v;
+int $keyVal;
+string $attrs[] ={"tx","ty","tz","rx","ry","rz","sx","sy","sz","v"};
+
+    for ($i=0;$i<(size($attrs));$i++)
+    {            
+        if ($attrVal[$i] == 1){
+            $keyVal = 0;
+            setAttr -lock $attrVal[$i] -keyable $keyVal -channelBox $keyVal ($obj +  "." + $attrs[$i]);
+    
+    }
+    }
+
+    return 1;
+}
+
+//////////////////////////////////////////////////////////////////////
+//////////////////////// CONTROL PROXY OR NOT ////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc doIt(int $Fk)
+{
+
+int $prx = `checkBox  -q -v pxCB`;  
+
+    if($prx == 1)
+    {
+    prxCnt $Fk;
+    }
+    
+    if($prx == 0)
+    {
+    cnt $Fk;
+    }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////      CONTROLER      ////////////////////////
+//////////////////////////////////////////////////////////////////////
+
+global proc cnt(int $Fk)
+{
+string $sel[]= `ls -sl`;
+
+if ((size($sel)) == 0){
+error "Select Object for controller";
+}
+else{
+    //find UI info 
+    string $axis =`radioCollection -q -sl ax`;
+    int $Nrax[] ={0, 0, 0};
+    if($axis=="x"){$Nrax ={1, 0, 0};};
+    if($axis=="y"){$Nrax ={0, 1, 0};};
+    if($axis=="z"){$Nrax ={0, 0, 1};};
+    string $cnst =`radioCollection -q -sl cnst`;
+    int $sclCst =`checkBox -q -v sclCB`;
+    
+    //create parent group
+    string $mnGrp = `group -em -n ($sel[0] + "_CtrlGrp")`;
+    if(`objExists "Extra_MotionSystem"`)
+        {parent $mnGrp "Extra_MotionSystem";}
+    for ($each in $sel){
+        string $chld[] = {};
+        if ($Fk == 1)
+        {
+         $chld =`ls -dag $each `;
+        }
+        else
+        {
+        $chld[0] = $each;
+        }
+        
+        for ($i=0;$i<(size($chld));$i++)
+        {
+            string $typ =`nodeType $chld[$i]`;
+            if ($typ == "transform" || $typ == "joint")
+                {        
+                //create contrller shape 
+                string $cntName[] =`circle 
+                    -c 0 0 0 
+                    -nr $Nrax[0] $Nrax[1] $Nrax[2] 
+                    -sw 360 -r 1 -d 3 -ut 0 
+                    -tol 0.01 -s 8 -ch 0
+                    -n ($chld[$i] + "_Ctrl")`;
+                    
+                string $grp = `group -em -n ($chld[$i] + "_OffsetGrp")`;
+                string $grp1 =`group -em -n ($chld[$i] + "_PosGrp")`;
+                
+                parent $cntName[0] $grp;
+                parent $grp $grp1;
+                
+                // position controller
+                float $pos[]=`xform -q -ws -rp$chld[$i]`;
+                float $rot[]=`xform -q -ws -ro $chld[$i]`;
+                
+                xform -ws -t $pos[0] $pos[1] $pos[2] $grp1;
+                xform -ws -ro $rot[0] $rot[1] $rot[2] $grp1;
+                
+                //Constraint 
+                if($cnst=="pnt"){
+                pointConstraint -mo $cntName[0] $chld[$i];
+                LNH $cntName[0] 0 0 0 1 1 1 0 0 0 1;
+                LNH $grp 0 0 0 1 1 1 0 0 0 1;
+                }
+                
+                if($cnst=="ort"){
+                orientConstraint -mo $cntName[0] $chld[$i];
+                LNH $cntName[0] 1 1 1 0 0 0 0 0 0 1;
+                LNH $grp 1 1 1 0 0 0 0 0 0 1;
+                }
+                
+                if($cnst=="prnt"){
+                parentConstraint -mo $cntName[0] $chld[$i];
+                LNH $cntName[0] 0 0 0 0 0 0 0 0 0 1;
+                LNH $grp 0 0 0 0 0 0 0 0 0 1;
+                }
+                
+                if($sclCst== 1){
+                scaleConstraint -mo $cntName[0] $chld[$i];
+                LNH $cntName[0] 0 0 0 0 0 0 0 0 0 1;
+                LNH $grp 0 0 0 0 0 0 0 0 0 1;
+                }else{
+                LNH $cntName[0] 0 0 0 0 0 0 1 1 1 1;
+                LNH $grp 0 0 0 0 0 0 1 1 1 1;
+                }
+                
+                //give parent 
+                string $prnt[] =`listRelatives -p $chld[$i]`;
+
+                if(`objExists  ($prnt[0] + "_Ctrl")`)
+                {
+                parent $grp1  ($prnt[0] + "_Ctrl");
+                }
+                else
+                {
+                parent $grp1 $mnGrp;
+                }
+               
+                
+                }
+            }
+        }
+    }
+}
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////   PROXY CONTROLER   ////////////////////////
+//////////////////////////////////////////////////////////////////////
+global proc prxCnt(int $Fk)
+{
+string $sel[]= `ls -sl`;
+
+if ((size($sel)) == 0){
+error "Select Object for controller";
+}
+    else{
+    
+    int $mdVal =`checkBox -q -v negCB`;
+    
+    //find UI info 
+    string $axis =`radioCollection -q -sl ax`;
+    int $Nrax[] ={0, 0, 0};
+    if($axis=="x"){$Nrax ={1, 0, 0};};
+    if($axis=="y"){$Nrax ={0, 1, 0};};
+    if($axis=="z"){$Nrax ={0, 0, 1};};
+    string $cnst =`radioCollection -q -sl cnst`;
+    int $sclCst =`checkBox -q -v sclCB`;
+    
+    //create parent group
+    string $mnGrp = `group -em -n ($sel[0] + "_CtrlGrp")`;
+    
+        if(`objExists "Extra_MotionSystem"`)
+            {parent $mnGrp "Extra_MotionSystem";}
+        
+    string $prxMnGrp = `group -em -n ("Proxy_" + $sel[0] + "_CtrlGrp")`;
+    setAttr ($prxMnGrp + ".visibility") 0;
+    setAttr -lock true ($prxMnGrp + ".visibility");
+    
+   
+    for ($each in $sel){
+    
+        string $chld[] = {};
+        if ($Fk == 1)
+        {
+         $chld =`ls -dag $each `;
+        }
+        else
+        {
+        $chld[0] = $each;
+        }
+        
+        
+        for ($i=0;$i<(size($chld));$i++)
+        {
+        
+            string $typ =`nodeType $chld[$i]`;
+            if ($typ == "transform" || $typ == "joint"){
+            //create contrller shape 
+            string $cntName[] =`circle 
+                -c 0 0 0 
+                -nr $Nrax[0] $Nrax[1] $Nrax[2] 
+                -sw 360 -r 1 -d 3 -ut 0 
+                -tol 0.01 -s 8 -ch 0
+                -n ($chld[$i] + "_Ctrl")`;
+                
+            string $grp = `group -em -n ($chld[$i] + "_OffsetGrp")`;
+            string $grp1 =`group -em -n ($chld[$i] + "_PosGrp")`;
+            
+            parent $cntName[0] $grp;
+            parent $grp $grp1;
+            
+            //proxy setup
+            string $pxCnt[] =`circle 
+                -c 0 0 0 
+                -nr $Nrax[0] $Nrax[1] $Nrax[2] 
+                -sw 360 -r 1 -d 3 -ut 0 
+                -tol 0.01 -s 8 -ch 0
+                -n ("Proxy_" + $chld[$i] + "_Ctrl")`;
+                
+            string $pxGrp = `group -em -n ("Proxy_" + $chld[$i] + "_OffsetGrp")`;
+            string $pxGrp1 =`group -em -n ("Proxy_" + $chld[$i] + "_PosGrp")`;
+            
+            parent $pxCnt[0] $pxGrp;
+            parent $pxGrp $pxGrp1;
+            
+            //Make Connections
+            connectAttr -f ($cntName[0] + ".translate") ($pxCnt[0] + ".translate");
+            connectAttr -f ($cntName[0] + ".rotate") ($pxCnt[0] + ".rotate");
+            connectAttr -f ($cntName[0] + ".scale") ($pxCnt[0] + ".scale");
+
+            if($mdVal == 0)
+            {
+                connectAttr -f ($grp + ".translate") ($pxGrp + ".translate");
+
+            }
+            else
+            {
+                string $revMD =`createNode multiplyDivide -n ($cntName[0] + "revMD")`;
+                connectAttr -f ($cntName[0] + ".translate") ($revMD + ".input1");
+                setAttr ($revMD + ".input2") -type "float3" -1.0 -1.0 -1.0;
+                connectAttr -f  ($revMD + ".output") ($grp + ".translate");
+
+            }
+
+            
+            connectAttr -f ($grp + ".rotate") ($pxGrp + ".rotate");
+            connectAttr -f ($grp + ".scale") ($pxGrp + ".scale");
+            
+            
+            // position controller
+            float $pos[]=`xform -q -ws -rp$chld[$i]`;
+            float $rot[]=`xform -q -ws -ro $chld[$i]`;
+            
+            xform -ws -t $pos[0] $pos[1] $pos[2] $grp1;
+            xform -ws -ro $rot[0] $rot[1] $rot[2] $grp1;
+            
+            xform -ws -t $pos[0] $pos[1] $pos[2] $pxGrp1;
+            xform -ws -ro $rot[0] $rot[1] $rot[2] $pxGrp1;
+            
+            
+            
+            //Constraint 
+            if($cnst=="pnt"){
+            pointConstraint -mo $pxCnt[0] $chld[$i];
+            LNH $cntName[0] 0 0 0 1 1 1 0 0 0 1;
+            LNH $grp 0 0 0 1 1 1 0 0 0 1;
+            }
+            
+            if($cnst=="ort"){
+            orientConstraint -mo $pxCnt[0] $chld[$i];
+            LNH $cntName[0] 1 1 1 0 0 0 0 0 0 1;
+            LNH $grp 1 1 1 0 0 0 0 0 0 1;
+            }
+            
+            if($cnst=="prnt"){
+            parentConstraint -mo $pxCnt[0] $chld[$i];
+            LNH $cntName[0] 0 0 0 0 0 0 0 0 0 1;
+            LNH $grp 0 0 0 0 0 0 0 0 0 1;
+            }
+            
+            if($sclCst== 1){
+            scaleConstraint -mo $pxCnt[0] $chld[$i];
+            LNH $cntName[0] 0 0 0 0 0 0 0 0 0 1;
+            LNH $grp 0 0 0 0 0 0 0 0 0 1;
+            }else{
+            LNH $cntName[0] 0 0 0 0 0 0 1 1 1 1;
+            LNH $grp 0 0 0 0 0 0 1 1 1 1;
+            }
+            
+                
+                //give parent 
+                string $prnt[] =`listRelatives -p $chld[$i]`;
+
+                if(`objExists  ($prnt[0] + "_Ctrl")`)
+                {
+                parent $grp1  ($prnt[0] + "_Ctrl");
+                }
+                else
+                {
+                parent $grp1 $mnGrp;
+                }
+                
+                
+                if(`objExists  ("Proxy_" + $prnt[0] + "_Ctrl")`)
+                {
+                parent $pxGrp1  ("Proxy_" + $prnt[0] + "_Ctrl");
+                }
+                else
+                {
+                parent $pxGrp1 $prxMnGrp;
+                }
+                
+            }
+
+        }
+        
+  
+    }
+    }
+}
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////    SHAPE REPLACER   ////////////////////////
+//////////////////////////////////////////////////////////////////////
+global proc shpRplc ()
+{
+    string $sel[]= `ls -sl`;
+    if ((size($sel)) == 0){
+    error "Select Target objects & then source object";
+    }
+    else{
+        int $sz = size($sel)-1;
+        string $grp = `group -em -n ("TempGrp" + $sel[$sz])`;
+        string $prntShp[] =`listRelatives -ad -s $sel[$sz] `;
+        parent -add -s $prntShp[0] $grp;
+        
+        for ($i=0;$i<$sz;$i++)
+            {
+            string $dupl[] =`duplicate -renameChildren $grp`;
+            string $nwShp[] =`listRelatives -ad -s$dupl[0] `;
+            
+            string $chld[] =`listRelatives -ad -s $sel[$i] `;
+            parent -add -s $nwShp[0] $sel[$i];
+            
+            for ($each in $chld){if(`objExists $each`){delete $each;}}
+            rename $nwShp[0] ($sel[$i] + "Shape");
+            delete $dupl;
+            }
+       delete $grp;
+    }
+}
+
+
+
+//////////////////////////////////////////////////////////////////////
+/////////////////////////   WIRE CONTROLLER   ////////////////////////
+//////////////////////////////////////////////////////////////////////
+global proc string cntWire (string $TYPE)
+  {
+  
+string $return[] ={};
+  switch ($TYPE)
+    {
+    case "Triangle" :
+      $return[0] =`curve -d 1 -p -1.03923 0 0.6 -p 1.03923 0 0.6 -p 0 0 -1.2 -p -1.03923 0 0.6 -k 0 -k 1 -k 2 -k 3 -n "Triangle" `;
+	break ;
+	
+    case "Circle" :
+      $return =`circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n "Circle" `;
+      break ;	
+	
+    case "Square" :
+      $return[0] =`curve -d 1 -p 1 0 -1 -p -1 0 -1 -p -1 0 1 -p 1 0 1 -p 1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4 -n "Square"` ;
+      break ;
+      
+    case "FatCross" :
+      $return[0] =`curve -d 1 -p 2 0 1 -p 2 0 -1 -p 1 0 -1 -p 1 0 -2 -p -1 0 -2 -p -1 0 -1 -p -2 0 -1 -p -2 0 1 -p -1 0 1 -p -1 0 2 -p 1 0 2 -p 1 0 1 -p 2 0 1 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -n "FatCross" `;
+      break ;      
+      
+    case "Pyramid" :
+      $return[0] =`curve -d 1 -p 0 2 0 -p 1 0 -1 -p -1 0 -1 -p 0 2 0 -p -1 0 1 -p 1 0 1 -p 0 2 0 -p 1 0 -1 -p 1 0 1 -p -1 0 1 -p -1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -n "Pyramid" `;
+      break ;
+      
+    case "Cube" :
+      $return[0] =`curve -d 1 -p 0.5 0.5 0.5 -p 0.5 0.5 -0.5 -p -0.5 0.5 -0.5 -p -0.5 -0.5 -0.5 -p 0.5 -0.5 -0.5 -p 0.5 0.5 -0.5 -p -0.5 0.5 -0.5 -p -0.5 0.5 0.5 -p 0.5 0.5 0.5 -p 0.5 -0.5 0.5 -p 0.5 -0.5 -0.5 -p -0.5 -0.5 -0.5 -p -0.5 -0.5 0.5 -p 0.5 -0.5 0.5 -p -0.5 -0.5 0.5 -p -0.5 0.5 0.5 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -n "Cube" `;
+      break ; 
+           
+    case "Sphere" :
+      $return[0] =`curve -d 1 -p 0 0 1 -p 0 0.5 0.866025 -p 0 0.866025 0.5 -p 0 1 0 -p 0 0.866025 -0.5 -p 0 0.5 -0.866025 -p 0 0 -1 -p 0 -0.5 -0.866025 -p 0 -0.866025 -0.5 -p 0 -1 0 -p 0 -0.866025 0.5 -p 0 -0.5 0.866025 -p 0 0 1 -p 0.707107 0 0.707107 -p 1 0 0 -p 0.707107 0 -0.707107 -p 0 0 -1 -p -0.707107 0 -0.707107 -p -1 0 0 -p -0.866025 0.5 0 -p -0.5 0.866025 0 -p 0 1 0 -p 0.5 0.866025 0 -p 0.866025 0.5 0 -p 1 0 0 -p 0.866025 -0.5 0 -p 0.5 -0.866025 0 -p 0 -1 0 -p -0.5 -0.866025 0 -p -0.866025 -0.5 0 -p -1 0 0 -p -0.707107 0 0.707107 -p 0 0 1 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -k 29 -k 30 -k 31 -k 32 -n "Sphere" `;
+      break ;    
+              	
+    case "Cone":
+		$return[0] =`curve -d 1 -p 0.5 -1 0.866025 -p -0.5 -1 0.866025 -p 0 1 0 -p 0.5 -1 0.866025 -p 1 -1 0 -p 0 1 0 -p 0.5 -1 -0.866025 -p 1 -1 0 -p 0 1 0 -p -0.5 -1 -0.866026 -p 0.5 -1 -0.866025 -p 0 1 0 -p -1 -1 -1.5885e-007 -p -0.5 -1 -0.866026 -p 0 1 0 -p -0.5 -1 0.866025 -p -1 -1 -1.5885e-007 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -n "Cone"`;
+	break;
+
+    case "Rombus" :
+      $return[0] =`curve -d 1 -p 0 1 0 -p 1 0 0 -p 0 0 1 -p -1 0 0 -p 0 0 -1 -p 0 1 0 -p 0 0 1 -p 0 -1 0 -p 0 0 -1 -p 1 0 0 -p 0 1 0 -p -1 0 0 -p 0 -1 0 -p 1 0 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -n "Rombus" `;
+      break ;
+
+    case "SingleNormal" :
+      $return[0] =`curve -d 1 -p 0 0 -1.32 -p -0.99 0 0 -p -0.33 0 0 -p -0.33 0 0.99 -p 0.33 0 0.99 -p 0.33 0 0 -p 0.99 0 0 -p 0 0 -1.32 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -n "SingleNormal" `;
+      break ;
+
+    case "FourNormal" :
+      $return[0] =`curve -d 1 -p 0 0 -1.98 -p -0.495 0 -1.32 -p -0.165 0 -1.32 -p -0.165 0 -0.165 -p -1.32 0 -0.165 -p -1.32 0 -0.495 -p -1.98 0 0 -p -1.32 0 0.495 -p -1.32 0 0.165 -p -0.165 0 0.165 -p -0.165 0 1.32 -p -0.495 0 1.32 -p 0 0 1.98 -p 0.495 0 1.32 -p 0.165 0 1.32 -p 0.165 0 0.165 -p 1.32 0 0.165 -p 1.32 0 0.495 -p 1.98 0 0 -p 1.32 0 -0.495 -p 1.32 0 -0.165 -p 0.165 0 -0.165 -p 0.165 0 -1.32 -p 0.495 0 -1.32 -p 0 0 -1.98 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -n "FourNormal" `;
+      break ;
+
+    case "Dumbell":
+		$return[0] =`curve -d 1 -p -1.207536 0 0.0254483 -p -1.123549 -0.202763 0.0254483 -p -0.920786 -0.28675 0.0254483 -p -0.718023 -0.202763 0.0254483 -p -0.63504 -0.00242492 0.0254483 -p 0.634091 0 0.0254483 -p 0.718023 -0.202763 0.0254483 -p 0.920786 -0.28675 0.0254483 -p 1.123549 -0.202763 0.0254483 -p 1.207536 0 0.0254483 -p 1.123549 0.202763 0.0254483 -p 0.920786 0.28675 0.0254483 -p 0.718023 0.202763 0.0254483 -p 0.634091 0 0.0254483 -p -0.63504 -0.00242492 0.0254483 -p -0.718023 0.202763 0.0254483 -p -0.920786 0.28675 0.0254483 -p -1.123549 0.202763 0.0254483 -p -1.207536 0 0.0254483 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -n "Dumbell"`;
+	break;
+	
+    case "ArrowOnBall" :
+      $return[0] =`curve -d 1 -p 0 0.35 -1.001567 -p -0.336638 0.677886 -0.751175 -p -0.0959835 0.677886 -0.751175 -p -0.0959835 0.850458 -0.500783 -p -0.0959835 0.954001 -0.0987656 -p -0.500783 0.850458 -0.0987656 -p -0.751175 0.677886 -0.0987656 -p -0.751175 0.677886 -0.336638 -p -1.001567 0.35 0 -p -0.751175 0.677886 0.336638 -p -0.751175 0.677886 0.0987656 -p -0.500783 0.850458 0.0987656 -p -0.0959835 0.954001 0.0987656 -p -0.0959835 0.850458 0.500783 -p -0.0959835 0.677886 0.751175 -p -0.336638 0.677886 0.751175 -p 0 0.35 1.001567 -p 0.336638 0.677886 0.751175 -p 0.0959835 0.677886 0.751175 -p 0.0959835 0.850458 0.500783 -p 0.0959835 0.954001 0.0987656 -p 0.500783 0.850458 0.0987656 -p 0.751175 0.677886 0.0987656 -p 0.751175 0.677886 0.336638 -p 1.001567 0.35 0 -p 0.751175 0.677886 -0.336638 -p 0.751175 0.677886 -0.0987656 -p 0.500783 0.850458 -0.0987656 -p 0.0959835 0.954001 -0.0987656 -p 0.0959835 0.850458 -0.500783 -p 0.0959835 0.677886 -0.751175 -p 0.336638 0.677886 -0.751175 -p 0 0.35 -1.001567 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -k 29 -k 30 -k 31 -k 32 -n "ArrowOnBall" `;
+      break ;
+      
+    case "Pin" :
+      $return[0] =`curve -d 1 -p 0 0 0 -p 0 1.503334 0 -p -0.079367 1.511676 0 -p -0.155265 1.536337 0 -p -0.224378 1.576239 0 -p -0.283684 1.629638 0 -p -0.330592 1.694201 0 -p -0.363051 1.767106 0 -p -0.379643 1.845166 0 -p -0.379643 1.924971 0 -p -0.363051 2.003031 0 -p -0.330592 2.075936 0 -p -0.283684 2.140499 0 -p -0.224378 2.193898 0 -p -0.155265 2.2338 0 -p -0.079367 2.258461 0 -p 0 2.266803 0 -p 0.079367 2.258461 0 -p 0.155265 2.2338 0 -p 0.224378 2.193898 0 -p 0.283684 2.140499 0 -p 0.330592 2.075936 0 -p 0.363051 2.003031 0 -p 0.379643 1.924971 0 -p 0.379643 1.845166 0 -p 0.363051 1.767106 0 -p 0.330592 1.694201 0 -p 0.283684 1.629638 0 -p 0.224378 1.576239 0 -p 0.155265 1.536337 0 -p 0.079367 1.511676 0 -p 0 1.503334 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 -k 12 -k 13 -k 14 -k 15 -k 16 -k 17 -k 18 -k 19 -k 20 -k 21 -k 22 -k 23 -k 24 -k 25 -k 26 -k 27 -k 28 -k 29 -k 30 -k 31  -n "pin" `;
+      break ;
+	}
+string $rtrn = $return[0];
+
+    return $rtrn;
+	
+}
+//////////////////////////////////////////////////////////////////////
+/////////////////////////   WIRE CONTROLLER   ////////////////////////
+//////////////////////////////////////////////////////////////////////
+global proc cntWireNw (string $TYPE)
+{
+string $sel[] = `ls -os -fl `;
+    if(`size $sel` != 0)
+    {
+        string $cnt =`cntWire $TYPE`;
+        select  $sel;
+        select -add $cnt;
+        shpRplc;
+        delete $cnt;
+        select  $sel;
+    }
+    else
+    {
+       cntWire $TYPE;
+       select -cl  ;
+
+    }
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////   Dynamic Setuup   ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+// Copyright (C) 2011-2011 Rahul Gawade, and/or its licensors.
+// All rights reserved.
+//
+// The coded instructions, statements, computer programs, and/or related
+// material (collectively the "Data") in these files contain unpublished
+// information proprietary to Rahul Gawade, and/or its licensors,
+// which is protected by Indian federal copyright law and by
+// international treaties.
+// Forr any quarries contact Rahul Gawade at rahulsg2901@gmail.com 
+
+//
+//
+//  Creation Date:  06-04-2014
+//
+//  Description:
+//      Add IK/FK dynamic Setup
+//
+
+//  Procedure Name:
+//		dynamicSetup
+//
+//  Lebals:
+//		1. dyna + any string
+//      2. propA any where you wont IK controller & at end of joint
+//
+//  Description:
+//      Add IK/FK dynamic Setup.
+//
+//  Input Arguments:
+//      None.
+//
+//  Return Value:
+//      None.
+//
+
+global proc transAtt()
+{
+string $sel[] =`ls -sl`;
+
+
+if(size($sel) == 2)
+{
+string $text;
+string $result = `promptDialog
+    -title "Rename Object"
+    -message "Enter Name:"
+    -button "OK" -button "Cancel"
+    -defaultButton "OK" -cancelButton "Cancel"
+    -dismissString "Cancel"`;
+
+
+if ($result == "OK") {
+    $text = `promptDialog -query -text`;
+    print $text;
+    if($text != "")
+    {
+    int $go = 0;
+    string $lstatt[] =`listAttr -ud $sel[1]`;
+    string $atts[] ={"Setup", "Before", "After", "Dynamic", "Stiffness", 
+    "Damp", "Friction", "Gravity", "Attract","Flow", "Iterations"}; 
+    
+    for ($e in $lstatt)
+    {
+        for($item in $atts)
+        {
+            if($e == $item)
+            {
+            $go +=1;
+            }
+        }
+    }
+    
+    if( size($atts) == $go)
+    {
+    //Add Attr
+    if ((`attrExt $sel[0] $text`) == 0){
+        addAttr -ln $text  -at "enum" -en "Off:On:"  $sel[0];
+        setAttr -e -lock true -keyable false -cb true ($sel[0] + "." + $text);}
+     $text = ($text + "_");
+        
+    if ((`attrExt $sel[0] ($text + "Setup")`) == 0){
+        addAttr -ln ($text + "Setup")  -at "enum" -en "Off:On:"  $sel[0];
+        setAttr -e -keyable false ($sel[0] + "." + $text + "Setup");}
+    
+    if ((`attrExt $sel[0] ($text + "Before")`) == 0){
+        addAttr -ln ($text + "Before")  -at "enum" -en "Off:FK:IK:"  $sel[0];
+        setAttr -e-keyable false -cb true ($sel[0] + "." + $text + "Before");}
+    
+    if ((`attrExt $sel[0] ($text + "After")`) == 0){
+        addAttr -ln ($text + "After")  -at "enum" -en "Off:On:"  $sel[0];
+        setAttr -e-keyable false -cb true ($sel[0] +  "." + $text + "After");}
+        
+    if ((`attrExt $sel[0] ($text + "Dynamic")`) == 0){
+        addAttr -ln ($text + "Dynamic")  -at "enum" -en "Static:Dynamic:"  $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Dynamic");}
+        
+    if ((`attrExt $sel[0] ($text + "Stiffness")`) == 0){
+        addAttr -ln ($text + "Stiffness")  -min 0 -max 1  -at "double" -dv 0.15 $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Stiffness");}
+        
+    if ((`attrExt $sel[0] ($text + "Damp")`) == 0){
+        addAttr -ln ($text + "Damp") -min 0 -max 1  -at "double" $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Damp");}
+        
+    if ((`attrExt $sel[0] ($text + "Friction")`) == 0){
+        addAttr -ln ($text + "Friction")  -min 0 -max 1  -at "double" -dv 0.5 $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Friction");}
+        
+    if ((`attrExt $sel[0] ($text + "Gravity")`) == 0){
+        addAttr -ln ($text + "Gravity")  -at "double" -dv 0.98 $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Gravity");}
+        
+    if ((`attrExt $sel[0] ($text + "Attract")`) == 0){
+        addAttr -ln ($text + "Attract")  -at "double" -min 0 -max 1 -dv 0.2 $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Attract");}
+        
+    if ((`attrExt $sel[0] ($text + "Flow")`) == 0){
+        addAttr -ln ($text + "Flow")  -at "double" -min 0 -max 1 -dv 0.2 $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Flow");}  
+    
+    if ((`attrExt $sel[0] ($text + "Iterations")`) == 0){
+        addAttr -ln ($text + "Iterations")  -at "long" -min 1 -max 50 -dv 4 $sel[0];
+        setAttr -e-keyable true ($sel[0] + "." + $text + "Iterations");} 
+              
+            
+        for ($e in $atts)
+        {
+        connectAttr -f ($sel[0] + "." + $text + $e) ($sel[1] + "." + $e);
+        }
+        
+            
+        }
+        else
+        {
+        error "Attribute not exists";
+        }
+    }
+    else
+    {
+        error "Tuz.... naav tak";    
+    }
+    }
+
+}
+else
+{
+error "select Controller then Parent joint";
+}
+}
+
+global proc addPropA()
+{
+    
+    string $sel[] =`ls -sl`;
+    if(`size $sel` != 0)
+    {
+        for ($each in $sel)
+        {
+        
+            if(`objectType $each` == "joint")
+            {
+                if(`getAttr ($each + ".drawLabel")` != 1)
+                {
+                    setAttr ($each + ".type") 15;
+                    setAttr -type "string" ($each + ".otherType") ("");
+                    setAttr ($each + ".drawLabel") 1;
+                }
+                else
+                {
+                    setAttr ($each + ".type") 0;
+                    setAttr -type "string" ($each + ".otherType") ("");
+                    setAttr ($each + ".drawLabel") 0; 
+                }
+            }
+        }
+    }
+    else
+    {
+        error "Tuzse yahi umid thi select Joint first";
+    }
+}
+
+
+
+
+global proc addDyna()
+{
+    
+    string $sel[] =`ls -sl`;
+    if(`size $sel` != 0)
+    {    
+        for ($each in $sel)
+        {
+            if(`objectType $each` == "joint")
+            {
+                if(`getAttr ($each + ".drawLabel")` != 1)
+                {
+                    setAttr ($each + ".type") 18;
+                    setAttr -type "string" ($each + ".otherType") ("dyna" + $each);
+                    setAttr ($each + ".drawLabel") 1;
+                }
+                else
+                {
+                    setAttr ($each + ".type") 0;
+                    setAttr -type "string" ($each + ".otherType") ("");
+                    setAttr ($each + ".drawLabel") 0; 
+                }
+            }
+        }
+    }
+    else
+    {
+        error "Tuzse yahi umid thi select Joint first";
+    }
+}
+
+
+
+global proc bakeDyna()
+{
+string $sets[] =`ls -set "*HairBakedSet*"`;
+string $setObj[] =`sets -q $sets[0]`;
+float $start  = `playbackOptions -q -ast`;
+float $end  = `playbackOptions -q -aet`;
+
+bakeResults 
+    -simulation true 
+    -t ($start + ":" +  $end)
+    -sampleBy 1 
+    -disableImplicitControl true 
+    -preserveOutsideKeys true 
+    -sparseAnimCurveBake false 
+    -removeBakedAttributeFromLayer false 
+    -bakeOnOverrideLayer false 
+    -controlPoints false 
+    -shape true 
+    $setObj;
+    
+print "Bake successfully\n";
+}
+
+global proc unbakeDyna()
+{
+    string $sets[] =`ls -set "*HairBakedSet*"`;
+    string $setObj[] =`sets -q $sets[0]`;
+    cutKey -time "-9000:9000" $setObj; 
+
+    for ($obj in $setObj)
+    {
+        string $s1 = `substitute "aftdyna_"  $obj "@#$%^&*!"`;
+        string $buffer[] = {};
+        $numTokens = `tokenize  $s1 "@#$%^&*!"  $buffer`;
+        string $s2 = `substitute "_grp"  $buffer[size($buffer)-1] ""`;
+        string $conJnt[] =`ls ("*Dyna_" + $s2)`;
+        
+        connectAttr -f  ($conJnt[0] + ".rotateX") ($obj + ".rotateX");
+        connectAttr -f  ($conJnt[0] + ".rotateY") ($obj + ".rotateY");
+        connectAttr -f  ($conJnt[0] + ".rotateZ") ($obj + ".rotateZ");
+        connectAttr -f  ($conJnt[0] + ".scaleX") ($obj + ".scaleX");
+        
+        
+        string $attr[]=`listAttr -ud $obj`;
+            if($attr[0] == "transCon")
+            {
+            connectAttr -f  ($conJnt[0] + ".translateX") ($obj + ".translateX");
+            connectAttr -f  ($conJnt[0] + ".translateY") ($obj + ".translateY");
+            connectAttr -f  ($conJnt[0] + ".translateZ") ($obj + ".translateZ");
+            }
+    }
+    print "Unbake successfully\n";
+}
+
+
+
+global proc dynaSetup()
+{
+
+string $sel[] =`ls -sl`;
+string $nucl[] ={};
+ 
+if ((size($sel)) == 0){
+     warning "select the parent joint.....";}
+else{
+//find all dyan lables
+string $child[] =`listRelatives -ad -c $sel[0]`;
+string $Dyna[] = {};
+int $no= 0;
+    for ($each in $child)
+    {
+     
+       if ((`objectType $each`) == "joint")
+        {
+            string $lable =`getAttr ($each + ".otherType")`;
+            int $types =`getAttr ($each + ".type")`;
+            int $drawlb =`getAttr ($each + ".drawLabel")`;
+            
+                    if ((startsWith ($lable, "dyna")) == 1 && $types == 18 && $drawlb == 1)
+                    {
+                        setAttr ($each + ".drawLabel") 0;
+                        $Dyna[$no]=$each;
+                        $no+= 1;
+                    }
+                    
+
+        }
+    }
+    
+
+if ((size($Dyna)) == 0){
+     warning "No dyna Exist....";}
+else{
+
+//Add Attr
+if ((`attrExt $sel[0] "Setup"`) == 0){
+    addAttr -ln "Setup"  -at "enum" -en "Off:On:"  $sel[0];
+    setAttr -e -keyable 0 ($sel[0] + ".Setup");}
+
+if ((`attrExt $sel[0] "Before"`) == 0){
+    addAttr -ln "Before"  -at "enum" -en "Off:FK:IK:"  $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Before");}
+
+if ((`attrExt $sel[0] "After"`) == 0){
+    addAttr -ln "After"  -at "enum" -en "Off:On:"  $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".After");}
+    
+if ((`attrExt $sel[0] "Dynamic"`) == 0){
+    addAttr -ln "Dynamic"  -at "enum" -en "Static:Dynamic:"  $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Dynamic");}
+    
+if ((`attrExt $sel[0] "Stiffness"`) == 0){
+    addAttr -ln "Stiffness"  -min 0 -max 1  -at "double" -dv 0.15 $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Stiffness");}
+    
+if ((`attrExt $sel[0] "Damp"`) == 0){
+    addAttr -ln "Damp" -min 0 -max 1  -at "double" $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Damp");}
+    
+if ((`attrExt $sel[0] "Friction"`) == 0){
+    addAttr -ln "Friction"  -min 0 -max 1  -at "double" -dv 0.5 $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Friction");}
+    
+if ((`attrExt $sel[0] "Gravity"`) == 0){
+    addAttr -ln "Gravity"  -at "double" -dv 0.98 $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Gravity");}
+    
+if ((`attrExt $sel[0] "Attract"`) == 0){
+    addAttr -ln "Attract"  -at "double" -min 0 -max 1 -dv 0.2 $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Attract");}
+    
+if ((`attrExt $sel[0] "Flow"`) == 0){
+    addAttr -ln "Flow"  -at "double" -min 0 -max 1 -dv 0.2 $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Flow");}    
+    
+if ((`attrExt $sel[0] "Iterations"`) == 0){
+    addAttr -ln "Iterations"  -at "long" -min 1 -max 50 -dv 4 $sel[0];
+    setAttr -e-keyable true ($sel[0] + ".Iterations");}   
+
+
+
+//Veribles
+string $fkJnts[] = {};
+string $fkcnt[] = {};
+string $ikJnts[] = {};
+string $ikcnt[] = {};
+string $dynaJnts[] = {};
+string $dynacnt[] = {};
+string $bfrJnts[] = {};
+string $dynaParent[] ={};
+
+for ($i=0;$i<(size($Dyna));$i++)
+{
+string $prt[] =`listRelatives -p $Dyna[$i]`;
+parent -w $Dyna[$i];
+$dynaParent[$i] = $prt[0];
+}
+
+//int $j=0;
+
+for ($j=0;$j<(size($Dyna));$j++)
+{
+
+//create Joints
+$fkJnts = `dupPrifix $Dyna[$j] FK`;
+$ikJnts = `dupPrifix $Dyna[$j] IK`;
+$dynaJnts = `dupPrifix $Dyna[$j] Dyna`;
+$bfrJnts = `dupPrifix $Dyna[$j] Before`;
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+    //Fk setup 
+    $fkcnt =`fkCtrls $fkJnts[0]`;
+      
+          for ($each in $fkcnt){
+              string $shp[]=`listRelatives -s $each`;
+              setAttr ($shp[0] + ".overrideEnabled") 1;
+              setAttr ($shp[0] + ".overrideColor") 6;}
+          
+    string $s1 = `substitute  "fk_"  $fkcnt[0] ""`;
+    string $s2 = `substitute  "_Ctrl" $s1 ""`;
+    
+    string $cnd1 = `createNode condition -n ($Dyna[$j] + "IkCnd")`;
+    string $cnd2 = `createNode condition -n ($Dyna[$j] + "FkCnd")`;
+
+    connectAttr -f ($sel[0] + ".Before") ($cnd1 + ".firstTerm");
+    setAttr ($cnd1 + ".secondTerm") 2;
+    setAttr ($cnd1 + ".colorIfTrueR") 1;
+    setAttr ($cnd1 + ".colorIfFalseR") 0;
+
+    connectAttr -f ($sel[0] + ".Before") ($cnd2 + ".firstTerm");
+    setAttr ($cnd2 + ".secondTerm") 1;
+    setAttr ($cnd2 + ".colorIfTrueR") 1;
+    setAttr ($cnd2 + ".colorIfFalseR") 0;
+
+    connectAttr -f ($cnd2 + ".outColor.outColorR") ($s2 + "_fkCtrls_grp.v"); 
+
+  
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+  
+
+//IK setup    
+
+string $child[] =`listRelatives -ad -c $ikJnts[0]`;
+string $ikLbl[] = {};
+int $no= 0;
+    for ($each in $child)
+    {
+     
+       if ((`objectType $each`) == "joint")
+        {
+            int $types =`getAttr ($each + ".type")`;
+            int $drawlb =`getAttr ($each + ".drawLabel")`;
+            
+                    if ($types == 15 && $drawlb == 1)
+                    {      
+                        string $s1 = `substitute "IK_" $each ""`;  
+                        setAttr ($s1 + ".drawLabel") 0;               
+                        $ikLbl[$no]=$each;
+                        $no+= 1;
+                    }
+        }
+        
+    
+    }
+
+    //revers array 
+    string $ikLblJnt[]= {};
+    int $no = 1;
+    $ikLblJnt[0] =$ikJnts[0];
+
+        for ($i=((size($ikLbl))-1);$i>=0;$i--)
+        {
+        $ikLblJnt[$no] =$ikLbl[$i];
+        $no += 1;
+        }
+    int $sizeIkjnt = size ($ikJnts); 
+        
+        if ((`size($ikLblJnt)`) <= 1)
+        {
+           
+               $ikLblJnt[0] =$ikJnts[0];
+               
+               //center of joint 
+               int $center = ($sizeIkjnt * 0.5);
+               $ikLblJnt[1] =$ikJnts[$center];
+               
+               
+               $ikLblJnt[2] =$ikJnts[($sizeIkjnt - 1)]; 
+               
+        }
+
+
+
+    //create IK curve
+    float $pos[] =`xform -q -ws -rp $ikLblJnt[0]`;
+    string $crv =`curve  -d 2 -p $pos[0] $pos[1] $pos[2] -n ($Dyna[$j] + "_IK_Curve")`;
+     
+              for ($i=1;$i<(size($ikLblJnt));$i++)
+              {
+                 float $pos[] =`xform -q -ws -rp $ikLblJnt[$i]`;
+                 curve  -a -d 2 -p $pos[0] $pos[1] $pos[2] $crv;
+              }
+              
+
+    //Create Controllers
+    string $parentGrp =`group -em -n ($Dyna[$j] + "_IkCtlrs_grp")`; 
+    string $clstrList[] = {};
+              
+              for ($i=0;$i<(size($ikLblJnt));$i++)
+              {
+                  string $Box =`curve 
+                                    -d 1 -p -0.5 0.5 -0.5 
+                                    -p -0.5 0.5 0.5 -p 0.5 0.5 0.5 
+                                    -p 0.5 0.5 -0.5 -p 0.5 -0.5 -0.5 
+                                    -p -0.5 -0.5 -0.5 -p -0.5 0.5 -0.5 
+                                    -p 0.5 0.5 -0.5 -p 0.5 0.5 0.5 
+                                    -p 0.5 -0.5 0.5 -p 0.5 -0.5 -0.5 
+                                    -p -0.5 -0.5 -0.5 -p -0.5 -0.5 0.5 
+                                    -p 0.5 -0.5 0.5 -p 0.5 0.5 0.5 
+                                    -p -0.5 0.5 0.5 -p -0.5 -0.5 0.5 
+                                    -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 
+                                    -k 6 -k 7 -k 8 -k 9 -k 10 -k 11 
+                                    -k 12 -k 13 -k 14 -k 15 -k 16
+                                    -n ($Dyna[$j] + "_IK_" + $i + "_Ctrl")`;
+                                    
+                
+                string $grp =`group -em -n ($Box + "_grp")`; 
+            
+                parent $Box $grp;
+                                    
+                string $clst[] =`cluster  -n ($Dyna[$j] + "_IK_Cluster" + $i)  ($Dyna[$j] + "_IK_Curve.cv[" + $i + "]")`;
+                
+                float $pos[] =`xform -q -ws -rp $clst[1]`;
+                float $rot[] =`xform -q -ws -ro $clst[1]`;
+                
+                xform -ws -t  $pos[0] $pos[1] $pos[2] $grp;
+                xform -ws -ro $rot[0] $rot[1] $rot[2] $grp;
+
+
+                parentConstraint $Box $clst[1];
+                LNH $Box 0 0 0 1 1 1 1 1 1 1;
+                parent $grp $parentGrp;
+                
+                $ikcnt[$i] = $Box;
+                $clstrList[$i] = $clst[0];
+              }
+              
+              connectAttr -f ($cnd1 + ".outColor.outColorR") ($parentGrp + ".v"); 
+              string $ikGrp =`group -em -n ($Dyna[$j] + "_IkExtra_grp")`; 
+
+
+                     
+        int $sz = size($ikLblJnt);
+        string $ikHd[]=` ikHandle 
+        -sol ikSplineSolver 
+        -ccv false 
+        -pcv false 
+        -sj $ikLblJnt[0] 
+        -ee $ikLblJnt[($sz - 1)] 
+        -c $crv
+        -n ($Dyna[$j] + "_BefoerIK_" + $i)`;
+ 
+            for ($each in $clstrList)
+                parent ($each + "Handle") $ikGrp;
+            
+            parent  $crv $ikGrp;
+            parent  $ikHd[0] $ikGrp;
+ 
+           for ($each in $ikcnt){
+              string $shp[]=`listRelatives -s $each`;
+              setAttr ($shp[0] + ".overrideEnabled") 1;
+              setAttr ($shp[0] + ".overrideColor") 17;}
+ 
+ //Make Stretch
+          stretchSpine $ikJnts $ikHd[0] $crv $sel[0] $ikcnt[0]; 
+
+ 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+       
+    //before setup
+    
+       string $cnd3 = `createNode condition -n ($Dyna[$j] + "_cnstCnd")`;
+    setAttr ($cnd3 + ".secondTerm") 2;
+    setAttr ($cnd3 + ".operation") 0;
+    setAttr ($cnd3 + ".colorIfTrueR") 0;
+    setAttr ($cnd3 + ".colorIfFalseR") 1;
+    
+    connectAttr -f ($sel[0] + ".Before") ($cnd3 + ".firstTerm") ;
+    
+        for ($i=0;$i<(size($bfrJnts));$i++)
+        {
+            
+            string $cnst[] =`parentConstraint $fkJnts[$i] $ikJnts[$i] $bfrJnts[$i] `;
+
+            connectAttr -f ($cnd1 + ".outColor.outColorR") ($cnst[0] + "." + $ikJnts[$i] + "W1");
+            connectAttr -f ($cnd3 + ".outColor.outColorR") ($cnst[0] + "." + $fkJnts[$i] + "W0");
+
+       }
+ 
+ 
+ 
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+    //after setup
+    $dynacnt=`aftCtrls $Dyna[$j]`;
+    string $aftgrp =`group -em -n ("after_" + $Dyna[$j] + "_Ctrl_grp")`; 
+    connectAttr ($sel[0] + ".After") ($aftgrp + ".v");
+
+        for ($each in $dynacnt)
+        {
+            
+            string $s1 = `substitute  "aft_" $each ""`;
+            string $s2 = `substitute  "_Ctrl" $s1 ""`;
+
+            parent ("aftparent_" + $s2 + "_grp")  $aftgrp;
+        }
+        
+             for ($each in $dynacnt){
+              string $shp[]=`listRelatives -s $each`;
+              setAttr ($shp[0] + ".overrideEnabled") 1;
+              setAttr ($shp[0] + ".overrideColor") 13;}
+       
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+    //Dynamic setup
+    //List all chind joints
+    string $child[] =`listRelatives -ad -c $dynaJnts[0]`;
+    $child[((size($child)))] = $dynaJnts[0];
+    //revers array 
+    string $list[]= {};
+    int $no = 0;
+        for ($i=((size($child))-1);$i>=0;$i--)
+        {
+        $list[$no] =$child[$i];
+        $no += 1;
+        }
+
+
+    //create base curve
+    float $pos[] =`xform -q -ws -rp $list[0]`;
+    string $crv =`curve  -d 3 -p $pos[0] $pos[1] $pos[2] -n ($Dyna[$j] + "_Base_Curve")`;
+                 for ($i=1;$i<(size($list));$i++)
+              {
+                 float $pos[] =`xform -q -ws -rp $list[$i]`;
+                 curve  -a -d 3 -p $pos[0] $pos[1] $pos[2] $crv;
+              }
+              
+     //Make base curve Dynamic
+     select -cl  ;
+     select  $crv ;
+     //makeCurvesDynamicHairs 1 0 1;
+     makeCurvesDynamic 2 { "1", "0", "1", "1", "0"};
+     select -cl  ;
+     
+     
+     
+     //Find connected Hair System
+     string $shape[] =`listRelatives -ad -s $crv`;
+     string $folicle[] =`listConnections   $shape[0]`;
+     string $folicleShp[] =`listRelatives -ad -s $folicle[1]`;
+     string $hairSysShp[] =`listConnections -sh 1 $folicleShp[0]`;
+     string $hairSys[] =`listRelatives -ad -p $hairSysShp[2]`;
+     string $dynaCrv[] =`listRelatives -ad -p $hairSysShp[4]`;
+     setAttr ($hairSysShp[2] + ".active") 0;
+
+
+     $nucl =`listConnections ($hairSysShp[2] + ".startState")`;
+
+
+
+     string $hairSysGrp =`group -em -n ($Dyna[$j] + "_HairSystem_grp")`; 
+     
+    parent $hairSys[0] $folicle[1] $crv $dynaCrv[0] $hairSysGrp;
+    rename $dynaCrv[0] ($Dyna[$j] + "_Dynamic_crv");
+    
+    delete ($hairSys[0] + "Follicles");
+    delete ($hairSys[0] + "OutputCurves");
+    
+    setAttr ($folicleShp[0] + ".pointLock") 1;
+
+     
+    int $size =size( $dynaJnts );
+    
+    string $ikHlds[]=` ikHandle 
+        -sol ikSplineSolver 
+        -ccv false 
+        -pcv false 
+        -sj $dynaJnts[0] 
+        -ee $dynaJnts[($size - 1)] 
+        -c ($Dyna[$j] + "_Dynamic_crv")`;
+
+         
+            parent  $crv $ikGrp;
+            parent  $ikHlds[0] $ikGrp;
+
+    //Make stretchy
+
+     stretchSpine $dynaJnts $ikHlds[0] $crv $sel[0] $ikcnt[0];
+
+    for ($i=0;$i<($size - 1);$i++)
+    {
+    
+    string $s1 = `substitute  "Dyna_" $list[$i] ""`;
+    if(`objExists ("FK_" + $s1 + "_Ctrl")`)
+    {
+    connectAttr -f ("FK_" + $s1 + "_Ctrl.rotateX") ("aftdyna_" + $s1 + "_grp.rotateX");
+    }
+    //connectAttr -f ($dynaJnts[$i] + ".rotateX") ("aftdyna_" + $s1 + "_grp.rotateX");
+    connectAttr -f ($dynaJnts[$i] + ".rotateY") ("aftdyna_" + $s1 + "_grp.rotateY");
+    connectAttr -f ($dynaJnts[$i] + ".rotateZ") ("aftdyna_" + $s1 + "_grp.rotateZ");
+    connectAttr -f ($dynaJnts[$i] + ".scaleX") ("aftdyna_" + $s1 + "_grp.scaleX");
+   
+    }
+    
+    connectAttr -f ($dynaJnts[0] + ".translateX") ("aftdyna_" + $Dyna[$j] + "_grp.translateX");
+    connectAttr -f ($dynaJnts[0] + ".translateY") ("aftdyna_" + $Dyna[$j] + "_grp.translateY");
+    connectAttr -f ($dynaJnts[0] + ".translateZ") ("aftdyna_" + $Dyna[$j] + "_grp.translateZ");
+ 
+
+    string $hrShp[] =`listRelatives -s $hairSys[0]`;
+    connectAttr -f ($sel[0] + ".Stiffness") ($hrShp[0] + ".stiffness");
+    connectAttr -f ($sel[0] + ".Damp") ($hrShp[0] + ".damp");
+    connectAttr -f ($sel[0] + ".Friction") ($hrShp[0] + ".friction");
+    connectAttr -f ($sel[0] + ".Gravity") ($hrShp[0] + ".gravity");
+    connectAttr -f ($sel[0] + ".Attract") ($hrShp[0] + ".startCurveAttract");
+    connectAttr -f ($sel[0] + ".Flow") ($hrShp[0] + ".attractionScale[1].attractionScale_FloatValue");
+    connectAttr -f ($sel[0] + ".Iterations") ($hrShp[0] + ".iterations");
+    
+ 
+    setDrivenKeyframe -cd ($sel[0] + ".Dynamic") -dv 0 -v 1 ($hrShp[0] + ".simulationMethod");
+    setDrivenKeyframe -cd ($sel[0] + ".Dynamic") -dv 1 -v 3 ($hrShp[0] + ".simulationMethod");
+    setAttr -l 1 ($hrShp[0] + ".simulationMethod");
+    
+    customPrifix $hairSys[0] $Dyna[$j];
+    customPrifix $folicle[1] $Dyna[$j];
+    customPrifix $ikHlds[0] $Dyna[$j];
+    customPrifix $ikHlds[1] $Dyna[$j];    
+        
+
+string $sknClst[] =`skinCluster -dr 4.0 -tsb  $bfrJnts[0] ($Dyna[$j] + "_Base_Curve")`;
+
+    for ($s=1;$s<(size($bfrJnts));$s++)
+    {      
+    skinCluster -e -ai $bfrJnts[$s] $sknClst[0];        
+    }
+       
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++// 
+string $ctrlGrp =`group -em -n ($Dyna[$j] + "_Controllers_grp")`; 
+string $stupGrp =`group -em -n ($Dyna[$j] + "_Setup_grp")`; 
+string $sclGrp =`group -em -n ($Dyna[$j] + "_scale_grp")`; 
+
+
+float $dynaPos[] =`xform -q -ws -t $dynaJnts[0]`;
+float $dynaRot[] =`xform -q -ws -ro $dynaJnts[0]`;
+
+string $RGJnt =`joint -p $dynaPos[0] $dynaPos[1] $dynaPos[2] -n ("Extra" + $dynaJnts[0])`;
+xform -ws -ro $dynaRot[0] $dynaRot[1] $dynaRot[2] $RGJnt;
+makeIdentity -apply true -t 1 -r 1 -s 1 -n 0 $RGJnt;
+parent $dynaJnts[0] $RGJnt;
+parentConstraint -mo $dynaParent[$j] $RGJnt;
+
+parent ("after_" + $Dyna[$j] + "_Ctrl_grp") ($Dyna[$j] + "_IkCtlrs_grp") ("FK_" + $Dyna[$j] + "_fkCtrls_grp") $ctrlGrp;
+parentConstraint -mo $dynaParent[$j] $ctrlGrp;
+
+parent  $hairSysGrp $ikGrp $stupGrp;
+parent $fkJnts[0] $ikJnts[0] $bfrJnts[0]  $sclGrp;
+
+connectAttr  -f ($sel[0] + ".Setup") ($stupGrp + ".v");
+
+if (!`objExists "HairBakedSet"`){
+    string $set =`sets -em -name "HairBakedSet"`;
+            for ($each in $dynacnt){
+            
+            string $prnt[]= `listRelatives -p $each`;
+            string $grndprnt[]= `listRelatives -p $prnt[0]`;
+            sets -e  -add $set $grndprnt;
+            
+            }
+        }
+    else{
+            for ($each in $dynacnt){
+            
+                string $prnt[]= `listRelatives -p $each`;
+                string $grndprnt[]= `listRelatives -p $prnt[0]`;
+                sets -e  -in "HairBakedSet" $grndprnt;
+                
+            }
+    }
+
+
+
+
+
+// For scale
+parent $sclGrp $stupGrp;
+scaleConstraint -mo $sel[0] $ctrlGrp;
+scaleConstraint -mo $sel[0] $sclGrp;
+}
+
+string $mnStupGrp;    
+string $mnCtrlGrp;
+
+
+if (!`objExists "DynaControllers_grp"`){
+    $mnCtrlGrp =`group -em -n "DynaControllers_grp"`; }
+
+if (!`objExists "DynaSetup_grp"`){
+    $mnStupGrp =`group -em -n "DynaSetup_grp"`; }
+
+for ($i=0;$i<(size($Dyna));$i++)
+{
+parent $Dyna[$i] $dynaParent[$i];
+parent ($Dyna[$i] + "_Controllers_grp") DynaControllers_grp;
+parent ($Dyna[$i] + "_Setup_grp") DynaSetup_grp;
+ 
+
+select -cl;
+print "// Result 1";
+
+
+//For Scale
+
+string $allJnt[] =`ls -dag -type "joint" $sel[0]`;
+
+for ($j=0;$j<(size($allJnt));$j++)
+{
+
+string $cons =`connectionInfo -sfd ($allJnt[$j] + ".inverseScale")`;
+
+    if($cons != "")
+    {
+    disconnectAttr $cons ($allJnt[$j] + ".inverseScale");
+    }
+    
+}
+
+
+}
+}
+}
+int $cb=`checkBox -q -v Ncb`;
+if ($cb!=1)
+{
+    delete $nucl;
+}
+
+};
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+//
+//                       Extra procedures
+//
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc string[] dupPrifix (string $joint, string $prefix )
+{  
+    //get child joints
+    string $child[] =`listRelatives -ad -c $joint`;
+    $child[((size($child)))] = $joint;
+    string $newjnt[] = {};
+    //revers array 
+    string $list[]= {};
+    int $no = 0;
+        for ($i=((size($child))-1);$i>=0;$i--)
+        {
+        $list[$no] =$child[$i];
+        $no += 1;
+        }
+    
+ 
+    //duplicate joint with prefix
+       string $dup[] =` duplicate  -rc $joint`;
+
+       int $count = 0;
+            for ($i=0;$i<(size($dup));$i++)
+            {
+                rename $dup[$i] ($prefix + "_" + $list[$i]);
+                $newjnt[$count] = ($prefix + "_" + $list[$i]);
+                $count += 1;
+                
+            }  
+            
+     return $newjnt;
+};
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc string[] customPrifix (string $joint,string $prefix )
+{  
+    //get child joints
+    string $child[] =`listRelatives -ad -c $joint`;
+    $child[((size($child)))] = $joint;
+    string $newjnt[] = {};
+
+        int $count = 0;
+            for ($i=0;$i<(size($child));$i++)
+            {
+                rename $child[$i] ($prefix + "_" + $child[$i]);
+                $newjnt[$count] = ($prefix + "_" + $child[$i]);
+                $count += 1;
+                
+            }  
+            
+     return $newjnt;
+};
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc string[] fkCtrls (string $joint)
+{
+string $ctrls[] = {};
+int $count = 0;
+string $child[] =`listRelatives -ad -c $joint`;
+$child[((size($child)))] = $joint;
+string $newjnt[] = {};
+    
+    //revers array 
+    string $list[]= {};
+    int $no = 0;
+        for ($i=((size($child))-1);$i>=0;$i--)
+        {
+        $list[$no] =$child[$i];
+        $no += 1;
+        }
+    
+        string $fkGrp =`group -em -n ($joint + "_fkCtrls_grp")`; 
+
+        //constriant jont with new controler
+        for ($i=0;$i<((size($list)-1 ));$i++)
+        {
+           string $fkctrl[]= `circle 
+               -c 0 0 0 -nr 1 0 0 
+               -sw 360 -r 1 -d 3 
+               -ut 0 -tol 0.01 
+               -s 8 -ch 0 
+               -n ($list[$i] + "_Ctrl")`;
+           string $grp1 =`group -em -n ("fkExtra_" + $list[$i] + "_grp")`; 
+           string $grp2 =`group -em -n ("fkparent_" + $list[$i] + "_grp")`; 
+        
+           parent $fkctrl[0] $grp1;
+           parent $grp1 $grp2;
+           
+           float $pos[] =`xform -q -ws -rp $list[$i]`;
+           float $rot[] =`xform -q -ws -ro $list[$i]`;
+           
+           xform -ws -t $pos[0] $pos[1] $pos[2] $grp2;
+           xform -ws -ro $rot[0] $rot[1] $rot[2] $grp2;
+        
+           parentConstraint -mo $fkctrl[0] $list[$i];
+           
+           LNH $fkctrl[0] 0 0 0 0 0 0 1 1 1 1;
+           LNH $grp1   0 0 0 0 0 0 1 1 1 1;
+           
+           parent $grp2 $fkGrp;
+           
+           $ctrls[$count] = $fkctrl[0];
+           $count += 1;
+        }
+
+
+        // make fk hierachy
+        for ($i=1;$i<((size($ctrls)));$i++)
+        {            
+            parentConstraint -mo $ctrls[($i - 1)] ("fkparent_" + $list[$i] + "_grp") ;
+        }
+        
+  return $ctrls;
+
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc string[] aftCtrls (string $joint)
+{ 
+
+string $ctrls[] = {};
+int $count = 0;
+string $child[] =`listRelatives -ad -c $joint`;
+$child[((size($child)))] = $joint;
+string $newjnt[] = {};
+    
+    //revers array 
+    string $list[]= {};
+    int $no = 0;
+        for ($i=((size($child))-1);$i>=0;$i--)
+        {
+        $list[$no] =$child[$i];
+        $no += 1;
+        }
+    
+    
+        //constriant jont with new controler
+        for ($i=0;$i<((size($list)-1 ));$i++)
+        {
+
+           string $aftctrl[]= `circle 
+               -c 0 0 0 -nr 1 0 0 
+               -sw 360 -r 1 -d 1 
+               -ut 0 -tol 0.01 
+               -s 4 -ch 0 
+               -n ("aft_" + $list[$i] + "_Ctrl")`;
+               
+           xform -ws -ro -45 0 0 $aftctrl[0];
+           makeIdentity -apply 1 -r 1 $aftctrl[0];
+
+           string $grp1 =`group -em -n ("aftExtra_" + $list[$i] + "_grp")`; 
+           string $grp2 =`group -em -n ("aftparent_" + $list[$i] + "_grp")`; 
+           string $grp3 =`group -em -n ("aftdyna_" + $list[$i] + "_grp")`; 
+
+
+           if($i == 0)
+           {
+            addAttr -ln "transCon"  -at bool  $grp3;
+            setAttr -e -keyable false -lock true ($grp3 + ".transCon");
+           }
+           
+        
+           parent $aftctrl[0] $grp1;
+           parent $grp1 $grp3;
+           parent $grp3 $grp2;
+           
+           float $pos[] =`xform -q -ws -rp $list[$i]`;
+           float $rot[] =`xform -q -ws -ro $list[$i]`;
+           
+           xform -ws -t $pos[0] $pos[1] $pos[2] $grp2;
+           xform -ws -ro $rot[0] $rot[1] $rot[2] $grp2;
+        
+           parentConstraint -mo $aftctrl[0] $list[$i];
+           
+           
+          LNH $aftctrl[0] 0 0 0 0 0 0 1 1 1 1;
+          LNH $grp1 0 0 0 0 0 0 1 1 1 1;
+
+            
+           $ctrls[$count] = $aftctrl[0];
+           $count += 1;
+        }
+
+
+        // make fk hierachy
+        for ($i=1;$i<(size($ctrls));$i++)
+        {
+            parentConstraint -mo ("aft_" + $list[($i-1)] + "_Ctrl") ("aftparent_" + $list[$i] + "_grp");
+            
+        }
+        
+   
+    
+  return $ctrls;
+
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc stretchSpine (string $jnt[],string $ikHandle, string $crv,string $glCrv, string $attrCrv )
+{
+int $attExt = 1;
+string $Attr[] = `listAttr -k $attrCrv`;
+    for ($arbt in $Attr)
+    {
+        if ($arbt == "Stretchy" || $arbt == "stretchy" )
+        {
+        $attExt = 0;
+        }
+        
+    }
+    
+    if ($attExt == 1)
+    {
+        addAttr -ln "Stretchy"  -at "enum" -en "Off:On:" $attrCrv ;
+        setAttr -e-keyable true ($attrCrv  + ".Stretchy");
+    }
+
+
+
+string $cvrInfo =`arclen -ch 1 $crv`;
+
+string $cnd =`createNode condition -n ($jnt[0] + "_Schy")`;
+
+connectAttr -f ($attrCrv + ".Stretchy") ($cnd + ".firstTerm");
+setAttr ($cnd + ".secondTerm") 1;
+setAttr ($cnd + ".operation") 0;
+connectAttr -f ($cvrInfo + ".arcLength") ($cnd + ".colorIfTrueR");
+float $arc = `getAttr ($cvrInfo + ".arcLength")`;
+
+
+string $glMd =`createNode multiplyDivide -n ($jnt[0] + "_glMD")`;
+
+    if(!`objExists "SRT"`)
+    {
+        connectAttr -f ($glCrv  + ".scaleX") ($glMd + ".input1X");
+    }
+    else
+    {
+        connectAttr -f ("SRT.scaleX") ($glMd + ".input1X");
+    }
+setAttr ($glMd + ".operation") 1;
+setAttr ($glMd + ".input2X") $arc;
+connectAttr -f ($glMd  + ".outputX") ($cnd + ".colorIfFalseR");
+
+string $md =`createNode multiplyDivide -n ($jnt[0] + "_MD")`;
+setAttr ($md+ ".operation") 2;
+
+connectAttr -f ($cnd + ".outColorR") ($md + ".input1X");
+connectAttr -f ($glMd + ".outputX") ($md + ".input2X");
+
+
+        for ($each in $jnt)
+            connectAttr -f ($md + ".outputX") ($each  + ".scaleX");
+
+
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc int attrExt (string $obj, string $attr)
+{
+string $allAttr[] =`listAttr -ud $obj`;
+int $go = 0;
+for ($each in $allAttr)
+
+if ($each == $attr)
+    {
+        $go = 1;
+    }
+    
+    
+    return $go;
+}
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc int  LNH (string $obj,int $tx,int $ty,int $tz,int $rx,int $ry,int $rz,int $sx,int $sy,int $sz,int $v)
+{
+int $attrVal[];
+$attrVal[0] =$tx;$attrVal[1] =$ty;$attrVal[2] =$tz;
+$attrVal[3] =$rx;$attrVal[4] =$ry;$attrVal[5] =$rz;
+$attrVal[6] =$sx;$attrVal[7] =$sy;$attrVal[8] =$sz;
+$attrVal[9] =$v;
+int $keyVal;
+string $attrs[] ={"tx","ty","tz","rx","ry","rz","sx","sy","sz","v"};
+
+    for ($i=0;$i<(size($attrs));$i++)
+    {
+        if ($attrVal[$i] == 0)
+            $keyVal = 1;
+            
+        if ($attrVal[$i] == 1)
+            $keyVal = 0;
+            
+            
+    setAttr -lock $attrVal[$i] -keyable $keyVal ($obj +  "." + $attrs[$i]);
+    }
+
+    return 1;
+}
+
+
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++//
+
+global proc rmDynaSetup ()
+{
+string $sel[] =`ls -sl`; 
+if ((size($sel)) == 0){
+     warning "select the parent joint.....";}
+else{
+//find all dyan lables
+string $child[] =`listRelatives -ad -c $sel[0]`;
+string $Dyna[] = {};
+string $ikLbl[] = {};
+int $no= 0;
+
+    //List Dyna joints
+    for ($each in $child)
+    {
+     
+       if ((`objectType $each`) == "joint")
+        {
+            string $lable =`getAttr ($each + ".otherType")`;
+            int $types =`getAttr ($each + ".type")`;
+            
+                    if ((startsWith ($lable, "dyna")) == 1 && $types == 18)
+                    {
+                        setAttr ($each + ".drawLabel") 0;
+                        $Dyna[$no]=$each;
+                        $no+= 1;
+                    }
+                    
+
+        }
+    }
+$no= 0;
+
+    //List PropA joints
+    for ($each in $child)
+    {
+     
+       if ((`objectType $each`) == "joint")
+        {
+            int $types =`getAttr ($each + ".type")`;
+            
+                    if ($types == 15)
+                    {      
+                        string $s1 = `substitute "IK_" $each ""`;  
+                        setAttr ($s1 + ".drawLabel") 0;               
+                        $ikLbl[$no]=$each;
+                        $no+= 1;
+                    }
+        }
+        
+    
+    }
+
+
+
+if ((size($Dyna)) == 0){
+    
+         string $lable =`getAttr ($sel[0] + ".otherType")`;
+         int $types =`getAttr ($sel[0] + ".type")`;
+         
+                    if ((startsWith ($lable, "dyna")) == 1 && $types == 18){
+                        $Dyna[0]=$sel[0]; }
+                    }
+
+if ((size($Dyna)) == 0){
+    warning "There is no Dyna.....";}
+else{
+//Delete Setup
+for ($each in $Dyna)
+{    
+    setAttr ($each + ".drawLabel") 1;
+    delete -cn $each;
+    
+    if (`objExists ($each + "_Controllers_grp")`)
+        delete ($each + "_Controllers_grp");
+
+    if (`objExists ($each + "_Setup_grp")`)
+        delete ($each + "_Setup_grp");
+ 
+}
+    
+//Restore lable
+for ($e in  $ikLbl)
+    setAttr ($e + ".drawLabel") 1;
+    
+string $child[] =`listRelatives -c "DynaControllers_grp"`;
+if ((size($child)) == 0)
+    delete "DynaControllers_grp";
+    
+    
+string $child[] =`listRelatives -c "DynaSetup_grp"`;
+if ((size($child)) == 0)
+    delete "DynaSetup_grp";
+    
+    }        
+    }
+};
+global proc CN()
+{
+    string $ctl[]=`ls -sl`;
+    addAttr -ln "StartFrame" -k 1 -at "long" -dv 1 $ctl[0];
+    connectAttr -f ($ctl[0] + ".StartFrame") "nucleus1.startFrame";
+} 
+
+
+////////////////////
+// About
+// 
+//////////////////////////////////////////
+proc gLocknHideAbout()
+{
+string $win = "gLocknHideAbout";
+if (`window -exists $win`) deleteUI -window $win;
+window -title "About gLock 'n Hide" -minimizeButton false -maximizeButton false -rtf true -wh 200 10 $win;
+
+columnLayout -adjustableColumn true -columnAttach "both" 5;
+	separator -height 10 -st none;
+	text -label "About" -fn "boldLabelFont" -align "center";
+	separator -height 10 -w 100;
+	text -label "gLock 'n Hide Version 2.1" -align "center";
+	separator -height 5 -st none;
+	text -label "Javier \"Goosh\" Solsona" -align "center";
+    	text -label "jsolsona@digital-dreams.net" -align "center";
+	text -label "Copyright © 2003" -align "center";
+	text -label "All Rights Reserved" -align "center";
+	separator -height 15 -st none;
+	button -label "Ok" -w 50 -c ("deleteUI " + $win);
+showWindow $win;
+}
+
+////////////////////
+// How to Use
+// 
+//////////////////////////////////////////
+proc gLocknHideHowtoUse()
+{
+string $win = "gLocknHideHow";
+if (`window -exists $win`) deleteUI -window $win;
+window -title "How to Use gLock 'n Hide" -minimizeButton false -maximizeButton false -rtf true -wh 200 10 $win;
+columnLayout -adjustableColumn true -columnAttach "both" 5;
+	separator -height 10 -st none;
+    	text -label "How to use" -fn "boldLabelFont" -align "center";
+	separator -height 10 -w 100;
+	text -label "Select object(s)."  -align "center";
+	text -label "Select the checkboxes for the attributes that you want to modify." -align "center";
+	text -label "Press one of the buttons to Lock, Hide, UnHide, etc";
+	separator -height 15 -st none;
+	button -label "Ok" -w 50 -c ("deleteUI " + $win);
+showWindow $win;
+}
+
+////////////////////
+// Select All Translations
+// Turns the Select All Translations checkbox on or off
+//////////////////////////////////////////
+
+global proc SelectAllTrans()
+{
+string $selectAllTrans = `checkBox -q -value allTrans`;
+string $selectAllRots = `checkBox -q -value allRots`;
+string $selectAllScs = `checkBox -q -value allScs`;
+string $vis = `checkBox -q -value vis`;
+
+if ($selectAllTrans)
+{
+	checkBox -e -v true transX;
+	checkBox -e -v true transY;
+	checkBox -e -v true transZ;
+}
+if ($selectAllTrans == 0)
+{
+	checkBox -e -v false transX;
+	checkBox -e -v false transY;
+	checkBox -e -v false transZ;
+	checkBox -e -v false SelectDeselect;
+}
+
+// If everything is on, turn the SelectAll Checkbox on
+if (($selectAllTrans) && ($selectAllRots) && ($selectAllScs) && ($vis))
+	checkBox -e -v true SelectDeselect;
+}
+
+
+////////////////////
+// Select All Rotations
+// Turns the Select All Rotations checkbox on or off
+///////////////////////////
+
+global proc SelectAllRots()
+{
+string $selectAllTrans = `checkBox -q -value allTrans`;
+string $selectAllRots = `checkBox -q -value allRots`;
+string $selectAllScs = `checkBox -q -value allScs`;
+string $vis = `checkBox -q -value vis`;
+
+if ($selectAllRots)
+{
+	checkBox -e -v true rotX;
+	checkBox -e -v true rotY;
+	checkBox -e -v true rotZ;
+}
+else
+{
+	checkBox -e -v false rotX;
+	checkBox -e -v false rotY;
+	checkBox -e -v false rotZ;
+	checkBox -e -v false SelectDeselect;
+}
+
+// If everything is on, turn the SelectAll Checkbox on
+if (($selectAllTrans) && ($selectAllRots) && ($selectAllScs) && ($vis))
+	checkBox -e -v true SelectDeselect;
+}
+
+
+///////////////////
+// Select All Scales
+// Turns the Select All Scales checkbox on or off
+/////////////////////////////////////
+
+global proc SelectAllScs()
+{
+string $selectAllTrans = `checkBox -q -value allTrans`;
+string $selectAllRots = `checkBox -q -value allRots`;
+string $selectAllScs = `checkBox -q -value allScs`;
+string $vis = `checkBox -q -value vis`;
+
+if ($selectAllScs)
+{
+	checkBox -e -v true scX;
+	checkBox -e -v true scY;
+	checkBox -e -v true scZ;
+}
+else
+{
+	checkBox -e -v false scX;
+	checkBox -e -v false scY;
+	checkBox -e -v false scZ;
+	checkBox -e -v false SelectDeselect;
+}
+
+// If everything is on, turn the SelectAll Checkbox on
+if (($selectAllTrans) && ($selectAllRots) && ($selectAllScs) && ($vis))
+	checkBox -e -v true SelectDeselect;
+}
+
+
+////////////////////////
+// Select Deselect All
+// Turns all the checkboxes on or off
+//////////////////////////////////////////
+
+global proc SelectDeselectAll()
+{
+string $SelectDeselect = `checkBox -q -value SelectDeselect`;
+
+if ($SelectDeselect)
+{
+	checkBox -e -v true transX;
+	checkBox -e -v true transY;
+	checkBox -e -v true transZ;
+	checkBox -e -v true allTrans;
+	checkBox -e -v true rotX;
+	checkBox -e -v true rotY;
+	checkBox -e -v true rotZ;
+	checkBox -e -v true allRots;
+	checkBox -e -v true scX;
+	checkBox -e -v true scY;
+	checkBox -e -v true scZ;
+	checkBox -e -v true allScs;
+	checkBox -e -v true vis;
+}
+else
+{
+	checkBox -e -v false transX;
+	checkBox -e -v false transY;
+	checkBox -e -v false transZ;
+	checkBox -e -v false allTrans;
+	checkBox -e -v false rotX;
+	checkBox -e -v false rotY;
+	checkBox -e -v false rotZ;
+	checkBox -e -v false allRots;
+	checkBox -e -v false scX;
+	checkBox -e -v false scY;
+	checkBox -e -v false scZ;
+	checkBox -e -v false allScs;
+	checkBox -e -v false vis;
+}
+}
+
+
+///////////////////
+// UnLock Attributes
+// Locks or UnLocks Attributes depending on the status of the checkboxes
+//////////////////////////////
+
+// $all used for when the unlock all button is pressed
+// $trueFalse used for lock or unlock
+// $hideAttrs used to check if it's supposed to hide the attributes too. Used for Lock and Hide button
+// $unHide used so that it unhides the attributes when you unlock them.
+global proc lockAttributes(int $all, int $trueFalse, int $hideAttrs, int $unHide)
+{
+string $selectedObjects[] = `ls -sl`;
+string $transX = `checkBox -q -value transX`;
+string $transY = `checkBox -q -value transY`;
+string $transZ = `checkBox -q -value transZ`;
+string $rotX = `checkBox -q -value rotX`;
+string $rotY = `checkBox -q -value rotY`;
+string $rotZ = `checkBox -q -value rotZ`;
+string $scX = `checkBox -q -value scX`;
+string $scY = `checkBox -q -value scY`;
+string $scZ = `checkBox -q -value scZ`;
+string $vis = `checkBox -q -value vis`;
+string $attrs[]={".tx",".ty",".tz",".rx",".ry",".rz",".sx",".sy",".sz",".v"};
+string $attrs2[]={$transX,$transY,$transZ,$rotX,$rotY,$rotZ,$scX,$scY,$scZ,$vis}; 
+
+for ($obj in $selectedObjects)
+{
+	for ($x=0;$x<size($attrs);$x++)
+	{
+		if (($attrs2[$x]) || ($all))				// checks what attributes are selected or if the button for "all" has been pressed
+		{							
+			setAttr -lock $trueFalse ($obj+$attrs[$x]);	// sets the attribute to lock or unlock depending on $trueFalse
+			if ($unHide)					// checks if it's supposed to unhide the attribute too
+				setAttr -keyable true ($obj+$attrs[$x]);
+		}
+		if (($attrs2[$x]) && ($hideAttrs))			// checks if it's supposed to hide the attributes too. from Lock 'n Hide button
+			setAttr -keyable false ($obj+$attrs[$x]);
+	}
+}
+}
+
+
+////////////////////
+// Hide Selected
+// Hides the Attributes that are selected so that they cannot be keyed
+///////////////////////////////////////
+
+// $all used for when the unlock all button is pressed
+// $trueFalse used for lock or unlock
+global proc HideAttributes(int $all, int $trueFalse)
+{
+string $selectedObjects[] = `ls -sl`;
+string $transX = `checkBox -q -value transX`;
+string $transY = `checkBox -q -value transY`;
+string $transZ = `checkBox -q -value transZ`;
+string $rotX = `checkBox -q -value rotX`;
+string $rotY = `checkBox -q -value rotY`;
+string $rotZ = `checkBox -q -value rotZ`;
+string $scX = `checkBox -q -value scX`;
+string $scY = `checkBox -q -value scY`;
+string $scZ = `checkBox -q -value scZ`;
+string $vis = `checkBox -q -value vis`;
+string $attrs[]={".tx",".ty",".tz",".rx",".ry",".rz",".sx",".sy",".sz",".v"};
+string $attrs2[]={$transX,$transY,$transZ,$rotX,$rotY,$rotZ,$scX,$scY,$scZ,$vis}; 
+
+for ($obj in $selectedObjects)
+{
+	for ($x=0;$x<size($attrs);$x++)
+	{
+		if (($attrs2[$x]) || ($all))				// if the attribute is on or the all button was hit
+			setAttr -k $trueFalse ($obj+$attrs[$x]);	// set the attribute to true of false depending on $trueFalse
+	}
+}
+}
+
+
+//////////////////////
+// UnCheck 
+// Turns the AllTranslations checkbox on or off
+///////////////////////////////////
+
+global proc unCheck(string $checkBoxes)
+{
+string $transX = `checkBox -q -value transX`;
+string $transY = `checkBox -q -value transY`;
+string $transZ = `checkBox -q -value transZ`;
+string $rotX = `checkBox -q -value rotX`;
+string $rotY = `checkBox -q -value rotY`;
+string $rotZ = `checkBox -q -value rotZ`;
+string $scX = `checkBox -q -value scX`;
+string $scY = `checkBox -q -value scY`;
+string $scZ = `checkBox -q -value scZ`;
+string $vis = `checkBox -q -value vis`;
+
+switch ($checkBoxes)
+{
+	case "trans":
+		if (($transX == 0) || ($transY == 0) || ($transZ == 0))
+		{
+			checkBox -e -v false allTrans;
+			checkBox -e -v false SelectDeselect;
+		}
+		if ($transX && $transY && $transZ)
+			checkBox -e -v true allTrans;
+		if ($transX && $transY && $transZ && $rotX && $rotY && $rotZ && $scX && $scY && $scZ && $vis)
+			checkBox -e -v true SelectDeselect;
+	break;
+
+	case "rot":
+		if (($rotX == 0) || ($rotY == 0) || ($rotZ == 0))
+		{
+			checkBox -e -v false allRots;
+			checkBox -e -v false SelectDeselect;
+		}
+		if ($rotX && $rotY && $rotZ)
+			checkBox -e -v true allRots;
+		if ($transX && $transY && $transZ && $rotX && $rotY && $rotZ && $scX && $scY && $scZ && $vis)
+			checkBox -e -v true SelectDeselect;
+	break;
+
+	case "sc":
+		if (($scX == 0) || ($scY == 0) || ($scZ == 0))
+		{
+			checkBox -e -v false allScs;
+			checkBox -e -v false SelectDeselect;
+		}
+		if ($scX && $scY && $scZ)
+			checkBox -e -v true allScs;
+		if ($transX && $transY && $transZ && $rotX && $rotY && $rotZ && $scX && $scY && $scZ && $vis)
+			checkBox -e -v true SelectDeselect;
+
+	case "vis":
+	if ($vis == 0)
+	{
+		checkBox -e -v false SelectDeselect;
+	}
+	if ($transX && $transY && $transZ && $rotX && $rotY && $rotZ && $scX && $scY && $scZ && $vis)
+		checkBox -e -v true SelectDeselect;
+	break;
+}
+}
+/////////////////////////////////////////JOINT SHOW AND HIDE/////////////////////////////////////////////////////////
+global proc jointsShow(string $jntFun)
+{
+    
+if ($jntFun == "selectAllJoint")
+{
+ 
+
+SelectAllJoints;
+print "-------selectedAllJoint------------";
+
+}
+
+if ($jntFun == "showAllJoint")
+
+{
+SelectAllJoints;
+string $sel[] =`ls - sl`;
+string $ech_jnt;
+
+for ($ech_jnt in $sel){
+       setAttr($ech_jnt+".drawStyle") 0;
+       //turning on all joints
+}
+print "---------showedAllJoint-----------";
+
+
+}
+
+if ($jntFun == "hideAllJoint")
+{
+SelectAllJoints;
+string $selr[] =`ls - sl`;
+string $ech_jnt;
+
+for ($ech_jnt in $selr){
+       setAttr($ech_jnt+".drawStyle") 2;
+}
+print "--------hidenAllJoint-----------";    
+
+}  
+    
+}
+
+//////////////////////////////////////Mirror Ctrl ///////////////////////////////////////////////////
+global proc mirrorCtrl()
+{
+string $ctrls[];
+int $type;
+$type = 1;
+
+if($type == 1)
+{
+$ctrls = `ls-sl`;
+}
+if($type == 2)
+{
+select -cl;
+select -r "LT_*_CtrI";
+$ctrls = `ls-sl`;
+}
+if($type == 3)
+{
+select -cl;
+select -r "RT_*_CtrI";
+$ctrls =  `ls-s1`;
+}
+
+for($ctrl in $ctrls){
+
+if($ctrl == "") continue;
+string $shapes[] = `listRelatives -shapes $ctrl`;
+if ($shapes[0] == "") continue;
+$objType = `objectType $shapes[0]` ;
+if ($objType!="nurbsCurve") continue;
+
+//finding whether the controller is left or right....
+
+string $tmpArray[];
+string $side;
+string $mirrorSide;
+tokenize $ctrl "_" $tmpArray;
+if(($tmpArray[0]!= "LT")&&($tmpArray[0] != "RT"))
+{
+print "Please Select Left or Right Controllers";
+continue;
+}
+if($tmpArray[0] == "LT") {$side = "LT_"; $mirrorSide = "RT_";}
+if($tmpArray[0] == "RT") {$side = "RT_"; $mirrorSide = "LT_";}
+
+//find out the opposit controller...
+
+$mirrorCtrl = `substitute $side $ctrl $mirrorSide`; 
+if(!`objExists $mirrorCtrl`) continue;
+$mirrorShapes = ` listRelatives -shapes $mirrorCtrl`; 
+if(!`objExists $mirrorShapes[0]`) continue;
+for($i=0; $i<`size($shapes)` ; $i++)
+{
+$form=`getAttr ($shapes[$i]+".form")`;
+$spans=`getAttr ($shapes[$i]+".spans")`; 
+$degrees=`getAttr ($shapes[$i]+".degree")`; 
+if ($form==2)
+$numCv=$spans;
+else
+$numCv=$spans+$degrees;
+for ($y=0;$y<$numCv+1;$y++)
+{
+$pos=`xform -q -ws -t ($shapes[$i]+".cv["+$y+"]")`;
+if ($y==0) $z=2; 
+if ($y==1) $z=3; 
+if ($y==2) $z=0; 
+if ($y==3) $z=1; 
+if ($y==4) $z=2; 
+if(!`objExists $mirrorShapes[$i]`) continue;
+xform -ws -t (-1*$pos[0]) $pos[1] $pos[2] ($mirrorShapes[$i]+".cv["+$y+"]"); 
+}
+}
+}
+select -cl;
+}
+
+//_
+
+////////////////////////////////////////// dkSkinWrap ///////////////////////////////////////////////////////
+global proc dkSkinWrap()
+{
+    string $sel[] = `ls -sl`;
+    if (`size($sel)` == 2)
+    {
+        string $influence[] = `skinCluster -q -inf $sel[0]`; 
+        string $skin = `findRelatedSkinCluster ($sel[1])`;
+
+        if ($skin == "")
+        {
+        select $influence $sel[1];
+        //newSkinCluster "-toSelectedBones -bindMethod 0 -normalizeWeights 1 -weightDistribution 0 -mi 5 -dr 10 -rui false,multipleBindPose,1"; 
+        SmoothBindSkin;
+        string $tarInf[] = `skinCluster -q -inf $sel[1]`;
+        string $missing[] = stringArrayRemove($tarInf, $influence);
+            if ($missing[0] != "")
+            {
+            select $missing $sel[1];
+            skinClusterInfuluence 1 " -dr 10 -lw true -wt 0";
+            print "Skin binded successfullly and missing influence added";
+            } 
+            else
+            {
+                print "Skin binded successfullly";
+            }
+        } 
+        else
+        {
+            string $tarl[] = ` skinCluster -q -inf $sel[1]` ;
+            string $miss[] = stringArrayRemove($tarl, $influence); 
+            if ($miss[0] != "")
+            {
+                select $miss $sel[1];
+                skinClusterInfluence 1 " -dr 10 -lw true -wt 0"; 
+                print "Missing influences added";
+            } 
+            else
+            {
+                print ("All the influences of " + $sel[0] + " are present in " + $sel[1]);
+            }
+        }
+    } 
+    else
+    {
+        warning "Please make a valid selection";
+    }
+}
+
+////////////////////////////////// Set ////////////////////////////////////////////////////
+global proc aset()
+{
+if (`objExists ("AnimSet")`)
+        {
+            jtErr("Already AnimSet in the file");
+        }
+else {
+            $createSetResult = `sets -name AnimSet`;
+            select -cl;
+    }
+
+}
+
+global proc aaset()
+{
+string $selection[]=`ls -selection` ;
+for ($n=0; $n<size($selection);$n++)
+{
+    sets -edit -forceElement AnimSet $selection[$n] ;
+} 
+}
+
+global proc rset() 
+{
+
+if (` objExists ("RenderSet")` )
+        {
+                 jtErr("Already RenderSet in the file");
+        }
+else {
+/*
+        $createSetResult = `sets -name BodySet`; 
+        $createSetResult = ` sets -name EyeSee ;
+        $createSetResult = ` sets -name TeethSet`;
+        select -r -ne BodySet EyeSet TeethSet ; 
+*/
+        $createSetResult = `sets -name RenderSet` ;
+        select -cl;
+    }
+
+}
+global proc bset()
+{
+string $selection[]=`ls -selection` ;
+for ($n=0; $n<size($selection);$n++)
+{
+sets -edit -forceElement RenderSet $selection[$n] ;
+} 
+}
+ 
+global proc cset()
+{
+if (`objExists ("CacheSet")`)
+        {
+            jtErr("Already CacheSet in the file");
+        }
+else {
+            $createSetResult = `sets -name CacheSet`;
+            select -cl;
+    }
+
+}
+        
+global proc ccset()
+{
+string $selection[]=`ls -selection` ;
+ for ($n=0; $n<size($selection);$n++)
+ {
+   sets -edit -forceElement CacheSet $selection[$n] ;
+ }
+}
+
+
+/////////////////////////// tBsConnections /////////////////////////////////
+
+global proc tBsConnections()
+
+{ 
+  string $cReturn[];
+  int $count = 0;
+  string $selectBS[] = `ls -sl`;
+
+  // List All Weights of selected BS!!
+  string $bAttr[] = `listAttr -m ($selectBS[0] + ".w")`;
+
+  for ($bs in $bAttr)
+  {
+     if (`connectionInfo -id ($selectBS[0]+"."+$bs)`) 
+     {
+        string $connection = `connectionInfo -sfd ($selectBS[0]+"."+$bs)` ; 
+        if(`objExists ($selectBS[1]+"."+$bs)`){
+          connectAttr -f $connection ($selectBS[1]+"."+$bs);
+          disconnectAttr $connection ($selectBS[0]+"."+$bs);
+        }
+        else
+        {
+            $cReturn[$count] = $bs; 
+            $count++;
+        }
+        }
+     }
+  print ("\n\n\n «      Can`t Transfer Those Attribute Connections!!  >> \n\n");
+  if (`size($cReturn)`){
+     for($bs in $cReturn){ print ($bs+"\n");}
+     }
+}
+//////////////////////////// tBsConnections  End /////////////////////////////////
+
+//////////////////////////////////////////////////// rivet ///////////////////////////////////////////
+
+global proc string rivet ( )
+{
+
+string $nameObject;
+string $namePOSI;
+
+string $parts[];
+string $list[] = `filterExpand -sm 32`;
+int $size = size($list);
+if ($size > 0)
+{
+	if ($size != 2)
+	{	error("No two edges selected");
+		return "";
+	}
+
+	tokenize($list[0],".",$parts);
+	$nameObject = $parts[0];
+	tokenize($list[0],"[]",$parts);
+	float $e1 = $parts[1];
+	tokenize($list[1],"[]",$parts);
+	float $e2 = $parts[1];
+
+	string $nameCFME1 = `createNode curveFromMeshEdge -n "rivetCurveFromMeshEdge1"`;
+		setAttr ".ihi" 1;
+		setAttr ".ei[0]"  $e1;
+	string $nameCFME2 = `createNode curveFromMeshEdge -n "rivetCurveFromMeshEdge2"`;
+		setAttr ".ihi" 1;
+		setAttr ".ei[0]"  $e2;
+	string $nameLoft = `createNode loft -n "rivetLoft1"`;
+		setAttr -s 2 ".ic";
+		setAttr ".u" yes;
+		setAttr ".rsn" yes;
+
+	$namePOSI = `createNode pointOnSurfaceInfo -n "rivetPointOnSurfaceInfo1"`;
+		setAttr ".turnOnPercentage" 1;
+		setAttr ".parameterU" 0.5;
+		setAttr ".parameterV" 0.5;
+
+	connectAttr -f ($nameLoft + ".os") ($namePOSI + ".is");
+	connectAttr ($nameCFME1 + ".oc") ($nameLoft + ".ic[0]");
+	connectAttr ($nameCFME2 + ".oc") ($nameLoft + ".ic[1]");
+	connectAttr ($nameObject + ".w") ($nameCFME1 + ".im");
+	connectAttr ($nameObject + ".w") ($nameCFME2 + ".im");
+}
+else
+{	$list = `filterExpand -sm 41`;
+	$size = size($list);
+
+	if ($size > 0)
+	{
+		if ($size != 1)
+		{	error("No one point selected");
+			return "";
+		}
+		tokenize($list[0],".",$parts);
+		$nameObject = $parts[0];
+		tokenize($list[0],"[]",$parts);
+		float $u = $parts[1];
+		float $v = $parts[2];
+		$namePOSI = `createNode pointOnSurfaceInfo -n "rivetPointOnSurfaceInfo1"`;
+				setAttr ".turnOnPercentage" 0;
+				setAttr ".parameterU" $u;
+				setAttr ".parameterV" $v;
+		connectAttr -f ($nameObject + ".ws") ($namePOSI + ".is");
+	}
+	else
+	{	error("No edges or point selected");
+		return "";
+	}
+}
+
+string $nameLocator = `createNode transform -n "rivet1"`;
+createNode locator -n ($nameLocator + "Shape") -p $nameLocator;
+
+string $nameAC = `createNode aimConstraint -p $nameLocator -n ($nameLocator + "_rivetAimConstraint1")`;
+	setAttr ".tg[0].tw" 1;
+	setAttr ".a" -type "double3" 0 1 0;
+	setAttr ".u" -type "double3" 0 0 1;
+	setAttr -k off ".v";
+	setAttr -k off ".tx";
+	setAttr -k off ".ty";
+	setAttr -k off ".tz";
+	setAttr -k off ".rx";
+	setAttr -k off ".ry";
+	setAttr -k off ".rz";
+	setAttr -k off ".sx";
+	setAttr -k off ".sy";
+	setAttr -k off ".sz";
+
+connectAttr ($namePOSI + ".position") ($nameLocator + ".translate");
+connectAttr ($namePOSI + ".n") ($nameAC + ".tg[0].tt");
+connectAttr ($namePOSI + ".tv") ($nameAC + ".wu");
+connectAttr ($nameAC + ".crx") ($nameLocator + ".rx");
+connectAttr ($nameAC + ".cry") ($nameLocator + ".ry");
+connectAttr ($nameAC + ".crz") ($nameLocator + ".rz");
+
+select -r $nameLocator;
+return ($nameLocator);
+
+}
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////Script Name: skinXfer.mel v1.5///////////////////////////////////////////////////
+
+global proc skinXfer ()
+{
+		
+	if(`window -ex skinXferWin`) deleteUI skinXferWin;		
+	
+	string $window = `window -title "SkinWeight Xfer UI"
+    	-iconName "Skin Xfer"
+    	-widthHeight 300 150 skinXferWin`;
+	
+	string $form = `formLayout -numberOfDivisions 100`;
+	button -label "Source Object" -command "getObject (\"sourceField\")" sourceBn;
+    textField -editable false sourceField;
+    	
+    button -label "Target Object" -command "getObject (\"targetField\")" targetBn;
+    textField -editable false targetField;
+		
+	checkBox  -label "use Maya copySkinWeights" -v 1 useMaya;
+	checkBox  -label "interpolate weight" -v 1 interpolateWeight;
+		
+	button -label "Xfer Weight" -h 30 -command "skinXferCB" xferBn;
+	
+	formLayout -edit
+
+   	-af     sourceBn     "top"    15
+   	-af     sourceBn    "left"   10
+   	-ac     sourceBn    "right"   5 sourceField
+   	
+   	-af     sourceField     "top"    15
+   	-af     sourceField    "left"   100
+   	-af		sourceField 	"right" 5
+   	
+   	-af     targetBn     "top"    40
+   	-af     targetBn    "left"   10
+   	-ac     targetBn    "right"   5 targetField
+   	
+   	-af     targetField     "top"    40
+   	-af     targetField    "left"   100
+   	-af		targetField 	"right" 5
+	
+	-af     useMaya     "top"    70
+   	-af     useMaya    "left"   60
+	
+	-af     interpolateWeight     "top"    90
+   	-af     interpolateWeight	 "left"   60
+   	
+	
+	-af     xferBn     "top"    110
+   	-af     xferBn    "left"   40
+   	-af     xferBn    "right"   40
+    	
+    	$form;
+		
+	showWindow $window;	
+		
+}
+
+global proc skinXferCB ()
+{
+	string $source = `textField -q -tx sourceField`;	
+	string $target = `textField -q -tx targetField`;	
+	if ($source == $target) error "Source object and target object are same!!!";
+	string $historytarget[] = `listHistory $target`;
+	
+	skinXferCmd ($source, $target);
+
+//	if(`window -ex skinXferWin`) deleteUI skinXferWin;
+			
+}
+
+global proc getObject (string $field)
+{
+	string $sel[] = `ls -sl`;
+	if (size($sel)>1) error "Please select one source object";
+	textField -e -tx $sel [0] $field;	
+}
+
+
+global proc int skinXferCmd (string $source, string $target)
+{
+	if(!`pluginInfo -query -loaded nearestPointOnMesh`)
+	eval(`loadPlugin -quiet nearestPointOnMesh`);
+     		
+	$CH = `constructionHistory -q -tgl`;
+	if( $CH > 0) constructionHistory -tgl off;
+
+// Make sure unit is set to cm or closestPointOnMesh won't work	
+	changeLinearUnit "cm";
+
+	int $sourcevertcount[] = `polyEvaluate -v $source`;
+	int $sourcefacecount[] = `polyEvaluate -f $source`;
+	int $targetvertcount[] = `polyEvaluate -v $target`;
+	string $historysource[] = `listHistory $source`;
+	string $historytarget[] = `listHistory $target`;
+	string $sourceclusterList[]= `ls -type skinCluster $historysource`;
+	string $sourcejoint[] = `skinCluster -q -wi $sourceclusterList[0]`;
+	string $targetclusterList[]= `ls -type skinCluster $historytarget`;
+	string $targetjoint[] = `ls -type joint $historytarget`;
+	float $dropOff = `getAttr ($sourceclusterList[0] + ".dropoffRate")`;
+	
+	string $tagetShape[] = `listRelatives -s $target`;
+	string $ans, $msg;
+	
+	if (size ($targetclusterList)>0)
+	{		
+		 $msg = ("Target " + $target + " is already bound!!!\n");
+		 $msg += "Detach skincluster from " + $target + "?";
+		 
+		 $ans = `confirmDialog -title "Confirm" -message $msg
+    		-button "Yes" -defaultButton "Yes" -button "No"
+    		-cancelButton "No" -dismissString "No"`;   		    		
+	}
+	if ($ans == "Yes") skinCluster -e  -ub $tagetShape[0];
+	if ($ans == "No") error "Cancelled...";
+
+	int $test;
+	string $cluster;
+	string $pointSelect;
+	float $delta[];
+	float $store;
+	vector $w[];	
+	float $targetweightA[];
+	float $targetweightB[];
+	float $targetweightC[];
+	float $targetweightD[];
+	float $finalweight[];
+	float $sumdelta;
+	int $flag;
+	int $matchpointindex ;
+	float $pointdist[];
+	string $tmpStrng;
+
+	
+// 	make new skincluster on target have same influence joint as source:
+		
+	int $maxinfluence = `skinCluster -q -mi $sourceclusterList[0]`;
+
+	select -r $sourcejoint;
+	select -add $target;
+	
+	string $targetclusterList[]= `createSkinCluster ("-toSelectedBones -mi " + $maxinfluence + " -dr " +$dropOff)`;
+	string $historytarget[] = `listHistory $target`;
+	string $targetjoint[] = `ls -type joint $historytarget`;
+	
+// use Maya method
+	if (`checkBox -q -v useMaya`)
+	{
+		if (`checkBox -q -v interpolateWeight`) copySkinWeights -ss $sourceclusterList[0] -ds $targetclusterList[0] -nm -sm;
+		else copySkinWeights -ss $sourceclusterList[0] -ds $targetclusterList[0] -nm;
+		return 1;
+	}
+
+		waitCursor -state 1;
+
+// progesss bar		
+		global string $gMainProgressBar;
+		 progressBar -edit
+	    	-beginProgress
+	    	-isInterruptable false
+	    	-status "Transfering Weihgts..."
+	    	-maxValue $targetvertcount[0]
+	    	$gMainProgressBar;
+    	    		
+for ($i = 0;$i<$targetvertcount[0];$i++) 
+		{
+		string $targetPointSelect=$target + ".vtx[" + $i +"]";
+		float $v[] = `xform -q -ws -t $targetPointSelect`;
+		vector $positionTarget = <<$v[0],$v[1],$v[2]>>;
+      		float $result[] = eval("closestPointOnMesh -ip " + ($positionTarget.x) + " "+ ($positionTarget.y) + " "+ ($positionTarget.z) + "-q -p -f " + $source);
+      		vector $closepoint = <<$result[0], $result[1], $result[2]>>;    		
+      		string $sourceface = $source + ".f[" + $result[3] + "]";
+         	select -r $sourceface;
+     		$temp = eval ("polyListComponentConversion -tv ");
+		select -r $temp;
+		$sourcepoint= eval ("filterExpand -sm 31");
+
+//	calculate max distance, take into accout of special case when target point = source point
+
+		float $MaxDist=0;	
+			for ($j = 0; $j < size ($sourcepoint); $j++)
+			{
+				float $u[] = `xform -q -ws -t $sourcepoint[$j]`;
+				$w[$j]=<<$u[0],$u[1],$u[2]>>;
+				$pointdist[$j] = mag($w[$j]-$closepoint);
+				$flag = 1;
+				if ($pointdist[$j] == 0 )
+				{
+					$flag = 0;
+					$matchpointindex  =$j;
+					$j = size ($sourcepoint);
+				}
+				else if ($MaxDist<$pointdist[$j])
+				{								
+					$MaxDist=$pointdist[$j];
+				}
+			}
+			
+
+
+// 	calculate delta and sumdelta
+
+		if ($flag == 1)
+		{
+			$sumdelta=0;	
+			
+			for ($j = 0; $j < size($sourcepoint); $j++)
+			{
+
+				$delta[$j] = $MaxDist/$pointdist[$j];
+				$sumdelta=$sumdelta+$delta[$j];
+			}
+			
+		
+// 	initialize target weight to 0
+
+		
+			for ($j = 0; $j < size ($sourcepoint); $j++)
+			{
+				$delta[$j] = $delta[$j]/$sumdelta;
+			}
+				
+			for ($k = 0; $k < size ($sourcejoint); $k++)
+			{
+				$targetweightA[$k] = 0;	
+				$targetweightB[$k] = 0;	
+				$targetweightC[$k] = 0;	
+				$targetweightD[$k] = 0;	
+			}
+
+// loop thru the 3 or 4 vertices to get their contribution of weights on all joints
+			
+			for ($k = 0; $k < size ($sourcejoint); $k++)
+			{
+				float $tempweight = `skinPercent -t $sourcejoint[$k] -q $sourceclusterList[0] $sourcepoint[0]`;
+				$targetweightA[$k] = $targetweightA[$k]+ $delta[0]* $tempweight;
+			}
+				
+			for ($k = 0; $k < size ($sourcejoint); $k++)
+			{
+				float $tempweight = `skinPercent -t $sourcejoint[$k] -q $sourceclusterList[0] $sourcepoint[1]`;
+				$targetweightB[$k] = $targetweightB[$k]+ $delta[1]* $tempweight;
+			}
+				
+			for ($k = 0; $k < size ($sourcejoint); $k++)
+			{
+				float $tempweight = `skinPercent -t $sourcejoint[$k] -q $sourceclusterList[0] $sourcepoint[2]`;
+				$targetweightC[$k] = $targetweightC[$k]+ $delta[2]* $tempweight;
+			}
+				
+			if (size ($sourcepoint) > 3)
+			{
+				for ($k = 0; $k < size ($sourcejoint); $k++)
+				{
+					float $tempweight = `skinPercent -t $sourcejoint[$k] -q $sourceclusterList[0] $sourcepoint[3]`;
+					$targetweightD[$k] = $targetweightD[$k]+ $delta[3]* $tempweight;
+				}
+			}
+				
+// shove total weight contributions from all vertices into one skinPercent command
+
+			$tmpStrng = "";
+				
+			for ($k = 0; $k < size ($sourcejoint); $k++)
+			{
+				$finalweight[$k] = $targetweightA[$k] + $targetweightB[$k] + $targetweightC[$k];
+				if (size ($sourcepoint) > 3)
+				{
+					$finalweight[$k] = $finalweight[$k] + $targetweightD[$k];
+				}
+				$tmpStrng = $tmpStrng + " -tv \"" + $sourcejoint[$k] + "\" " + $finalweight[$k];
+			}
+					
+				$tmpStrng = "skinPercent " + $tmpStrng + " \"" + $targetclusterList[0] + " \"" + $targetPointSelect;
+				eval $tmpStrng ;
+			
+		}
+		else
+		{
+				$tmpStrng = "";
+			
+				for ($k = 0; $k < size ($sourcejoint); $k++)
+				{
+
+					$targetweight[$k] = `skinPercent -t $sourcejoint[$k] -q $sourceclusterList[0] $sourcepoint[$matchpointindex]`;
+					$tmpStrng = $tmpStrng + " -tv \"" + $sourcejoint[$k] + "\" " + $targetweight[$k];					
+
+				}
+
+				$tmpStrng = "skinPercent " + $tmpStrng + " \"" + $targetclusterList[0] + " \"" + $targetPointSelect;
+				eval $tmpStrng ;
+//				print ( $i + ")... " + $flag + "\t" + $tmpStrng + "\n");
+				
+		}
+		progressBar -edit -step 1 $gMainProgressBar;
+		
+		flushUndo;	
+		
+		}	
+		
+		progressBar -edit -endProgress $gMainProgressBar;
+		select -cl;		
+		waitCursor -state 0;
+
+		flushUndo;
+		if( $CH > 0) constructionHistory -tgl on;
+
+		print "Done transfering weights";
+		return 1;
+ }
+
+///////////////////////////////////////// skinXfer end ///////////////////////////////////////////////////////////////
+
+//////////////////////////////////////// attributeMan ////////////////////////////////////////////////////////////////
+
+
+
+//attributeMan.mel
+//a script by:
+// Hamish McKenzie- mel@macaroniKazoo.com - www.macaronikazoo.com
+// David Walden-  dwalden74@hotmail.com - www.davidwalden.com
+//
+//created May 5-18 2004
+//
+//this script manages attributes - it can rename without reordering, it can reorder attributes, it
+//can transfer attributes between objects
+//
+//type attributeManager to open the UI, press the load Obj button to see its attributes
+//see the help for more information
+//
+//©2004 David Walden
+//©2004 macaroniKazoo
+
+
+
+
+//------
+//this proc will return a reordered array.  it takes a list of elements to be shifted, and a direction to shift
+//them in.  up is shifting the elements towards zero, and down, the other way.  The entries array is zero based
+//
+//NOTE: this proc doesn't "wrap" array entries.  If you try to move entry zero up, it will simply return the
+//original array.
+//
+//example:
+//zooAttrManUtilsArrayReorder { "a", "b", "c", "d", "e" } { 2,3 } up
+//returns the array { "a", "c", "d", "b", "e" }
+//------
+global proc string[] zooAttrManUtilsArrayReorder( string $array[], int $entries[], string $dir ) {
+	string $newArray[] = $array;
+	int $gaps[];
+	int $be;
+
+	if( !`size $entries` ) return $array;
+	$entries = `sort $entries`;
+	$gaps[0] = $entries[0];
+	for( $n = 0; $n < `size $entries`-1; $n++ ) if( $entries[$n]+1 != $entries[( $n+1 )] ) {
+		$gaps[( `size $gaps` )] = $entries[$n];
+		$gaps[( `size $gaps` )] = $entries[( $n+1 )];
+		}
+	$gaps[( `size $gaps` )] = $entries[( `size $entries`-1 )];
+
+	for( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == "up" ) $newArray = `zooAttrManUtilsArrayShiftUp $newArray $gaps[$n] $gaps[( $n+1 )]`;
+	for( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == "down" ) $newArray = `zooAttrManUtilsArrayShiftDown $newArray $gaps[$n] $gaps[( $n+1 )]`;
+
+	return $newArray;
+	}
+
+
+
+//------
+//this is a sub proc used by the zooAttrManUtilsArrayReorder proc, it handles shifting subsections
+//of an array.
+//shifts entries inclusive from the start index, to the end index up (ie towards zero) in an array
+//------
+global proc string[] zooAttrManUtilsArrayShiftUp( string $array[], int $startIndex, int $endIndex ) {
+	string $newArray[];
+	int $displaced = $startIndex-1;
+	int $num = ( $endIndex-$startIndex )+1;
+
+	if( $startIndex == 0 ) return $array;
+
+	//copy the original array to the newArray variable
+	for( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];
+
+	int $i = $startIndex-1;
+	for( $n = 0; $n < $num; $n++, $i++) $newArray[$i] = $array[( $i+1 )];
+
+	$newArray[$endIndex] = $array[$displaced];
+	return $newArray;
+	}
+
+
+
+//------
+//shifts entries inclusive from the start index, to the end index down (ie away from zero) in an array
+//------
+global proc string[] zooAttrManUtilsArrayShiftDown( string $array[], int $startIndex, int $endIndex ) {
+	string $newArray[];
+	int $displaced = $endIndex+1;
+	int $num = ( $endIndex-$startIndex )+1;
+
+	if( $endIndex >= `size $array`-1 ) return $array;
+
+	//copy the original array to the newArray variable
+	for( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];
+
+	int $i = $startIndex+$num;
+	for( $n = 0; $n < $num; $i--, $n++ ) $newArray[$i] = $array[( $i-1 )];
+
+	$newArray[$startIndex] = $array[$displaced];
+	return $newArray;
+	}
+
+
+
+//------
+//returns the first entry in an array.
+//this is useful for commands that only return a single string, but return an array
+//
+//example: string $constraint = zooAttrManUtilsReturnElement( 0,`parentConstraint -mo $obj2 $obj1` );
+//example: string $parent = zooAttrManUtilsReturnElement( 0,`listRelatives -p $obj2` );
+//------
+global proc string zooAttrManUtilsReturnElement( int $entry, string $array[] ) {
+	if( $entry<0 ) $entry = `size $array` + $entry;
+	return $array[$entry];
+	}
+
+
+
+//------
+//this proc deals with getting the attribute selection from the UI, and passing it to the reorder proc below
+//------
+global proc zooDoReorder( string $dir ) {
+	string $validTypes[] = { "bool", "enum", "long", "double" };
+	string $obj = `text -q -l dwAttrManObjTXT`;
+	string $selAttrs[] = `textScrollList -q -si dwAttrManTSL`;
+	if( !`size $selAttrs` ) return;
+
+	string $attrs[] = `listAttr -k -ud $obj`;
+	string $validAttrs[];
+	int $toReorder[];
+
+	//filters the list of attributes - the re-ordering process only works on attributes that show up in the channel box
+	for( $n=0; $n<`size $attrs`; $n++ ) {
+		string $type = `addAttr -q -at ( $obj +"."+ $attrs[$n] )`;
+		int $isValid = 0;
+		for( $a in $validTypes ) if( $type == $a ) { $isValid = 1; break; }
+		if( $isValid ) $validAttrs[( `size $validAttrs` )] = $attrs[$n];
+		}
+
+	//gets a list of which attributes are selected, and puts their indicies into an array
+	for( $n=0; $n<`size $validAttrs`; $n++ ) for( $a in $selAttrs ){
+		if( $a == $validAttrs[$n] ) $toReorder[( `size $toReorder` )] = $n;
+		}
+
+	string $newOrder[] = `zooAttrManUtilsArrayReorder $validAttrs $toReorder $dir`;
+	zooAttrManReorder $obj $newOrder;
+	dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
+	for( $a in $selAttrs ) textScrollList -e -si $a dwAttrManTSL;
+	}
+
+
+
+//------
+//reorders dynamic attributes on an object
+//NOTE: this proc is taken from zooReorderAttribs - its put here for the sake of simplicity
+//------
+global proc zooAttrManReorder ( string $obj, string $newAttribOrder[] ) {
+	string $selObjs[] = `ls -sl`;
+	for ( $attrib in $newAttribOrder ) {
+		//if the attribute is locked, we'll need to unlock it to rename it
+		int $isAttrLocked = `getAttr -l ( $obj + "." + $attrib )`;
+		if( $isAttrLocked ) setAttr -l 0 ( $obj + "." + $attrib );
+
+		//rename the attribute to a temporary name.  You can't rename it to its own name, so we need to rename it to a proxy name, and then back again
+		string $tempAttrib = `renameAttr ( $obj + "." + $attrib ) "temp"`;
+		renameAttr ( $obj + "." + $tempAttrib ) $attrib;
+
+		//if the attribute WAS locked, lock it again, in order to maximise transparency
+		if( $isAttrLocked ) setAttr -l 1 ( $obj + "." + $attrib );
+		}
+
+	select -r $selObjs;
+	select $selObjs;
+	}
+
+
+
+//------
+//this proc deals with getting the new attribute name from the UI, and renaming the attribute
+//------
+global proc zooAttrManDoRename() {
+	string $obj = `text -q -l dwAttrManObjTXT`;
+	string $selAttrs[] = `textScrollList -q -si dwAttrManTSL`;
+	string $oldName = $selAttrs[0];
+	string $newName = `textField -q -tx dwNewAttrName`;
+
+	zooAttrManRenameAttrInPlace $obj $oldName $newName;
+
+	dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
+	textScrollList -e -si $newName dwAttrManTSL;
+	}
+
+
+
+//------
+//renames an attribute without changing its order
+//NOTE: this proc is taken from zooReorderAttribs - its put here for the sake of simplicity
+//------
+global proc zooAttrManRenameAttrInPlace( string $obj, string $oldAttr, string $newAttr ) {
+	string $attrs[] = `listAttr -k -ud $obj`;
+
+	for( $n=0; $n<`size $attrs`; $n++ ) if( $attrs[$n] == $oldAttr ) {
+		int $isLocked = `getAttr -l ( $obj + "." + $attrs[$n] )`;
+		setAttr -l 0 ( $obj + "." + $attrs[$n] );
+		renameAttr ( $obj + "." + $attrs[$n] ) $newAttr;
+		$attrs[$n] = $newAttr;
+		setAttr -l $isLocked ( $obj + "." + $attrs[$n] );
+		}
+
+	zooAttrManReorder $obj $attrs;
+	}
+
+
+
+///////////////////////////////////////////////////////////////
+
+//Proc loads the attributes for the selected object into the UI.
+//For now we´re skipping all compound attributes...they´re tricky lil´ bastards...!
+global proc dwAttrMan_LoadAttributes (string $obj, int $keyableCheck)
+{
+//string $sel[] = `ls -sl -o`;
+if (! `objExists $obj`)
+	{
+	print "Object invalid or unspecified. Try again.\n";
+	return;
+	}
+
+//Query user-defined attrs, depending on $keyableCheck int.
+string $attrs[];
+if ($keyableCheck)
+	$attrs = `listAttr -ud -k $obj`;
+else
+	$attrs = `listAttr -ud $obj`;
+
+
+//if the attribute is a "vector" (ie the vector type was checked when the attribute was added)
+//then explicitly list all its children
+string $expandedAttrs[];
+for( $a in $attrs ) {
+	string $children[] = `attributeQuery -listChildren -n $obj $a`;
+	if( `size $children` ) for( $b in $children ) $expandedAttrs[( `size $expandedAttrs` )] = $b;
+	else $expandedAttrs[( `size $expandedAttrs` )] = $a;
+	}
+//clear $attrs;
+//$attrs = $expandedAttrs;
+//$attrs = `stringArrayRemoveDuplicates $attrs`;
+
+
+//if (! `size $attrs`)
+//	print ($obj + " has no custom attributes.\n");
+
+
+//Load obj name
+text -e -l $obj dwAttrManObjTXT;
+//Remove all from TSL.
+textScrollList -e -ra dwAttrManTSL;
+//Load attrs
+for ($a in $attrs)
+	{
+	//Skip over compound attributes for now.
+	//string $parent = `addAttr -q -parent ($obj + "." + $a)`;
+	//string $parentType = `addAttr -q -attributeType ($obj + "." + $parent)`;
+	//if (($parentType == "double3") || ($parentType == "double2") || ($parentType == "float3") || ($parentType == "float2"))
+	//	continue;
+	string $parent = `addAttr -q -parent ($obj + "." + $a)`;
+	//Only add parent attributes (for compound). Compound attrs should be transferred as a group.
+	//print $parent;
+	if ($parent == $a)
+		textScrollList -e -a $a dwAttrManTSL;
+	}
+}
+
+///////////////////////////////////////////////////////////////
+
+
+//Proc transfers connections from a given object attribute to a target object attribute.
+global proc int dwAttrMan_TransferConnections(string $sourceObj, 		//Source obj.
+							string $attr, 		//Source attribute.
+							string $targetObj, 	//Target obj.
+							int $isMulti)		//Is the attribute a multi attribute?
+{
+//Get all connection to- and from- the source object attribute.
+string $sourceConnections[] = `listConnections -source 1 -destination 0 -plugs 1 ($sourceObj + "." + $attr)`;
+string $destinationConnections[] = `listConnections -source 0 -destination 1 -plugs 1 ($sourceObj + "." + $attr)`;
+
+
+//If the source obj´s ".message" attribute is connected to the same obj as $sourceConnections, then it is locked and we can´t transfer it.
+string $messageConnections[] = `listConnections -source 0 -destination 1 -plugs 1 ($sourceObj + ".message")`;
+string $messageBuffer[];
+string $destinationBuffer[];
+int $isLockedByMessage = 0;
+int $n = 0;
+if (`size $messageConnections`)
+	{
+	tokenize $messageConnections[0] "." $messageBuffer;
+	tokenize $destinationConnections[0] "." $destinationBuffer;
+	for ($n = 0; $n < `size $destinationConnections`; $n++)
+		{
+		if ($messageBuffer[0] == $destinationBuffer[$n])
+			{
+			warning ($sourceObj + "." + $attr + " is locked to " + $destinationBuffer[$n] + ". Cannot transfer connections for this attribute.");
+			$isLockedByMessage = 1;
+			}
+		}
+	}
+if ($isLockedByMessage)
+	return $isLockedByMessage;
+
+
+//Disconnect old attributes and make connections for new attribute.
+//SOURCE CONNECTIONS (CONNECTIONS COMING FROM OTHER OBJECTS).
+int $i = 0;
+for ($s in $sourceConnections)
+	{
+	//If the attribute is multi, we have to find the indexes that are connected.
+	if ($isMulti)
+		{
+		//Not sure how important $indexMatters really is... it seems to work fine without specifiying it, so let´s ignore it for now.
+		//if ($indexMatters)
+		//	{
+			disconnectAttr $s ($sourceObj + "." + $attr + "[" + $i + "]");
+			connectAttr -f $s ($targetObj + "." + $attr + "[" + $i + "]");
+		//	}
+		//else if (! $indexMatters)
+		//	{
+		//	disconnectAttr -na $s ($sourceObj + "." + $attr);
+		//	connectAttr -f -na $s ($targetObj + "." + $attr);
+		//	}
+		}
+	else
+		{
+		disconnectAttr $s ($sourceObj + "." + $attr);
+		connectAttr -f $s ($targetObj + "." + $attr);
+		}
+	$i++;
+	}
+//DESTINATION CONNECTIONS (CONNECTIONS GOING TO OTHER OBJECTS).
+$i = 0;
+for ($d in $destinationConnections)
+	{
+	//If the attribute is multi, we have to find the indexes that are connected.
+	if ($isMulti)
+		{
+		//if ($indexMatters)
+		//	{
+			disconnectAttr ($sourceObj + "." + $attr + "[" + $i + "]") $d;
+			connectAttr -f ($targetObj + "." + $attr + "[" + $i + "]") $d;
+		//	}
+		//else if (! $indexMatters)
+		//	{
+		//	disconnectAttr -na ($sourceObj + "." + $a) $d;
+		//	connectAttr -f -na ($targetObj + "." + $a) $d;
+		//	}
+		}
+	else
+		{
+		disconnectAttr ($sourceObj + "." + $attr) $d;
+		connectAttr -f ($targetObj + "." + $attr) $d;
+		}
+	$i++;
+	}
+
+//Return if the object is locked by its message attribute.
+return $isLockedByMessage;
+}
+
+///////////////////////////////////////////////////////////////
+
+
+//Proc returns 1 if the attribute is a compound type attr, 0 if not. "Compound" attributes require the "-nc" flag, other
+//attribs of compound type do not.
+global proc int dwAttrMan_IsCompoundType(string $sourceObj, string $attribute)
+{
+string $type = `addAttr -q -attributeType ($sourceObj + "." + $attribute)`;
+
+if (($type == "reflectance") || ($type == "spectrum") || ($type == "float2") || ($type == "float3")
+		 || ($type == "double2") || ($type == "double3") || ($type == "long2") || ($type == "long3")
+		 || ($type == "short2") || ($type == "short3") || ($type == "compound"))
+	return 1;
+else
+	return 0;
+}
+
+
+///////////////////////////////////////////////////////////////
+//Proc returns 1 if the attr requires the "-dataType" flag. 0 if not.
+global proc int dwAttrMan_IsDataType(string $object, string $attr)
+{
+string $type = `addAttr -q -attributeType ($object + "." + $attr)`;
+
+if ($type == "typed")
+	return 1;
+else
+	return 0;
+}
+
+///////////////////////////////////////////////////////////////
+
+//Proc transfers attributes from the selection in the UI list to the selected obj.
+//All connections to- and from- the attribute are maintained (if user desires), and attributes on original obj are deleted (if user desires).
+//Note: for compound attributes, we will only input the parent attribute into this procedure. That means we need to query the children attrs.
+global proc dwAttrMan_TransferAttributes(string $sourceObj,			  //Source object
+						string $attrs[], 	  //Attr list
+						string $parent,		  //Parent attr (necessary for compound attrs)
+						int $transferConnections, //Transfer connections?
+						int $deleteOriginals)	  //Delete original attrs?
+{
+if (! `objExists $sourceObj`)
+	error "Source object specified incorrectly. Try again.";
+if (! `size $attrs`)
+	error "No attributes selected in list. Try again.";
+string $sel[] = `ls -sl -o`;
+if (! `size $sel`)
+	error "Nothing selected. Select one object and try again.";
+if (`size $sel` > 1)
+	error "Select only one object and try again.";
+
+//Report error if user wants to transfer attribute to same obj.
+if ($sel[0] == $sourceObj)
+	error ("Selected object is the same as the source. Try again.");
+
+//Report error if attribute already exists on target obj. Do this BEFORE transferring anything.
+for ($a in $attrs)
+	{
+	if (`attributeExists $a $sel[0]`)
+		error ("Attribute \"" + $a + "\" conflicts with name of existing attribute on target " + $sel[0] + ". Try again.");
+	}
+
+int $numberOfChildren;
+for ($a in $attrs)
+	{
+	//GET ALL THE INFORMATION ABOUT THE ATTRIBUTE.
+	//Get the -attributeType flag. For now we are skipping attributes that require the "-dataType" flag.
+	string $type = `addAttr -q -attributeType ($sourceObj + "." + $a)`;
+	//IF THE ATTRIBUTE IS A COMPOUND ATTRIBUTE, GET ITS CHILDREN.
+
+	string $children[];
+	int $isCompoundType = `dwAttrMan_IsCompoundType $sourceObj $a`;
+	if ($isCompoundType)
+		{
+		//Assign $numberOfChildren only if the attr is a compound type.
+		$numberOfChildren = `addAttr -q -numberOfChildren ($sourceObj + "." + $a)`;
+		//Get list of children attrs.
+		$children = `listAttr ($sourceObj + "." + $a)`;
+		//Remove parent name from $children array.
+		$children = `stringArrayRemove {$a} $children`;
+		//print $children; return;
+		}
+
+	int $keyable = `getAttr -keyable ($sourceObj + "." + $a)`;
+	int $locked = `getAttr -lock ($sourceObj + "." + $a)`;
+	//Let´s ignore the attribute value for now.
+	//$value = `getAttr ($sourceObj + "." + $a)`;
+	string $longName = `addAttr -q -longName ($sourceObj + "." + $a)`;
+	string $shortName = `addAttr -q -shortName ($sourceObj + "." + $a)`;
+
+	//Get range information (if attr is not a string type or a vector type (double3)).
+	int $hasMin; int $hasMax; float $minValue; float $maxValue; int $hasSoftMin;
+	int $hasSoftMax; float $softMinValue; float $softMaxValue;
+	if (($type != "typed") && ($type != "message") && ($type != "fltMatrix") && ($type != "matrix") && (! $isCompoundType))
+		{
+		$hasMin = `addAttr -q -hasMinValue ($sourceObj + "." + $a)`;
+		$hasMax = `addAttr -q -hasMaxValue ($sourceObj + "." + $a)`;
+		$minValue = `addAttr -q -minValue ($sourceObj + "." + $a)`;
+		$maxValue = `addAttr -q -maxValue ($sourceObj + "." + $a)`;
+		$hasSoftMin = `addAttr -q -hasSoftMinValue ($sourceObj + "." + $a)`;
+		$hasSoftMax = `addAttr -q -hasSoftMaxValue ($sourceObj + "." + $a)`;
+		$softMinValue = `addAttr -q -softMinValue ($sourceObj + "." + $a)`;
+		$softMaxValue = `addAttr -q -softMaxValue ($sourceObj + "." + $a)`;
+		}
+
+
+	//Find out if the attribute is a string attribute.
+	int $isString = 0;
+	string $typedDataType[]; //For some reason querying "-dataType" returns an array (while "-attributeType" returns a string).
+	if ($type == "typed")
+		{
+		$typedDataType = `addAttr -q -dataType ($sourceObj + "." + $a)`;
+		if ($typedDataType[0] == "string")
+			$isString = 1;
+		}
+
+	//Find out if the attribute is a multi attribute.
+	int $isMulti = `attributeQuery -n $sourceObj -multi $a`;
+	int $multiSize = `getAttr -size ($sourceObj + "." + $a)`;
+	int $indexMatters = `addAttr -q -indexMatters ($sourceObj + "." + $a)`;
+
+	//Get the -enumName value if the attribute is an "enum" type.
+	string $enumName;
+	if ($type == "enum")
+		$enumName = `addAttr -q -enumName ($sourceObj + "." + $a)`;
+
+	//print ($a + " : " + $type + "\n");return;
+
+	//ADD THE ATTR TO THE SELECTED OBJECT.
+	//We need special cases for "enum" type, "string" type, and for multi attributes.
+	//Criteria for multi attributes.
+	if (! $isMulti)
+		{
+		//Criteria for enum attributes.
+		if ($type != "enum")
+			{
+			//Criteria for string attributes.
+			if (! $isString)
+				{
+				//If there is a specified parent, add the attr using the "-parent" flag.
+				if (`size $parent`)
+					{
+					//print `addAttr -q -numberOfChildren ($sel[0] + "." + $parent)`; return;
+					addAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];
+					}
+				else
+					addAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];
+
+				}
+			else
+				{
+				//If there is a specified parent, add the attr using the "-parent" flag.
+				//Note: attributes using the "-dataType" flag cannot use the -numberOfChildren flag... cool!
+				if (`size $parent`)
+					addAttr -parent $parent -dataType "string" -longName $longName -shortName $shortName $sel[0];
+				else
+					addAttr -dataType "string" -longName $longName -shortName $shortName $sel[0];
+				}
+			}
+		else
+			{
+			//If there is a specified parent, add the attr using the "-parent" flag.
+			if (`size $parent`)
+				addAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType "enum" -enumName $enumName -longName $longName -shortName $shortName $sel[0];
+			else
+				addAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType "enum" -enumName $enumName -longName $longName -shortName $shortName $sel[0];
+			}
+		}
+	else if ($isMulti)
+		{
+		//If there is a specified parent, add the attr using the "-parent" flag.
+		if (`size $parent`)
+			addAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -m -indexMatters $indexMatters -longName $longName -shortName $shortName $sel[0];
+		else
+			addAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -m -indexMatters $indexMatters -longName $longName -shortName $shortName $sel[0];
+		}
+
+	//Now, after transferring the attr: if the attr is a compound type, transfer all its children before continuing.
+	//This is a recursive part because we are calling this same procedure for each child.
+	if ($isCompoundType)
+		{
+		for ($c in $children)
+			dwAttrMan_TransferAttributes($sourceObj,		//Source obj
+							 {$c}, 			//child attribute to add.
+							 $a, 			//Parent attribute (same as current attr).
+							 $transferConnections,  //transfer connections?
+							 0);			//Don´t delete attr (we´ll delete the parent attr later).
+		}
+
+
+
+
+	//Edit attribute accordingly. Attributes of type "typed" are string attributes and do not have min-max ranges.
+	if (($type != "typed") && ($type != "message") && ($type != "fltMatrix") && ($type != "matrix") && (! $isCompoundType))
+		{
+		if ($hasMin)
+			addAttr -e -minValue $minValue ($sel[0] + "." + $a);
+		if ($hasMax)
+			addAttr -e -maxValue $maxValue ($sel[0] + "." + $a);
+		if ($hasSoftMin)
+			addAttr -e -softMinValue $softMinValue ($sel[0] + "." + $a);
+		if ($hasSoftMax)
+			addAttr -e -softMaxValue $softMaxValue ($sel[0] + "." + $a);
+		}
+
+
+
+	//For some reason, this produces a very bizarre error message. Instead, let´s specifiy the -keyable state upon adding the attr (above).
+	//if ($keyable)
+	//	setAttr -keyable 1 ($sel[0] + "." + $a);
+	if ($locked)
+		setAttr -lock 1 ($sel[0] + "." + $a);
+
+	//For now we can ignore the value of the attribute.
+	//Set the attribute value. String attributes require special case.
+	//if ($type != "typed")
+	//	setAttr ($sel[0] + "." + $a) $value;
+	//else if ($isString)
+	//	setAttr -type "string" ($sel[0] + "." + $a) $value;
+
+
+	//TRANSFER CONNECTIONS.
+	int $isLockedByMessage = 0;
+	if ($transferConnections)
+		{
+		//For compound attrib members, let´s wait until all children are transferred before we do the connections.
+		//***I learned something really important: the parent (compound) attribute exists ONLY when all the children exist.
+		//Only when they ALL exist (the entire compound group, parent and all children) are any of them editable.
+		//So, first check to see if the attr has a given parent, and if that parent indeed exists. If the parent exists,
+		//it exists because all the children attributes have been added to the group. Only then can we proceed to
+		//transfer connections to/from compound attributes and their children attributes.
+		if ((`size $parent`) && (`attributeExists $parent $sel[0]`))
+			{
+			//Get the children of the parent.
+			$children = `listAttr ($sel[0] + "." + $parent)`;
+			//Remove parent name from $children array.
+			$children = `stringArrayRemove {$parent} $children`;
+			for ($c in $children)
+				$isLockedByMessage = `dwAttrMan_TransferConnections $sourceObj $c $sel[0] $isMulti`;
+			}
+		else if (! `size $parent`)
+			$isLockedByMessage = `dwAttrMan_TransferConnections $sourceObj $a $sel[0] $isMulti`;
+		}
+
+	//Continue the loop if the attribute is locked by its message attr.
+	if ($isLockedByMessage)
+		continue;
+
+	//DELETE ATTR FROM SOURCE OBJ.
+	if ($deleteOriginals)
+		{
+		//We need to unlock it first.
+		if ($locked)
+			setAttr -lock 0 ($sourceObj + "." + $a);
+		//Delete it only if it has no specified parent (ie, not a member of a compound attr group)
+		if (! `size $parent`)
+			deleteAttr ($sourceObj + "." + $a);
+		}
+	}
+
+
+//Refresh TSL to reflect transferred attributes (but only if not a child of a compound attr).
+if (! `size $parent`)
+	dwAttrMan_LoadAttributes $sourceObj `checkBox -q -v dwAttrManListKeyableCheck`;
+}
+
+
+
+
+///////////////////////////////////////////////////////////////
+
+
+global proc doHideConXnList() {
+	int $hideState = `control -q -vis dwAttrManConXnForm`;
+	string $buttonLabel = ( $hideState )? "<": ">";
+	int $newPos = ( $hideState )? 100: 50;
+
+	button -e -width 12 -l $buttonLabel dwAttrManButtonCollapseConXn;
+	control -e -vis (!$hideState) dwAttrManConXnForm;
+
+	formLayout -e
+		-ap dwAttrManConXnForm left -3 $newPos
+		//-af dwAttrManConXnForm top 0
+		//-af dwAttrManConXnForm right 0
+		//-ac dwAttrManConXnForm bottom 0 dwAttrManBottomForm
+		dwAttrManFormMaster;
+	}
+
+
+
+
+
+///////////////////////////////////////////////////////////////
+//Proc shows connections in the right-hand TSL in the main UI.
+global proc dwAttrMan_ShowConnections(int $kind)
+{
+//Clear the TSL
+textScrollList -e -ra dwAttrManConXnTSL;
+//Get the full object attribute name.
+string $obj = `text -q -l dwAttrManObjTXT`;
+if (! `objExists $obj`)
+	return;
+string $attr[] = `textScrollList -q -si dwAttrManTSL`;
+//If many attributes are selected, display "..."
+if (`size $attr` > 1)
+	textScrollList -e -a "..." dwAttrManConXnTSL;
+else if (`size $attr` == 1)
+	{
+	string $connections[];
+	if ($kind == 1)
+		$connections = `listConnections -s 1 -d 0 -p 1 ($obj + "." + $attr[0])`;
+	else if ($kind == 2)
+		$connections = `listConnections -s 0 -d 1 -p 1 ($obj + "." + $attr[0])`;
+
+	for ($c in $connections)
+		{
+		//Get the nodeType.
+		string $nodeBuffer[];
+		tokenize $c "." $nodeBuffer;
+		string $nodeType = `nodeType $nodeBuffer[0]`;
+		//Show the connection name as well as its nodeType.
+		textScrollList -e -a ($c + " (" + $nodeType + ")") dwAttrManConXnTSL;
+		}
+	}
+}
+
+
+///////////////////////////////////////////////////////////////
+//Proc deletes selected attributes.
+global proc dwAttrMan_DeleteAttributes(string $obj, string $attrs[])
+{
+if (! `size $attrs`)
+	return;
+
+for ($a in $attrs)
+	deleteAttr ($obj + "." + $a);
+
+//Refresh source TSL
+dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
+//Refresh connection TSL
+dwAttrMan_ShowConnections `radioButtonGrp -q -sl attrManConnectionsRBG`;
+}
+
+///////////////////////////////////////////////////////////////
+//Procedure selects a connected obj, as listed in the connection TSL.
+global proc dwAttrMan_SelectConnectionObject()
+{
+string $objAttr[] = `textScrollList -q -si dwAttrManConXnTSL`;
+if (! `size $objAttr`)
+	return;
+
+//Tokenize the $objAttrs by ".", make sure the buffer exists, then add it to a final selection string.
+string $objBuffer[];
+string $selectionString;
+for ($i = 0; $i < `size $objAttr`; $i++)
+	{
+	tokenize $objAttr[$i] "." $objBuffer;
+	if (`objExists $objBuffer[$i]`)
+		$selectionString += ($objBuffer[$i] + " ");
+	}
+
+if (`size $selectionString`)
+	select -r $selectionString;
+}
+
+///////////////////////////////////////////////////////////////
+
+//Procedure selects the original source obj.
+global proc dwAttrMan_SelectSourceObject()
+{
+string $obj = `text -q -l dwAttrManObjTXT`;
+if (! `objExists $obj`)
+	return;
+select -r $obj;
+}
+
+///////////////////////////////////////////////////////////////
+
+
+//Proc sets the source attr´s keyable or not.
+global proc dwAttrMan_SetKeyable()
+{
+string $obj = `text -q -l dwAttrManObjTXT`;
+string $attrs[] = `textScrollList -q -si dwAttrManTSL`;
+for ($a in $attrs)
+	{
+	//If attribute is a compound attr, then set children keyable.
+	if (`dwAttrMan_IsCompoundType $obj $a `)
+		{
+		string $children[] = `listAttr ($obj + "." + $a)`;
+		$children = `stringArrayRemove {($obj + "." + $a)} $children`;
+		int $keyable;
+		for ($c in $children)
+			{
+			$keyable = `getAttr -k ($obj + "." + $c)`;
+			setAttr -k (! $keyable) ($obj + "." + $c);
+			//print ($c + " ----> " + (! $keyable) + "\n");
+			}
+		//Another bizarre anomoly: I must set the compound parent´s "keyability" to the *opposite* of the children (???)
+		setAttr -k ($keyable) ($obj + "." + $a);
+		//print ($a + " ----> " + ($keyable) + "\n");
+		}
+
+	if (`dwAttrMan_IsDataType $obj $a`)
+		{
+		warning ($obj + "." + $a + " is a dataType attribute. Attributes that require the \"-dataType\" flag cannot be keyable.");
+		continue;
+		}
+
+	if (`getAttr -k ($obj + "." + $a)` == 0)
+		setAttr -k 1 ($obj + "." + $a);
+	else
+		setAttr -k 0 ($obj + "." + $a);
+	}
+//Refresh TSL.
+dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
+}
+
+
+///////////////////////////////////////////////////////////////
+//Returns the exact attribute type, regardless whether it is an -at or a -dt type.
+global proc string dwAttrManGetAttrTypeGeneral(string $object, string $attribute)
+{
+string $type = `addAttr -q -attributeType ($object + "." + $attribute)`;
+
+if ($type == "typed")
+	{
+	//Data typed attrs return an array for their -dataType
+	string $dataType[] = `addAttr -q -dataType ($object + "." + $attribute)`;
+	return $dataType[0];
+	}
+
+else
+	return $type;
+}
+
+
+///////////////////////////////////////////////////////////////
+//Returns 1 if the attribute is a multi attribute, 0 if not
+global proc int dwAttrManIsMulti(string $object, string $attribute)
+{
+string $isMulti = `addAttr -q -multi ($object + "." + $attribute)`;
+
+return $isMulti;
+}
+
+///////////////////////////////////////////////////////////////
+
+global proc attrManHelp()
+{
+if (`window -ex attrManHelpUI`)
+	deleteUI attrManHelpUI;
+
+window -t "AttributeMan Help" -wh 450 350 attrManHelpUI;
+	string $form = `formLayout`;
+		string $scroll = `scrollLayout`;
+			columnLayout;
+
+				rowColumnLayout -nc 2 -cw 1 75 -cw 2 300;
+					text -label "Authors: " -font boldLabelFont;
+					text -label "Hamish McKenzie:  www.macaronikazoo.com";
+					text -label "";
+					text -label "David Walden:        www.davidwalden.com";
+					text -label "";
+					text -label "";
+					text -label "Created:" -font boldLabelFont;
+					text -label "May 5-18, 2004";
+					setParent..;
+
+				text -label "" -h 30;
+
+
+				text -label "   About: " -font boldLabelFont;
+				string $noteText = "  This tool allows the user to manage custom object attributes, providing the following\n";
+				$noteText += "   functionality:  reordering of attributes, renaming attributes, and transferring attributes\n";
+				$noteText += "   between objects. To use, simply select an object and load it into the UI via the \"Load Obj\"\n";
+				$noteText += "   button. \n";
+				$noteText += "   \n";
+				$noteText += "   Reordering of attributes is done via the \"Move Up\" and \"Move Down\" buttons. User can  \n" ;
+				$noteText += "   rename attributes by simply providing a new name for the selected attribute in the text  \n";
+				$noteText += "   field below the attribute list. \n";
+				$noteText += "   \n";
+				$noteText += "   Transferring attributes allows the user to move custom attributes between objects. User  \n";
+				$noteText += "   has the option of transferring all input and output connections. The original object \n";
+				$noteText += "   attributes can either be preserved or deleted. \n";
+				$noteText += "   \n";
+				$noteText += "   In the main attribute UI list, the user can access additional functionality via the RMB popup \n";
+				$noteText += "   menu. Here the user can see the exact attribute type, toggle the attribute´s keyable status, \n";
+				$noteText += "   and delete the attribute. On the right-hand side of the UI is a button that opens another text \n";
+				$noteText += "   list which allows the user to view both input and output connections on the selected attribute.\n";
+				$noteText += "   Double clicking in this list selects the connected object. \n";
+				$noteText += "   \n";
+				$noteText += "   Virtually all attribute types are supported. Compound attributes, for example vector attributes, \n";
+				$noteText += "   are shown in the UI according to their parent attribute name. Compound children attributes \n";
+				$noteText += "   must be transferred together with their parent, and thus are not available in the UI. \"Move Up\"   \n";
+				$noteText += "   and \"Move Down\" is currently not supported with compound attributes, nor with attributes that   \n";
+				$noteText += "   require the \"-dataType\" flag upon creation.  \n";
+				$noteText += "   \n";
+				$noteText += "   There are some known bugs with transferring compound attributes multiple times in the same \n";
+				$noteText += "   Maya session.  Compound attributes (with their connections) can be transferred once per \n";
+				$noteText += "   Maya session; more than that and Maya will report errors, or worse, crash. There is currently \n";
+				$noteText += "   no known fix for this, so just try to avoid it.   \n";
+				$noteText += "   \n";
+				$noteText += "   Comments etc. can be sent to mel@macaroniKazoo.com or dwalden74@hotmail.com. \n";
+				text -label $noteText -align left;
+
+				text -label "" -h 10;
+
+
+				setParent..;
+			setParent..;
+		string $closeButton = `button -label "Close Window" -c "deleteUI attrManHelpUI"`;
+		setParent..;
+
+	formLayout -e
+		-attachForm $scroll left 0
+		-attachForm $scroll top 0
+		-attachForm $scroll right 0
+		-attachControl $scroll bottom 0 $closeButton
+
+		-attachForm $closeButton left 0
+		-attachNone $closeButton top
+		-attachForm $closeButton right 0
+		-attachForm $closeButton bottom 0
+		$form;
+
+showWindow attrManHelpUI;
+}
+
+///////////////////////////////////////////////////////////////
+
+//Proc creates main UI.
+global proc attributeMan()
+{
+if (`window -ex dwAttrManWin`)
+	deleteUI dwAttrManWin;
+
+window -t "AttributeMan" -menuBar true dwAttrManWin;
+menu -label "Help" -tearOff true attributeMangerHelpMenu;
+	menuItem -l "AttributeMan Help" -c "attrManHelp";
+
+//Master form layout; contains three children formLayouts ($sourceForm, $conXnform, and $bottomForm)
+string $masterForm = `formLayout dwAttrManFormMaster`;
+
+
+//Source object formLayout.
+string $sourceForm = `formLayout sourceObjForm`;
+
+	string $sourceText = `text -l "Source Object:"`;
+	string $objText = `text -l "" -font boldLabelFont -align left dwAttrManObjTXT`;
+		popupMenu -p $objText -b 3;
+			menuItem -l "Select" -c "dwAttrMan_SelectSourceObject";
+
+	string $TSL = `textScrollList
+			-ams 1
+			-sc ("textField -e -tx (zooAttrManUtilsReturnElement(0,`textScrollList -q -si dwAttrManTSL`)) dwNewAttrName; \
+				dwAttrMan_ShowConnections `radioButtonGrp -q -sl attrManConnectionsRBG`;")
+			dwAttrManTSL`;
+
+		//PopupMenu for main TSL.
+		//Show the attribute type via a popup menu.
+		popupMenu -p $TSL -b 3 -postMenuCommand "{string $obj = `text -q -l dwAttrManObjTXT`; \
+								if (`objExists $obj`) { \
+									string $attr[] = `textScrollList -q -si dwAttrManTSL`; \
+								if (`attributeExists $attr[0] $obj`) {\
+									string $attrType; \
+								if (`size $attr` > 1) \
+									$attrType = \"\"; \
+								else \
+									{$attrType = `dwAttrManGetAttrTypeGeneral $obj $attr[0]`; \
+									if (`dwAttrManIsMulti $obj $attr[0]`) \
+									$attrType += \" (multi)\";} \
+								string $newMenuLabel = (\"Attribute Type: \" + $attrType); \
+								menuItem -e -l $newMenuLabel attrMan_AttrTypeMI;}}}";
+			menuItem -l "Attribute Type: " attrMan_AttrTypeMI;
+			menuItem -d 1;
+			menuItem -l "Toggle keyable" -c "dwAttrMan_SetKeyable";
+			menuItem -l "Delete attribute" -c "dwAttrMan_DeleteAttributes `text -q -l dwAttrManObjTXT` `textScrollList -q -si dwAttrManTSL`";
+
+	string $moveUpBTN = `button -l "Move Up" -c ( "zooDoReorder up" )`;
+	string $moveDownBTN = `button -l "Move Down" -c ( "zooDoReorder down" )`;
+
+	//Button form is a child of $sourceForm.
+	//string $buttForm = `formLayout`;
+	//	string $upButt = `symbolButton -i "arrowup.xpm" -width 15 -c( "zooDoReorder up" )`;
+	//	string $dnButt = `symbolButton -i "arrowdown.xpm" -width 15 -c( "zooDoReorder down" )`;
+	//setParent ..;
+
+	string $collapseButton = `button -l ">" -width 13 -c( "doHideConXnList" ) dwAttrManButtonCollapseConXn`;
+setParent ..;
+
+
+//Show connections formLayout.
+string $conXnform = `formLayout -vis 0 dwAttrManConXnForm`;
+	string $connectionsTXT = `text
+					-l "Show Connections:"
+					-align left`;
+	string $conXnRBG = `radioButtonGrp
+				-nrb 2
+				-cw 1 70
+				-la2 "Inputs" "Outputs"
+				-on1 "dwAttrMan_ShowConnections 1"
+				-on2 "dwAttrMan_ShowConnections 2"
+				attrManConnectionsRBG`;
+		radioButtonGrp -e -sl 1 attrManConnectionsRBG;
+	string $conXnTSL = `textScrollList
+			-en 1
+			-ams 0
+			-dcc "dwAttrMan_SelectConnectionObject"
+			-sc ""
+			dwAttrManConXnTSL`;
+		popupMenu -p $conXnTSL -b 3;
+			menuItem -l "Select object" -c "dwAttrMan_SelectConnectionObject";
+setParent ..;
+
+
+//Bottom formLayout.
+string $bottomForm = `formLayout dwAttrManBottomForm`;
+	string $renameTF = `textField -cc( "zooAttrManDoRename" ) dwNewAttrName`;
+	string $keyableCheck = `checkBox
+					-l "List keyable only"
+					-v 1
+					-ofc "dwAttrMan_LoadAttributes `text -q -l dwAttrManObjTXT` 0;"
+					-onc "dwAttrMan_LoadAttributes `text -q -l dwAttrManObjTXT` 1;"
+					dwAttrManListKeyableCheck`;
+	string $separator = `separator`;
+	string $spacerTXT = `text -l "" -h 5`;
+	string $transferOptionsTXT = `text -l "Transfer Attribute Options:" -font boldLabelFont`;
+	string $deleteOriginalsCheck = `checkBox
+						-l "Delete source attributes"
+						-v 1
+						-ofc "checkBox -e -en 1 dwAttrManConnectionsCheck;"
+						-onc "checkBox -e -en 0 dwAttrManConnectionsCheck; checkBox -e -v 1 dwAttrManConnectionsCheck;"
+						dwAttrManDeleteSourceAttrsCheck`;
+	string $transferConnectionsCheck = `checkBox
+						-l "Transfer connections"
+						-v 1
+						-en 0
+						dwAttrManConnectionsCheck`;
+
+	string $loadButton = `button -l "Load Obj" -c "{string $sel[] = `ls -sl -o`; \
+							dwAttrMan_LoadAttributes $sel[0] `checkBox -q -v dwAttrManListKeyableCheck`; \
+							textField -e -tx \"\" dwNewAttrName; \
+							textScrollList -e -ra dwAttrManConXnTSL;}"`;
+	string $transferButton = `button -l "Transfer Attrs" -c "dwAttrMan_TransferAttributes \
+									`text -q -l dwAttrManObjTXT` \
+									`textScrollList -q -si dwAttrManTSL` \
+									\"\" \
+									`checkBox -q -v dwAttrManConnectionsCheck` \
+									`checkBox -q -v dwAttrManDeleteSourceAttrsCheck`;"`;
+setParent ..;
+
+//Edit button form
+/*formLayout -e
+	-an $upButt left
+	-af $upButt top 0
+	-af $upButt right 0
+	-ap $upButt bottom 0 50
+
+	-an $dnButt left
+	-ac $dnButt top 0 $upButt
+	-af $dnButt right 0
+	-af $dnButt bottom 0
+	$buttForm;
+*/
+//Edit source form.
+formLayout -e
+	-af $sourceText left 0
+	-af $sourceText top 0
+	-an $sourceText right
+	-an $sourceText bottom
+
+	-ac $objText left 5 $sourceText
+	-af $objText top 0
+	-af $objText right 0
+	-an $objText bottom
+
+	-af $TSL left 0
+	-ac $TSL top 0 $sourceText
+	-ac $TSL right 5 $collapseButton
+	-ac $TSL bottom 5 $moveUpBTN
+
+	-af $moveUpBTN left 5
+	-an $moveUpBTN top
+	-ap $moveUpBTN right 5 50
+	-af $moveUpBTN bottom 0
+
+	-ac $moveDownBTN left 5 $moveUpBTN
+	-an $moveDownBTN top
+	-ac $moveDownBTN right 10 $collapseButton
+	-af $moveDownBTN bottom 0
+
+	//-an $buttForm left
+	//-ac $buttForm top 0 $sourceText
+	//-ac $buttForm right 3 $collapseButton
+	//-af $buttForm bottom 0
+
+	-an $collapseButton left
+	-ac $collapseButton top 0 $sourceText
+	-af $collapseButton right 0
+	-af $collapseButton bottom 0
+	$sourceForm;
+
+//Edit connection form
+formLayout -e
+	-af $connectionsTXT left 3
+	-af $connectionsTXT top 0
+	-af $connectionsTXT right 0
+	-an $connectionsTXT bottom
+
+	-af $conXnRBG left 3
+	-ac $conXnRBG top 0 $connectionsTXT
+	-af $conXnRBG right 0
+	-an $conXnRBG bottom
+
+	-af $conXnTSL left 3
+	-ac $conXnTSL top 5 $conXnRBG
+	-af $conXnTSL right 0
+	-af $conXnTSL bottom 0
+	$conXnform;
+
+//Edit bottom form.
+formLayout -e
+	-af $renameTF left 0
+	-an $renameTF top
+	-af $renameTF right 0
+	-ac $renameTF bottom 0 $keyableCheck
+
+	-af $keyableCheck left 0
+	-an $keyableCheck top
+	-af $keyableCheck right 0
+	-ac $keyableCheck bottom 0 $separator
+
+	-af $separator left 0
+	-an $separator top
+	-af $separator right 0
+	-ac $separator bottom 0 $spacerTXT
+
+	-af $spacerTXT left 0
+	-an $spacerTXT top
+	-af $spacerTXT right 0
+	-ac $spacerTXT bottom 0 $transferOptionsTXT
+
+	-af $transferOptionsTXT left 0
+	-an $transferOptionsTXT top
+	-af $transferOptionsTXT right 0
+	-ac $transferOptionsTXT bottom 0 $deleteOriginalsCheck
+
+	-af $deleteOriginalsCheck left 0
+	-an $deleteOriginalsCheck top
+	-af $deleteOriginalsCheck right 0
+	-ac $deleteOriginalsCheck bottom 0 $transferConnectionsCheck
+
+	-af $transferConnectionsCheck left 0
+	-an $transferConnectionsCheck top
+	-af $transferConnectionsCheck right 0
+	-ac $transferConnectionsCheck bottom 0 $loadButton
+
+	-af $loadButton left 0
+	-an $loadButton top
+	-ap $loadButton right 0 50
+	-af $loadButton bottom 0
+
+	-ac $transferButton left 0 $loadButton
+	-an $transferButton top
+	-af $transferButton right 0
+	-af $transferButton bottom 0
+	$bottomForm;
+
+
+//Edit master form
+int $spacer = 3;
+formLayout -e
+	-af $sourceForm left $spacer
+	-af $sourceForm top $spacer
+	-ac $sourceForm right $spacer $conXnform
+	-ac $sourceForm bottom $spacer $bottomForm
+
+	-ap $conXnform left -2 100
+	-af $conXnform top $spacer
+	-af $conXnform right $spacer
+	-ac $conXnform bottom $spacer $bottomForm
+	//-ap $conXnform left 0 50
+	//-af $conXnform top 0
+	//-af $conXnform right 0
+	//-af $conXnform bottom 0
+
+	-af $bottomForm left $spacer
+	-an $bottomForm top
+	-af $bottomForm right $spacer
+	-af $bottomForm bottom $spacer
+	$masterForm;
+
+
+showWindow dwAttrManWin;
+}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+global proc NameDuplicateNodes()
+{
+    if(` window -query -exists NameDuplicateNodesWin`) 
+         deleteUI NameDuplicateNodesWin;
+
+    window -widthHeight 450 100 -title "Rename Duplicate Node " -toolbox true -sizeable 1 NameDuplicateNodesWin;
+
+         columnLayout -adjustableColumn true;
+       button -label "Analyze" -c ("ListDuplicates();") ;
+          textScrollList -w 450 -h 350 -ams 1 -selectCommand "GeoSelcet();" TsField;
+      setParent ..;
+  rowLayout -numberOfColumns 3 -columnWidth3 120 150 150 -adjustableColumn 3 -columnAlign 1 "center" -columnAttach 1 "both" 0 -columnAttach 2 "both" 0 - columnAttach 3 "both" 0;
+              text -l "Padding:";
+              intField -minValue 1 -maxValue 5 -step 1 -value 1 PaddingUl;
+          button -label "Rename" -c ("RenameDuplicates();" ) ;
+
+  setParent ..;
+
+ setParent ..;
+    showWindow NameDuplicateNodesWin;
+}
+
+global proc ListDuplicates()
+{
+textScrollList -e -removeAll TsField;
+python ("import maya.cmds as cmds");
+string $dupList[] = python ("[f for f in cmds.ls(tr=1,s=1) if 'l' in f]");
+print `size($dupList)` ;
+for ($each in $dupList)
+{
+textScrollList -e -append ($each+"\n") TsField;
+select -cl;
+}
+}
+global proc GeoSelcet() 
+{
+  string $Datas[] = `textScrollList -q -selectItem TsField` ; 
+  select $Datas;
+}
+
+global proc RenameDuplicates()
+{
+//print "\nRenaming.... ";
+int $pad = ` intField -q -v PaddingUI`;
+python ("import DupRenamer") ; 
+python("DupRenamer.PyrenameDuplicates("+$pad+")");
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////NameDuplicateNodes////////////////////////////////////////////
+
+///////////////////////////////////////unusedNodes//////////////////////////////////////////////////// 
+global proc deleteUnusedNodes()
+{
+string $polyGeo[] = ` ls -type "mesh"` ;
+int $count = 0;
+for ($each in $polyGeo)
+{
+string $conn[] = ` listConnections $each`;
+if ($conn[0] == "")
+{
+delete $each;
+print ("Deleted " + $each + "\n"); 
+$count++;
+}
+}
+if ($count == 0)
+{
+print "No unused Orig nodes found in the scene.\n";
+} 
+}
+////////////////////////////////////////////////////////////////////////////////////// 
+global proc dkAddAttr(string $attr)
+{
+string $name = ` textField -q -text attrTF` ;
+string $buffer[];
+$numTokens = ` tokenize $name " " $buffer` ; 
+if ($name !="")
+{
+for ($eachAttr in $buffer)
+{
+string $sel[] = ` ls -sl` ;
+for ($each in $sel)
+{
+if (` attributeExists $eachAttr $each` )
+{
+warning ($eachAttr + " attribute already exists in " + $each + "\n");
+} 
+else
+{
+if ($attr == "enum")
+{
+addAttr -ln $eachAttr -k 1 -at "enum" -en "Off:On:" $each;
+}
+else if ($attr == "floatA")
+{
+addAttr -ln $eachAttr -at double -min 0 -max 1 -dv 0 -k 1 $each;
+}
+else if ($attr == "floatB")
+{
+addAttr -ln $eachAttr -at double -min 0 -max 10 -dv 0 -k 1 $each;
+}
+else if ($attr == "floatC")
+{
+addAttr -ln $eachAttr -at double -min -10 -max 10 -dv 0 -k 1 $each;
+}
+else if ($attr == "floatD")
+{
+addAttr -ln $eachAttr -at double -dv 0 -k 1 $each;
+}
+} 
+} 
+} 
+} 
+else
+{
+warning "No attribute specified in the field";
+}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////PropControl////////////////////////////////////////////////
+global proc PropControl() 
+{         
+        string $assetName; 
+        string $rosie                  = ` promptDialog -title "Asset Group Name"
+                                                                   -message "Asset Name:"
+                                                                   -button "OK" -button "Cancel"
+                                                                   -defaultButton "OK" -cancelButton "Cancel"
+                                                                   -dismissString "Cancel" ` ;
+        if ($rosie == "OK") 
+        {
+            $assetName = ` promptDialog -query -text` ; 
+            string $world_01 = "Placement01_Ctrl" ; 
+            string $world_02 = "Placement02_Ctrl" ;
+            string $cog                       = "_COG";
+        
+            string $asset                 = `group -em -n $assetName` ; 
+            string $ctrlGrp               = `group -em -n Ctrl_Group` ;
+            string $geoGrp                = `group -em -n Geometry_Group` ; 
+            string $defoGrp               = `group -em -n Deformers_Group` ; 
+            string $jntGrp                = `group -em -n Joints_Group` ;
+            string $texGrp                = `group -em -n Texture_Group` ; 
+            string $ligGrp                = `group -em -n Light_Group` ;
+            string $efxGrp                = `group -em -n Efx_Group` ;
+            string $noteLoc               = worldNote();
+
+            string $offsetGrp   =  `group -em -n Offset` ;
+            string $ctrlShapGro =  `group -em -n ($assetName + "_Ctrl_Group")` ;
+            string $astGeoGrp   =  `group -em -n ($assetName + "_Geo_Group")` ; 
+            string $loRes                 = `group -em -n Lo` ;
+            string $hiRes                 = `group -em -n Hi` ;
+            string $jntShapeGrp           = `group -em -n ($assetName + " jnt_Group")`;
+//B//
+            parent $ctrlGrp $geoGrp $defoGrp $jntGrp $texGrp $ligGrp $efxGrp $asset ; 
+            parent Notez $asset;
+            parent $offsetGrp $ctrlGrp ;
+            parent $ctrlShapGro $ctrlGrp ;
+            parent $astGeoGrp $geoGrp ;
+            parent $loRes $hiRes $astGeoGrp ;
+            parent $jntShapeGrp $jntGrp ;
+
+
+            //Control Shapes
+            string $place_01Ctrl[] = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1.6 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n $world_01` ;
+            string $place_02Ctrl[] = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 2 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n $world_02` ;
+            string $bkAr          = `curve -d 1 -p -0.258465 0 -2.001129 -p -0.258465 0 -2.518059 -p -0.51693 0 -2.518059 -p 0 0 -3.207298 -p 0.51693 0 -2.518059 -p 0.258465 0 -2.518059 -p 0.258465 0 -2.001129 -p -0.258465 0 -2.001129 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7`;
+            string $rtAr          = `curve -d 1 -p -3.207298 0 0 -p -2.518059 0 0.51693 -p -2.518059 0 0.258465 -p -2.001129 0 0.258465 -p -2.001129 0 -0.258465 -p -2.518059 0 -0.258465 -p -2.518059 0 -0.51693 -p -3.207298 0 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7`;
+            string $frAr          = `curve -d 1 -p 0 0 3.207298 -p -0.51693 0 2.518059 -p -0.258465 0 2.518059 -p -0.258465 0 2.001129 -p 0.258465 0 2.001129 -p 0.258465 0 2.518059 -p 0.51693 0 2.518059 -p 0 0 3.207298 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7`;
+            string $ltAr          = `curve -d 1 -p 3.207298 0 0 -p 2.518059 0 0.51693 -p 2.518059 0 0.258465 -p 2.001129 0 0.258465 -p 2.001129 0 -0.258465 -p 2.518059 0 -0.258465 -p 2.518059 0 -0.51693 -p 3.207298 0 0 -k 0 -k 1 -k 2 -k 3 -k 4 -k 5 -k 6 -k 7`;
+            
+            
+            //World 02 Color
+            string $place_02shape[] = `listRelatives -s $place_02Ctrl[0]` ; 
+            setAttr ($place_02shape[0] + ".overrideEnabled") 1 ;
+            setAttr ($place_02shape[0] + ".overrideColor") 6 ;
+//C/
+            select $bkAr $rtAr $frAr $ltAr ;
+            string $seleShap[] = `ls -sl` ;
+            string $obj ;
+            for ($obj in $seleShap)
+            {
+                     string $shapeNod[] = `listRelatives -s $obj` ; 
+                     setAttr ($shapeNod[0] + ".overrideEnabled") 1 ; 
+                     setAttr ($shapeNod[0] + ".overrideColor") 17 ;
+            
+                     parent -r -s $shapeNod $place_02Ctrl[0] ;
+                     rename $shapeNod ($place_02Ctrl[0] + "Shape") ; 
+                     delete $obj ;
+            }
+            
+            //World 01 Color
+            string $place_O1shape[] =  `listRelatives -s $place_01Ctrl[0]` ; 
+            setAttr ($place_O1shape[0] + ".overrideEnabled") 1 ;
+            setAttr ($place_O1shape[0] + ".overrideColor") 17 ;   
+            string $cogShape[] = ` circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0 -n ($assetName + $cog)`;
+            string $shapeNod[] = `listRelatives -s $cogShape[0]` ;
+            setAttr ($shapeNod[0] + ".overrideEnabled") 1 ;
+            setAttr ($shapeNod[0] + ".overrideColor") 14 ;
+            
+            //$asset Attribute
+            addAttr -ln "AssetType" -dt "string" $asset ; 
+            setAttr -e-keyable true ($asset + ".AssetType") ;
+            setAttr -type "string" ($asset + ".AssetType") "Prop"; 
+            setAttr -l true ($asset + ".AssetType") ;
+//D//
+            //World 01 Attribute
+            addAttr -ln "globleScale" -at double -dv 1 $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".globleScale") ;
+            
+            addAttr -ln "meshDisplay" -at "enum" -en "Normal:Template:Refrence:" $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".meshDisplay") ;
+            setAttr -keyable false -channelBox true ($place_01Ctrl[0] + ".meshDisplay") ;
+            
+            addAttr -ln "meshSmooth" -at "enum" -en "0:1:2:" $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".meshSmooth") ;
+            setAttr -keyable false -channelBox true ($place_01Ctrl[0] + ".meshSmooth") ;
+            
+            addAttr -ln "ctrlVis" -at "enum" -en "Off:On:" $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".ctrlVis") ;
+            setAttr -keyable false -channelBox true ($place_01Ctrl[0] + ".ctrlVis") ; 
+            setAttr ($place_01Ctrl[0] + ".ctrlVis") 1 ;
+            
+            addAttr -ln "meshVis" -at "enum" -en "Off:On:" $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".meshVis") ;
+            //setAttr -keyable false -channelBox true ($place_01Ctrl[0] + ".meshVis") ; 
+            setAttr ($place_01Ctrl[0] + ".meshVis") 1 ;
+            
+            addAttr -ln "jointVis" -at "enum" -en "Off:On:" $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".jointVis") ;
+            setAttr -keyable false -channelBox true ($place_01Ctrl[0] + ".jointVis") ;
+            
+            addAttr -ln "LOD" -at "enum" -en "Hi.Lo:" $place_01Ctrl[0] ; 
+            setAttr -e-keyable true ($place_01Ctrl[0] + ".LOD") ;
+            setAttr -keyable false -channelBox true ($place_01Ctrl[0] + ".LOD") ;   
+//E//       
+            //Control Shapes Prenting
+            parent $cogShape[0] $place_01Ctrl[0] ; 
+            parent $place_01Ctrl[0] $place_02Ctrl[0] ; 
+            parent $place_02Ctrl[0] $offsetGrp ;
+            
+            //Connections
+/*            
+            connectAttr -f ($place_01Ctrl[0] + ".globleScale") ($place_01Ctrl[0] + ".scaleX") ; 
+            connectAttr -f ($place_01Ctrl[0] + ".globleScale") ($place_01Ctrl[0] + ".scaleY") ; 
+            connectAttr -f ($place_01Ctrl[0] + ".globleScale") ($place_01Ctrl[0] + ".scaleZ") ;
+*/            
+            parentConstraint ($assetName + $cog) ($assetName + "_Geo_Group") ; 
+            scaleConstraint ($assetName + $cog)($assetName + "_Geo_Group") ; 
+            connectAttr -f ($place_01Ctrl[0] + ".ctrlVis") ($ctrlShapGro + ".visibility") ; 
+            connectAttr -f ($place_01Ctrl[0] + ".meshVis") ($astGeoGrp + ".visibility") ; 
+            connectAttr -f ($place_01Ctrl[0] + ".jointVis") ($jntShapeGrp + ".visibility") ; 
+            string $revNode = `shadingNode -asUtility reverse -n ($assetName + "_Geo_Vis_Rev")`;    
+            connectAttr -f ($place_01Ctrl[0] + ".LOD") ($loRes + ".visibility") ; 
+            connectAttr -f ($place_01Ctrl[0] + ".LOD") ($revNode + ".inputX") ; 
+            connectAttr -f ($revNode + ".outputX") ($hiRes + ".visibility") ;  
+            setAttr -keyable false -channelBox false ($place_01Ctrl[0] + ".v") ; 
+            setAttr -keyable false -channelBox false ($place_02Ctrl[0] + ".v") ; 
+            setAttr -keyable false -channelBox false ($cogShape[0] + ".v") ; 
+            select -cl ;
+            select -r("*_Ctrl");
+            select -add("*_COG");
+            sets -name "AnimSet_prp";
+            select -cl ;
+//F//
+        } 
+        else
+        { 
+                print " \" Please enter the Asset Name\"...............";
+        }
+}
+
+        //World Notes
+        global proc worldNote()
+        {
+                createNode transform -n "Notez" -p "AssetName";
+                addAttr -ci true -sn "notes" -ln "notes" -dt "string";
+                setAttr -l on ".v" no; 
+                setAttr -l on -k off ".tx"; 
+                setAttr -l on -k off ".ty"; 
+                setAttr -l on -k off ".tz"; 
+                setAttr -l on -k off ".rx"; 
+                setAttr -l on -k off ".ry"; 
+                setAttr -l on -k off ".rz"; 
+                setAttr -l on -k off ".sx"; 
+                setAttr -l on -k off ".sy"; 
+                setAttr -l on -k off ".sz";
+                setAttr ".notes" -type "string" "ProjectName - ProjectName \r\nStudioName - XenTrixStudios";
+                createNode locator -n "NotezShape" -p "Notez";
+                setAttr -k off ".v";
+                addAttr -ln "AssetType" -at "enum" -en "Character:Props:Env:Structures:Vegatation:Vehicles:" Notez; 
+                setAttr -e-keyable true Notez.AssetType;
+                addAttr -ln "AssetPath" -dt "string" Notez;
+                setAttr -e-keyable true Notez.AssetPath;
+                addAttr -ln "Project" -dt "string" Notez; 
+                setAttr -e-keyable true Notez.Project;
+                addAttr -ln "ModelVersion" -dt "string" Notez; 
+                setAttr -e-keyable true Notez.ModelVersion;
+                addAttr -ln "TextureVersion" -dt "string" Notez;
+                setAttr -e-keyable true Notez.TextureVersion;
+        }     
+
+        global proc jtErr(string $msg)
+        {
+            confirmDialog -t "Error" -m $msg -ma "center" -b "Ok" -db "Ok";
+        }  
+         
+
+
+////////////////////////////////////PropControl End///////////////////////////////////////////////////
+            
+//////////////////////////////////////UV Dtiver ///////////////////////////////////////////////////
+global proc uvDriver()
+{
+    string $uvName;
+    string $uvDriver   = ` promptDialog -title " UV Driver"
+                                        -message "Uv Driver Name:"
+                                        -button "OK" -button "Cancel"
+                                        -defaultButton "OK" -cancelButton "Cancel"
+                                        -dismissString "Cancel"` ;
+    if ($uvDriver == "OK")
+     {
+        $uvName = `promptDialog -query -text` ;
+        string $seleObj[] = `ls -sl` ;
+        string $uvMesh[] = `nurbsPlane -p 0 0 0 -ax 1 0 0 -w 5 -lr 1 -d 1 -u 1 -v 1 -ch 1 -n ($uvName + "_UV_Geo")`; 
+        string $uvLoc[] = `spaceLocator -p 0 0 0 -n ($uvName + "_UV_Loc")` ;
+        string $uvCpos    = `createNode closestPointOnSurface -n ($uvName + "_UV_Cpos")`;
+        string $uvPoSInfo = `createNode pointOnSurfaceInfo -n ($uvName + "_UV_PoSInfo")` ;
+        string $geoConst[] = `geometryConstraint -weight 1 $uvMesh[0] $uvLoc[0]` ; 
+        connectAttr -f ($uvMesh[0] + "Shape.worldSpace[0]") ($uvCpos + ".inputSurface") ;
+        connectAttr -f ($uvLoc[0] + ".translateX") ($uvCpos + ".inPositionX") ; 
+        connectAttr -f ($uvLoc[0] + ".translateY") ($uvCpos + ".inPositionY") ; 
+        connectAttr -f ($uvLoc[0] + ".translateZ") ($uvCpos + ".inPositionZ") ;
+        connectAttr -f ($uvCpos + ".parameterU") ($uvPoSInfo + ".parameterU") ; 
+        connectAttr -f ($uvCpos + ".parameterV") ($uvPoSInfo + ".parameterV") ;
+        connectAttr -f ($uvMesh[0] + "Shape.worldSpace[0]") ($uvPoSInfo + ".inputSurface") ; 
+        string $uvGrp                   = `group -em -n ($uvName + "_UV_Driver")` ;
+        string $uvGeoGrp = ` group -em -n ($uvName + "_UV_Geo_Group")` ;
+        string $uvLocGrp = ` group -em -n ($uvName + "_UV_Loc_Group")` ;
+        parent $uvGeoGrp $uvLocGrp $uvGrp ;
+        parent $uvMesh[0] $uvGeoGrp ;
+        parent $uvLoc[0] $uvLocGrp ;
+     } 
+    else
+    {         
+            print " \" Please enter the UV Driver Name\"........................... ";
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+select -cl; 
+select $csel;
+
+
+
+
+//////////////////////////////////////END RG TOOL////////////////////////////////////////////////////

@@ -1,0 +1,111 @@
+string $selVerts[] = `ls -sl -fl`;
+
+selectMode -co;
+
+selectMode -object;
+
+$ob = `ls -sl -fl`;
+
+for ($vrts in $selVerts) {
+
+select -r $vrts;
+
+$cl = `newCluster "-envelope 1"`;
+
+select -r -cl;
+
+string $ctrlN[] = `circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+select -r ($ctrlN[0]+".cv[0]");
+
+select -tgl ($ctrlN[0]+".cv[2]");
+
+select -tgl ($ctrlN[0]+".cv[4]");
+
+select -tgl ($ctrlN[0]+".cv[6]");
+
+scale -r -p 0cm 0cm 0cm -0.00093493 -0.00093493 -0.00093493 ;
+
+select -cl;
+
+select $ctrlN[0];
+
+string $na = $ctrlN[0];
+
+rename $na $vrts;
+
+string $ctrl[] = `ls -sl`;
+
+rename ($ctrl[0] + "_SoftMod_Handle_Ctrl");
+
+addAttr -ln "fallOff" -at double -dv 5 ($ctrl[0]+ "_SoftMod_Handle_Ctrl");
+setAttr -e-keyable true ($ctrl[0] + "_SoftMod_Handle_Ctrl.fallOff");
+
+addAttr -ln "fallOffMode" -at "enum" -en "volume;surface;" ($ctrl[0]+ "_SoftMod_Handle_Ctrl");
+setAttr -e-keyable true ($ctrl[0] + "_SoftMod_Handle_Ctrl.fallOffMode") ;
+addAttr -ln "globalScale" -at double -dv 1 ($ctrl[0]+"_SoftMod_Handle_Ctrl");
+string $locA[] = `spaceLocator -n ($ctrl[0]+ "_SoftMod_Ctrl") -p 0 0 0`;
+group -n ($ctrl[0]+ "_SoftMod_Ctrl_Group");
+
+
+
+
+parent ($ctrl[0] + "_SoftMod_Handle_Ctrl") ($ctrl[0]+ "_SoftMod_Ctrl");
+
+delete `pointConstraint $cl ($ctrl[0] + "_SoftMod_Ctrl_Group") `;
+
+delete $cl;
+
+select -r $ob;
+
+$soft = `softMod -wn $ob $ob`;
+
+softMod -e -wn ($ctrl[0] + "_SoftMod_Handle_Ctrl") ($ctrl[0] + "_SoftMod_Handle_Ctrl") $soft[0];
+setAttr ($soft[0] + ".falloffAroundSelection") 0;
+
+connectAttr -f ($ctrl[0] + "_SoftMod_ Ctrl.worldPosition[0]") ($soft[0] + ".falloffCenter");
+shadingNode -asUtility -n ($ctrl[0] + "MDLinr") multDoubleLinear;
+
+connectAttr -f ($ctrl[0] + "_SoftMod_Handle_Ctrl.fallOffMode") ($soft[0]+ ".falloffMode");
+connectAttr -f ($ctrl[0] + "_SoftMod_Handle_Ctrl.fallOff") ($ctrl[0] + "MDLinr.input1");
+connectAttr -f ($ctrl[0] + "_SoftMod_Handle_Ctrl.globalScale") ($ctrl[0] + "MDLinr.input2");
+connectAttr -f ($ctrl[0] + "MDLinr.output") ($soft[0] + ".falloffRadius");
+
+connectAttr -f ($ctrl[0] + "_SoftMod_Ctrl.worldInverseMatrix[0]") ($soft[0] + ".bindPreMatrix");
+select -cl;
+
+select $locA[0];
+
+pickWalk -d down;
+
+setAttr (".visibility") 0;
+
+setAttr -l true (".visibility");
+
+select -cl;
+
+string $locNewShape[] = `circle -n ($vrts+"Shape_01") -c 0 0 0 -nr 0 1 0 -sw 360 -r .75 -d 3 -ut 0 -tol 0.01 -s 8 -ch 0`;
+setAttr ($locNewShape[0]+"Shape"+".overrideEnabled") 1;
+
+setAttr ($locNewShape[0] +"Shape"+".overrideColor") 6;
+
+pickWalk -d down;
+
+select -add $locA[0];
+
+parent -r -s;
+
+select -cl;
+
+delete $locNewShape [0];
+
+setAttr ($ctrl[0] + "_SoftMod_Handle_Ctrl"+"Shape"+".overrideEnabled") 1;
+
+setAttr ($ctrl[0] + "_SoftMod_Handle_Ctrl"+"Shape"+".overrideColor") 13;
+
+setAttr ($locA[0]+"Shape"+".overrideEnabled") 1;
+
+setAttr ($locA[0] +"Shape"+".overrideColor") 13;
+
+setAttr ($ctrl[0] + "_SoftMod_Handle_Ctrl.fallOffMode") -k false -l true;
+
+}

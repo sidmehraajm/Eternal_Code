@@ -1,0 +1,339 @@
+global proc clothWire()
+{
+	source rigUtilities;
+	if(`window -q -exists clothWireWindow`) deleteUI clothWireWindow;
+	window -t "Cloth Wire Rig" clothWireWindow;
+	columnLayout;
+		text -l "Select geometry, wireCurve, left and right parent joints...\n (curve transforms must be frozen.)";
+		rowLayout -nc 2;
+				text -l "Enter rig name: ";
+				textField -w 200 rigNameInputField;
+				setParent..;		
+		button -l "Create wire rig" -c "createABPWireRig" createWireRigButton;
+		separator -h 6;
+		text -l "Select locator and then select parent joint for sleeve controller...";
+		button -l "Sleeve rig"  -c "createABPSleeveRig" createABPSleeveRigButton;
+		separator -h 6;
+		text -l "Select locator...";
+		button -l "Specs rig" -c "createABPSpecsRig" createABPSpecsRigButton;
+		separator -h 6;
+		text -l "Select skinned curve, rotation up object and...";
+		rowLayout -nc 9;
+				text -l "Enter rig name: ";
+				textField -w 100 curveRigNameInputField;
+				separator -w 8;
+				text -l "Up axis :";
+				radioCollection upAxisInputRadio;
+					radioButton -l "X" X;
+					radioButton -l "Y" -sl Y;
+					radioButton -l "Z" Z;				
+				checkBox -l "Negative" upAxisIsNegative;
+				setParent..;
+		rowLayout -nc 2;
+				text -l "Number of controllers required: ";
+				intField -w 20 -v 5 curveControlsNumberInputField;
+				setParent..;
+		separator -w 8;
+		button -l "Create joints rig on curve" -c "createABPJointOnCurveRig" createABPJointOnCurveRigButton;
+		
+	showWindow clothWireWindow;
+}
+
+global proc createABPJointOnCurveRig()
+{
+	int $error = 0;
+	string $errorString = "Found errors. Please fix following errors before proceeding:";	
+	string $objects[] = `ls -sl`;	
+	if(size($objects) != 2) 
+	{
+		$error = 1;
+		$errorString = $errorString+"\n>> Invalid selection. Exactly 2 objects must be selected. First select curve and then up object.";
+	}
+	string $curve = $objects[0];
+	string $upObject = $objects[1];
+	string $rigName = `textField -q -text curveRigNameInputField`;
+	if($rigName == "")
+	{
+		$error = 1;
+		$errorString = $errorString+"\n>> Rig name cannot be left blank.";
+	}
+	
+	if(`objExists ($rigName+"_1_jnt")`)
+	{
+		$error = 1;
+		$errorString = $errorString+"\n>> Name already used for another rig. Please enter a unique name.";
+	}
+	string $upAxis = `radioCollection -q -sl upAxisInputRadio`;	
+	int $upVector = 1;
+	int $inverseUp = `checkBox -q -v upAxisIsNegative`;
+	if ($inverseUp) $upVector = -1;
+	
+	int $number = `intField -q -v curveControlsNumberInputField`;
+	if($number < 1)
+	{
+		$error = 1;
+		$errorString = $errorString+"\n>> Number of controls must be greater than zero.";
+	}
+	
+	if($error == 0)
+	{
+		int $counter = 1;			
+		group -em -name ($rigName+"_rig_grp");
+		group -em -name ($rigName+"_rig_controls_grp");
+		group -em -name ($rigName+"_rig_joints_grp");
+		parent ($rigName+"_rig_joints_grp") ($rigName+"_rig_controls_grp") ($rigName+"_rig_grp");
+		
+		float $increment = (1.0 / ($number - 1));		
+		float $uValue = 0;
+		
+		while($counter <= $number)
+		{
+			circle -name ($rigName+"_"+$counter+"_cc") -nr 0 1 0 -r .5;
+			DeleteHistory;
+			select -r ($rigName+"_"+$counter+"_cc");
+			uCreateOffset("off");	
+			
+		//motion path
+			select -r ($rigName+"_"+$counter+"_cc_off") $curve;
+			if($upAxis == "X") pathAnimation -name ($rigName+"_MP_"+$counter) -follow true -followAxis y -inverseFront 1 -upAxis z -worldUpType "objectrotation" -worldUpVector $upVector 0 0 -worldUpObject $upObject -startTimeU 1 -endTimeU  1;
+			if($upAxis == "Y") pathAnimation -name ($rigName+"_MP_"+$counter) -follow true -followAxis y -inverseFront 1 -upAxis z -worldUpType "objectrotation" -worldUpVector 0 $upVector 0 -worldUpObject $upObject -startTimeU 1 -endTimeU  1;		
+			if($upAxis == "Z") pathAnimation -name ($rigName+"_MP_"+$counter) -follow true -followAxis y -inverseFront 1 -upAxis z -worldUpType "objectrotation" -worldUpVector 0 0 $upVector -worldUpObject $upObject -startTimeU 1 -endTimeU  1;
+			delete `listConnections -type addDoubleLinear ($rigName+"_MP_"+$counter)`;
+			string $connections[] = `listConnections ($rigName+"_MP_"+$counter)`;
+			setAttr ($rigName+"_MP_"+$counter+".uValue") $uValue;
+			delete $connections[0];
+			connectAttr ($rigName+"_MP_"+$counter+".allCoordinates") ($rigName+"_"+$counter+"_cc_off.translate");
+			setAttr ($rigName+"_MP_"+$counter+".uValue") $uValue;
+			
+			parent ($rigName+"_"+$counter+"_cc_off") ($rigName+"_rig_controls_grp");
+			
+		// Joint setup
+			select -cl;
+			joint -name ($rigName+"_"+$counter+"_jnt") -p 0 0 0;
+			select -r ($rigName+"_"+$counter+"_cc") ($rigName+"_"+$counter+"_jnt");
+			parentConstraint -name tempCon;
+			delete tempCon;
+			makeIdentity -a 1 -r 1 ($rigName+"_"+$counter+"_jnt");
+			select -r ($rigName+"_"+$counter+"_cc") ($rigName+"_"+$counter+"_jnt");
+			parentConstraint;
+			
+			parent ($rigName+"_"+$counter+"_jnt") ($rigName+"_rig_joints_grp");
+			$uValue = $uValue + $increment;
+			$counter++;
+		}
+		confirmDialog -t "Done!" -m "Rig created. If required please assign up objects on controller's offset group motion paths manually."	-b "Okay";	
+	}
+	else confirmDialog -t "Error!" -m $errorString -b "Okay";
+	
+	
+}
+
+global proc createABPSpecsRig()
+{
+	string $sel[] = `ls -sl`;
+	select -cl;
+	joint -name specs_jnt -p 0 0 0;
+	select -r $sel[0] specs_jnt;
+	parentConstraint -name tempCon;
+	delete tempCon;
+	makeIdentity -a 1 -r 1 specs_jnt;
+	float $scale[] = `xform -q -r -scale $sel[0]`;
+	circle -name specs_cc -nr 1 0 0 -r $scale[0];
+	DeleteHistory;
+	select -r specs_jnt specs_cc;
+	parentConstraint -name tempCon;
+	delete tempCon;
+	duplicate -name specs_cc_off specs_cc;
+	delete specs_cc_offShape;
+	parent specs_cc specs_cc_off;
+	select -r specs_cc specs_jnt;
+	parentConstraint;
+	select -r Head_M specs_cc_off;
+	parentConstraint -mo;
+	
+	if(!`objExists rig_grp`)
+	{
+		group -em -name rig_grp;
+		parent rig_grp Main;
+	}
+	group -em -name specs_rig_grp;
+	parent specs_cc_off specs_jnt specs_rig_grp;
+	parent specs_rig_grp rig_grp;
+	select -r specs_cc;
+	uColorShape(17);
+	uTransforms("hide", 0, 0, 1, 1);
+	select -r specs_cc_off;
+	uTransforms("lock", 1, 1, 1, 1);
+	
+	if(`objExists Global`) connectAttr Global.joints specs_jnt.visibility;
+	
+	confirmDialog -t "Success!" -m "Specs rig added";
+}
+
+global proc createABPSleeveRig()
+{
+	string $sel[] = `ls -sl`;
+	select -cl;
+	joint -name sleeve_jnt_L -p 0 0 0;
+	select -r $sel[0] sleeve_jnt_L;
+	pointConstraint -name tempCon;
+	delete tempCon;
+	mirrorJoint -mirrorYZ -mirrorBehavior -searchReplace "_L" "_R" sleeve_jnt_L;
+	parent sleeve_jnt_L ElbowPart3_L;
+	parent sleeve_jnt_R ElbowPart3_R;
+	float $scaleFactor[] = `xform -q -r -scale $sel[0]`;
+	circle -name sleeve_L -nr 1 0 0 -r $scaleFactor[0];
+	DeleteHistory;
+	select -r sleeve_jnt_L sleeve_L;
+	pointConstraint -name tempCon;
+	delete tempCon;
+	makeIdentity -a 1 -t 1 sleeve_L;
+	select -r sleeve_L;
+	uCreateOffset("off");
+	
+	circle -name sleeve_R -nr 1 0 0 -r $scaleFactor[0];
+	DeleteHistory;
+	select -r sleeve_jnt_R sleeve_R;
+	pointConstraint -name tempCon;
+	delete tempCon;
+	makeIdentity -a 1 -t 1 sleeve_R;
+	select -r sleeve_R;
+	uCreateOffset("off");
+	
+	select -r sleeve_L sleeve_R;
+	uColorShape(17);
+	uTransforms("hide", 0, 0, 0, 1);
+	pickWalk -d up;
+	uTransforms("lock", 0, 0, 0, 1);
+	
+	group -em -name sleeve_controls_grp;
+	parent sleeve_L_off sleeve_R_off sleeve_controls_grp;
+	if(!`objExists rig_grp`)
+	{
+		group -em -name rig_grp;
+		parent rig_grp Main;
+	}
+	parent sleeve_controls_grp rig_grp;
+	select -r $sel[1] sleeve_L_off;
+	parentConstraint -mo;
+	
+	string $reverseName = `substring $sel[1] 1 (size($sel[1])-2)`;
+	$reverseName = $reverseName+"_R";
+	select -r $reverseName sleeve_R_off;
+	parentConstraint -mo;
+	
+	select -r sleeve_L sleeve_jnt_L;
+	parentConstraint -mo;
+	scaleConstraint;
+	
+	select -r sleeve_R sleeve_jnt_R;
+	parentConstraint -mo;
+	scaleConstraint;
+	
+	parent sleeve_jnt_R_parentConstraint1 sleeve_jnt_R_scaleConstraint1 sleeve_jnt_L_parentConstraint1 sleeve_jnt_L_scaleConstraint1 ConstraintSystem;
+	
+	confirmDialog -t "Done!" -m "Sleeve rig successful." -b "Okay";
+}
+
+global proc createABPWireRig()
+{
+	string $tag = `textField -q -text rigNameInputField`;
+	if($tag == "") confirmDialog -t "Error!" -m "Rig name field can't be left blank. Please enter valid rig name." -b "Okay";
+	else
+	{		
+		string $sel[] = `ls -sl`;
+		if(size($sel) != 4 && size($sel) !=2) confirmDialog -t "Confirmation!" -m "2 objects must be selected for rigs without parenting. Geometry and then wire curve.\n4 objects must be selected for parenting rig in this order-> Geo, wireCurve, parent joints on left and right sides." -b "Okay";
+		else
+		{
+			int $parenting = 0;
+			if(size($sel) == 4) $parenting = 1;
+			string $geo = $sel[0];
+			string $curve = $sel[1];
+			string $parent1 = $sel[2];
+			string $parent2 = $sel[3];
+
+			if(!`objExists rig_grp`)
+			{
+				group -em -name rig_grp;
+				parent rig_grp Main;
+			}
+
+			int $spans = getAttr ($curve + ".spans");
+
+			//duplicating geo
+			if(!`objExists ($geo+"_bsGeo")`) 
+			{
+				duplicate -name ($geo+"_bsGeo") $geo;
+				select -r $curve ($geo+"_bsGeo");
+				group -name ($geo+"_sec_rig_grp");
+				setAttr ($geo+"_sec_rig_grp.translateZ") -5;
+				blendShape -foc -name ($geo+"_sec_bs") ($geo+"_bsGeo") $geo;
+				setAttr ($geo+"_sec_bs."+$geo+"_bsGeo") 1;
+			}
+			else
+			{
+				setAttr ($curve+".translateZ") -5;
+				parent $curve ($geo+"_sec_rig_grp");
+			}
+
+			// Making clusters
+			
+			int $counter = 1;
+			while($counter <= $spans)
+			{
+				select -r ($curve+"Shape.cv["+($counter-1)+"]");
+				cluster -name ($tag+"Cls"+$counter);
+				circle -name ($tag+"_"+$counter+"_cc") -nr 0 1 0 -r .2;
+				DeleteHistory;
+				uColorShape(17);
+				select -r ($tag+"Cls"+$counter+"Handle") ($tag+"_"+$counter+"_cc");
+				pointConstraint -name tempCon;
+				delete tempCon;
+				makeIdentity -a 1 -t 1 -r 1 -s 1 ($tag+"_"+$counter+"_cc");
+				select -r ($tag+"_"+$counter+"_cc");
+				uCreateOffset("off");
+				select -r ($tag+"_"+$counter+"_cc");
+				uCreateOffset("parent");	
+				setAttr ($tag+"_"+$counter+"_cc_off.translateZ") 5;
+				
+				connectAttr ($tag+"_"+$counter+"_cc.translate") ($tag+"Cls"+$counter+"Handle.translate");
+				connectAttr ($tag+"_"+$counter+"_cc.rotate") ($tag+"Cls"+$counter+"Handle.rotate");
+				
+				if($parenting == 1)
+				{
+					select -r Root_M $parent1 $parent2 ($tag+"_"+$counter+"_cc_parent");
+					parentConstraint -name ($tag+"_"+$counter+"_cc_parent_parentConstraint") -mo;
+					setAttr ($tag+"_"+$counter+"_cc_parent_parentConstraint.interpType") 2;
+				}
+				
+				$counter++;
+			}
+
+			select -r ($tag+"Cls*Handle");
+			group -name ($tag+"_clusters_grp");
+			select -r ($tag+"_*_cc_off");
+			group -name ($tag+"_controls_grp");
+
+			//setAttr ($tag+"_controls_grp.translateZ") 5;
+			makeIdentity -a 1 -t 1 ($tag+"_controls_grp.translateZ");
+			parent ($tag+"_controls_grp") rig_grp;
+
+			parent  ($tag+"_clusters_grp") ($geo+"_sec_rig_grp");
+
+			//Applywing wire			
+			if(!`objExists ($geo+"_bsGeo_wire")`)
+			{
+				wire -name ($geo+"_bsGeo_wire") -gw false -en 1 -ce 0 -li 0 -w $curve ($geo+"_bsGeo");
+			}
+			
+			else wire -e -w $curve ($geo+"_bsGeo_wire");
+			
+			//Secondary rig parenting
+			if(`objExists "|Group"`) parent ($geo+"_sec_rig_grp") "|Group";
+			else parent ($geo+"_sec_rig_grp") "|Character";
+						
+			confirmDialog -t "Done!" -m "Rig created. Adjust wire dropoff distance and controller parent blending values and check parenting if required." -b "Okay";
+		}
+	}
+}
+clothWire();
