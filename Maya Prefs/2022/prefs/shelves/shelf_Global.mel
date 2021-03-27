@@ -1,0 +1,1742 @@
+global proc shelf_Global () {
+    global string $gBuffStr;
+    global string $gBuffStr0;
+    global string $gBuffStr1;
+
+
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "ECode" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Ecode" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "envBall.svg" 
+        -image1 "envBall.svg" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import sys\nimport os\nsys.path.append('B:/Eternal_Code_Directory')\nimport Procs\nimport ECUI\nreload(Procs)\nreload(ECUI)" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "#skintransfer\n\n\n\n\nimport maya.cmds as cmds\nimport maya.mel as me..." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "#skintransfer\n\n\n\n\nimport maya.cmds as cmds\nimport maya.mel as me..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "skin.png" 
+        -image1 "skin.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "#skintransfer\n\n\n\n\nimport maya.cmds as cmds\nimport maya.mel as mel\ndef sknTransferUI():\n            \n    if cmds.window('SkinTransfer', exists=True ):\n        cmds.deleteUI( 'SkinTransfer', window=True )\n    if cmds.windowPref('SkinTransfer', exists=True ):\n        cmds.windowPref( 'SkinTransfer', r=True )\n    \n    cmds.window('SkinTransfer', title='Skin Transfer', iconName='Short Name', widthHeight=(336,150),s=0 )\n    \n    form = cmds.formLayout(numberOfDivisions=100,bgc =[(.294),(.294),(.294)])\n    source = cmds.textField('sourcetxf',w=150,h=40)\n    \n    destination = cmds.textScrollList('asd',h=40,w=150)\n    \n    sourceButton = cmds.button(l='Source',w=150,bgc =[(.394),(.394),(.394)],c='sourceobjs()')\n    destinationButton = cmds.button(l='Destination',w=150,bgc =[(.394),(.394),(.394)],c='destinationObjs()')\n    transfer = cmds.button(l='Transfer',w=310,bgc =[(.2),(.5),(.4)],h=25,c='Transfer()')\n    author = cmds.symbolButton(i='UV_Freeze_Tool.png',c='author()')\n    \n    \n    cmds.formLayout(form,edit=True,attachForm=[\n    (source,'top',10),\n    (destination,'top',11),\n    (sourceButton,'top',60),\n    (destinationButton,'top',60),\n    (transfer,'top',91),\n    (author,'top',120),\n    \n    \n    \n    (source,'left',12),\n    (destination,'left',12),\n    (sourceButton,'left',12),\n    (destinationButton,'left',12),\n    (transfer,'left',12),\n    (author,'left',302),\n    \n            \n            \n            \n            \t\n    \n    \n    \n    \n    \n    \n    ],\n    attachControl=[\n    \n    (destination, 'left', 10, source), \n    (sourceButton, 'bottom', 20, source), \n    (destinationButton, 'left', 10, sourceButton), \n    \n    \n    \n    \n        \t\n        \t\n    \n    ]\n    \n    \n    \n    \n    \n    \n    \n    )\n            \n            \n            \n            \n    cmds.showWindow('SkinTransfer')\n        \n        \nobjlst=[]    \nsourceobjctlst=[]\ndef sourceobjs():\n    print 'f'\n    sel = cmds.ls(sl=True)\n    cmds.textField('sourcetxf',e=True,tx=str(sel[0]),ed=0)\n    sourceobjctlst.append(sel[0])\n    \n    \ndef destinationObjs():\n    cmds.textScrollList('asd',e=True,ra=True)\n    \n    destsel = cmds.ls(sl=True)\n    for i in destsel:\n        cmds.textScrollList('asd',e=True,a=i)\n        objlst.append(i)\n        \n    \n    \n\n    \ndef Transfer():\n    cmds.select(cl=True)\n    sel = str(sourceobjctlst[0])\n    a = mel.eval(\"findRelatedSkinCluster(\"+'\"'+sel+'\"'+\")\")\n    infJnts=cmds.skinCluster(a,q=True,wi=True)\n    cmds.select(infJnts,r=True)\n    for i in objlst:\n        try:\n            cmds.skinCluster(i,e=True,ub=True)\n        except:\n            \n            pass\n            \n        b = cmds.skinCluster(infJnts,i,mi=5)\n        cmds.select(sel,i)\n        mel.eval(\"copySkinWeights  -noMirror -surfaceAssociation closestPoint -influenceAssociation closestJoint -normalize;\")\n        cmds.select(cl=True)\n        sknTransferUI()\n        \n    \n\ndef author():\n    cmds.launch(web='https://www.facebook.com/sidmehraajm/') \n    \n    \n    \nsknTransferUI()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Edit the references for the current scene" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Reference Editor" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "reference.svg" 
+        -image1 "reference.svg" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "ReferenceEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Create a NURBS circle on the grid" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Circle" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "circle.png" 
+        -image1 "circle.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "circle -c 0 0 0 -nr 0 1 0 -sw 360 -r 1 -d 3 -ut 0 -tol 0.01 -s 8 -ch 1; objectMoveCommand" 
+        -sourceType "mel" 
+        -doubleClickCommand "CreateNURBSCircleOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Create a curve on the grid or live surface specifying control vertices" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "CV Curve Tool" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "curveCV.png" 
+        -image1 "curveCV.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CVCurveTool" 
+        -sourceType "mel" 
+        -doubleClickCommand "CVCurveToolOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "NURBS Plane" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "NURBS Plane" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "plane.png" 
+        -image1 "plane.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CreateNURBSPlane" 
+        -sourceType "mel" 
+        -doubleClickCommand "CreateNURBSPlaneOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Select the skin and unused joints and influences will be disconnected to improve performance." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Remove Unused Influences" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "RUI" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconSkinning.png" 
+        -image1 "menuIconSkinning.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "RemoveUnusedInfluences" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Removes weights below a specified value" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Prune Small Weights" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "PSW" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconSkinning.png" 
+        -image1 "menuIconSkinning.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "PruneSmallWeights" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Assigns selected vertices with the same weight values as their neighboring vertices" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Hammer Skin Weights" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "HSW" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconSkinning.png" 
+        -image1 "menuIconSkinning.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "WeightHammer" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Opens the Set Driven Key window; driven keys use one object's attribute(s) to drive the animation of other attribute(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Set..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "setDrivenKeyframe.png" 
+        -image1 "setDrivenKeyframe.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "SetDrivenKey" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "import pymel.core as pm\nsl = pm.ls(sl=1)\ntry:\n    pm.delete(pm.parentConstraint(sl[0],sl[1]))\nexcept:\n    pm.matchTransform(sl[1],sl[0],pos =1, rot=1)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "M" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "grabUVTool.png" 
+        -image1 "grabUVTool.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import pymel.core as pm\nsl = pm.ls(sl=1)\ntry:\n    pm.delete(pm.parentConstraint(sl[0],sl[1]))\nexcept:\n    pm.matchTransform(sl[1],sl[0],pos =1, rot=1)" 
+        -sourceType "python" 
+        -doubleClickCommand "pm.delete(pm.parentConstraint())" 
+        -commandRepeatable 1
+        -flat 1
+        -mi "Point" ( "import pymel.core as pm\nsl = pm.ls(sl=1)\ntry:\n    pm.delete(pm.pointConstraint(sl[0],sl[1]))\nexcept:\n    pm.matchTransform(sl[1],sl[0],pos =1)" )
+        -mip 0
+        -mi "ParentScale" ( "import pymel.core as pm\nsl = pm.ls(sl=1)\ntry:\n    pm.delete(pm.parentConstraint(sl[0],sl[1]))\n    pm.delete(pm.scaleConstraint(sl[0],sl[1]))\nexcept:\n    pm.matchTransform(sl[1],sl[0],pos =1, rot=1,scl=1)" )
+        -mip 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 34
+        -enable 1
+        -width 37
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "sel = pm.ls(sl=1)[0]\nhis = pm.listHistory(sel)\nSkin = pm.ls(his,type = 'skinCluster')[0]\ninfJnts=pm.skinCluster(Skin,q=True,wi=True)\npm.select(infJnts,r=True)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "InfJnts" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "InfJnts" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "particleTranspMapper.svg" 
+        -image1 "particleTranspMapper.svg" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "sel = pm.ls(sl=1)[0]\nhis = pm.listHistory(sel)\nSkin = pm.ls(his,type = 'skinCluster')[0]\ninfJnts=pm.skinCluster(Skin,q=True,wi=True)\npm.select(infJnts,r=True)" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Opens the Graph Editor, a tool for editing animation curves" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Graph Editor" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "GE" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconWindow.png" 
+        -image1 "menuIconWindow.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "GraphEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Edit various component values for the selected object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Component Editor" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "CpEd" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconWindow.png" 
+        -image1 "menuIconWindow.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "ComponentEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Edit deformer set membership" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Deformer Sets" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "DS" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconWindow.png" 
+        -image1 "menuIconWindow.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "DeformerSetEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Edit the attributes of the selected object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Attribute Spread Sheet" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "SpSh" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconWindow.png" 
+        -image1 "menuIconWindow.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "SpreadSheetEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Delete constraints on the selected object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Constraints" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Cons" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconEdit.png" 
+        -image1 "menuIconEdit.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "DeleteConstraints" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Make a set containing the selected object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Set" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Set" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconEdit.png" 
+        -image1 "menuIconEdit.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CreateSet" 
+        -sourceType "mel" 
+        -doubleClickCommand "CreateSetOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Delete construction history on the selected object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "History" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Hist" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconEdit.png" 
+        -image1 "menuIconEdit.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "DeleteHistory" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Delete static channels on the selected object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Static Channels" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "SC" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconEdit.png" 
+        -image1 "menuIconEdit.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "DeleteStaticChannels" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Select an object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Center Pivot" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "CP" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconModify.png" 
+        -image1 "menuIconModify.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CenterPivot" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Select an object(s)" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Freeze Transformations" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "FT" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconModify.png" 
+        -image1 "menuIconModify.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "FreezeTransformations" 
+        -sourceType "mel" 
+        -doubleClickCommand "FreezeTransformationsOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Rename objects in scene" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Search and Replace Names..." 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "SaRN" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconModify.png" 
+        -image1 "menuIconModify.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "SearchAndReplaceNames" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Select hierarchy" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Hierarchy" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Hier" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "menuIconSelect.png" 
+        -image1 "menuIconSelect.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "SelectHierarchy" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Click to place joint, click on existing joint to add to skeleton, click/drag to position joint" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Create Joints" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "kinJoint.png" 
+        -image1 "kinJoint.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "JointTool" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "BS" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "BS" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "blendShape.png" 
+        -image1 "blendShape.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "sl = pm.ls(sl=1)\ntgt = sl[-1]\nsrc = sl\nsrc.pop(-1)\nfor i in src:\n    hs = pm.listHistory(tgt)\n    try:\n        bs = pm.ls(hs, type = 'blendShape')[0]\n        if bs:\n            aliasName = pm.aliasAttr(bs, query=True)\n            indx = len(aliasName)/2+1\n            pm.blendShape(bs, e=1, t =(tgt,indx,i,1))\n        \n    except:\n        pm.blendShape(i,tgt,foc=1,n = i+ '_Blendshape')\n        \n\n\n\n\n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Creates a transform driven deformation for a set of points on an object (CVs, vertices, or lattice points)." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Cluster" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "cluster.png" 
+        -image1 "cluster.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CreateCluster" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Smooth bind skin" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Bind Skin" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "smoothSkin.png" 
+        -image1 "smoothSkin.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "SmoothBindSkin" 
+        -sourceType "mel" 
+        -doubleClickCommand "SmoothBindSkinOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Detach skin options" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "unbindSkinDialog" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "detachSkin.png" 
+        -image1 "detachSkin.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "DetachSkinOptions" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Paint weights on smooth bound skins" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Paint Skin Weights" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "paintSkinWeights.png" 
+        -image1 "paintSkinWeights.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "ArtPaintSkinWeightsTool" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Create a locator object on the grid" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Locator" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "locator.png" 
+        -image1 "locator.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CreateLocator" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Constrain one object to the position of another." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Point" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "posConstraint.png" 
+        -image1 "posConstraint.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "doCreatePointConstraintArgList 1 { \"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"1\",\"\",\"1\" };" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Constrain one object to the position/orientation/scale of another." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Parent" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "parentConstraint.png" 
+        -image1 "parentConstraint.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "doCreateParentConstraintArgList 1 { \"1\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"0\",\"1\",\"\",\"1\" };" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Constrain one object to the scale of another." 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Scale" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "scaleConstraint.png" 
+        -image1 "scaleConstraint.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "doCreateScaleConstraintArgList 1 { \"0\",\"1\",\"1\",\"1\",\"0\",\"0\",\"0\",\"1\",\"\",\"1\" };" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Aim Constraint" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Aim Constraint" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "aimConstraint.png" 
+        -image1 "aimConstraint.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "AimConstraint" 
+        -sourceType "mel" 
+        -doubleClickCommand "AimConstraintOptions" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Copy skin weights options" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "copySkinWeightsDialog" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "copySkinWeight.png" 
+        -image1 "copySkinWeight.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "CopySkinWeightsOptions" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Mirror skin weights options" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "mirrorSkinWeightsDialog" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "mirrorSkinWeight.png" 
+        -image1 "mirrorSkinWeight.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "MirrorSkinWeightsOptions" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Returns the skeleton to the position where its bind pose was set" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Go to Bind Pose" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "goToBindPose.png" 
+        -image1 "goToBindPose.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "GoToBindPose" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Adjust blend shape weights" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Shape Editor" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "blendShapeEditor.png" 
+        -image1 "blendShapeEditor.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "ShapeEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Select a joint to mirror" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Mirror Joints" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "kinMirrorJoint_S.png" 
+        -image1 "kinMirrorJoint_S.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "mirrorJoint -mirrorXY -mirrorBehavior" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Add influence options" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "addInfluenceDialog" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "addWrapInfluence.png" 
+        -image1 "addWrapInfluence.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "AddInfluenceOptions" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "SS" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "SS" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "skinWeightCopy.png" 
+        -image1 "skinWeightCopy.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "#skintransfer\n\n\n\nimport pymel.core as pm\nimport maya.cmds as cmds\nimport maya.mel as mel\ndef sknTransferUI():\n            \n    if cmds.window('SkinTransfer', exists=True ):\n        cmds.deleteUI( 'SkinTransfer', window=True )\n    if cmds.windowPref('SkinTransfer', exists=True ):\n        cmds.windowPref( 'SkinTransfer', r=True )\n    \n    cmds.window('SkinTransfer', title='Skin Transfer', iconName='Short Name', widthHeight=(336,150),s=0 )\n    \n    form = cmds.formLayout(numberOfDivisions=100,bgc =[(.294),(.294),(.294)])\n    source = cmds.textField('sourcetxf',w=150,h=40)\n    \n    destination = cmds.textScrollList('asd',h=40,w=150)\n    \n    sourceButton = cmds.button(l='Source',w=150,bgc =[(.394),(.394),(.394)],c='sourceobjs()')\n    destinationButton = cmds.button(l='Destination',w=150,bgc =[(.394),(.394),(.394)],c='destinationObjs()')\n    transfer = cmds.button(l='Transfer',w=310,bgc =[(.2),(.5),(.4)],h=25,c='Transfer()')\n    author = cmds.symbolButton(i='UV_Freeze_Tool.png',c='author()')\n    \n    \n    cmds.formLayout(form,edit=True,attachForm=[\n    (source,'top',10),\n    (destination,'top',11),\n    (sourceButton,'top',60),\n    (destinationButton,'top',60),\n    (transfer,'top',91),\n    (author,'top',120),\n    \n    \n    \n    (source,'left',12),\n    (destination,'left',12),\n    (sourceButton,'left',12),\n    (destinationButton,'left',12),\n    (transfer,'left',12),\n    (author,'left',302),\n    \n            \n            \n            \n            \t\n    \n    \n    \n    \n    \n    \n    ],\n    attachControl=[\n    \n    (destination, 'left', 10, source), \n    (sourceButton, 'bottom', 20, source), \n    (destinationButton, 'left', 10, sourceButton), \n    \n    \n    \n    \n        \t\n        \t\n    \n    ]\n    \n    \n    \n    \n    \n    \n    \n    )\n            \n            \n            \n            \n    cmds.showWindow('SkinTransfer')\n        \n        \nobjlst=[]    \nsourceobjctlst=[]\ndef sourceobjs():\n    print 'f'\n    sel = cmds.ls(sl=True)[0]\n    a = sel.encode('utf8')\n    \n    cmds.textField('sourcetxf',e=True,tx=a,ed=0)\n    sourceobjctlst.append(sel[0])\n    \n    \ndef destinationObjs():\n    cmds.textScrollList('asd',e=True,ra=True)\n    \n    destsel = cmds.ls(sl=True)\n    for i in destsel:\n        cmds.textScrollList('asd',e=True,a=i)\n        objlst.append(i)\n        \n    \n    \n\n    \ndef Transfer():\n    cmds.select(cl=True)\n    sel = str(sourceobjctlst[0])\n    a = mel.eval(\"findRelatedSkinCluster(\"+'\"'+sel+'\"'+\")\")\n    infJnts=cmds.skinCluster(a,q=True,wi=True)\n    cmds.select(infJnts,r=True)\n    for i in objlst:\n        try:\n            cmds.skinCluster(i,e=True,ub=True)\n        except:\n            \n            pass\n            \n        b = cmds.skinCluster(infJnts,i,mi=5)\n        cmds.select(sel,i)\n        mel.eval(\"copySkinWeights  -noMirror -surfaceAssociation closestPoint -influenceAssociation closestJoint -normalize;\")\n        cmds.select(cl=True)\n        \n    \n\ndef author():\n    cmds.launch(web='https://www.facebook.com/sidmehraajm/') \n    \n    \n    \nsknTransferUI()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Orient joint options" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "orientJointOptionItem" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "orientJoint.png" 
+        -image1 "orientJoint.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "OrientJointOptions" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "ParentConstraint;\nScaleConstraint;" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "ParentConstraint;\nScaleConstraint;" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "P.Cn+S.Cn" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "arealight.png" 
+        -image1 "arealight.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "parentConstraint -mo;\nscaleConstraint -mo;" 
+        -sourceType "mel" 
+        -doubleClickCommand "pointConstraint -mo;\n" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Attr" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "AMan" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "attributes.png" 
+        -image1 "attributes.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "/*  This file downloaded from Highend3d.com\n''  \n''  Highend3d.com File Information:\n''  \n''    Script Name: attributeMan v1.0\n''    Author: Hamish McKenzie and David Walden\n''    Last Updated: June 1, 2004\n''    Update/Change this file at:\n''    http://www.highend3d.com/maya/mel/?section=project#2938\n''  \n''  Please do not alter any information above this line\n''  it is generated dynamically by Highend3d.com and will\n''  be changed automatically on any updates.\n*/\n\n//attributeMan.mel\n//a script by:\n// Hamish McKenzie- mel@macaroniKazoo.com - www.macaronikazoo.com\n// David Walden-  dwalden74@hotmail.com - www.davidwalden.com\n//\n//created May 5-18 2004\n//\n//this script manages attributes - it can rename without reordering, it can reorder attributes, it\n//can transfer attributes between objects\n//\n//type attributeManager to open the UI, press the load Obj button to see its attributes\n//see the help for more information\n//\n//©2004 David Walden\n//©2004 macaroniKazoo\n\n\n\n\n//------\n//this proc will return a reordered array.  it takes a list of elements to be shifted, and a direction to shift\n//them in.  up is shifting the elements towards zero, and down, the other way.  The entries array is zero based\n//\n//NOTE: this proc doesn't \"wrap\" array entries.  If you try to move entry zero up, it will simply return the\n//original array.\n//\n//example:\n//zooAttrManUtilsArrayReorder { \"a\", \"b\", \"c\", \"d\", \"e\" } { 2,3 } up\n//returns the array { \"a\", \"c\", \"d\", \"b\", \"e\" }\n//------\nglobal proc string[] zooAttrManUtilsArrayReorder( string $array[], int $entries[], string $dir ) {\n\tstring $newArray[] = $array;\n\tint $gaps[];\n\tint $be;\n\n\tif( !`size $entries` ) return $array;\n\t$entries = `sort $entries`;\n\t$gaps[0] = $entries[0];\n\tfor( $n = 0; $n < `size $entries`-1; $n++ ) if( $entries[$n]+1 != $entries[( $n+1 )] ) {\n\t\t$gaps[( `size $gaps` )] = $entries[$n];\n\t\t$gaps[( `size $gaps` )] = $entries[( $n+1 )];\n\t\t}\n\t$gaps[( `size $gaps` )] = $entries[( `size $entries`-1 )];\n\n\tfor( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == \"up\" ) $newArray = `zooAttrManUtilsArrayShiftUp $newArray $gaps[$n] $gaps[( $n+1 )]`;\n\tfor( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == \"down\" ) $newArray = `zooAttrManUtilsArrayShiftDown $newArray $gaps[$n] $gaps[( $n+1 )]`;\n\n\treturn $newArray;\n\t}\n\n\n\n//------\n//this is a sub proc used by the zooAttrManUtilsArrayReorder proc, it handles shifting subsections\n//of an array.\n//shifts entries inclusive from the start index, to the end index up (ie towards zero) in an array\n//------\nglobal proc string[] zooAttrManUtilsArrayShiftUp( string $array[], int $startIndex, int $endIndex ) {\n\tstring $newArray[];\n\tint $displaced = $startIndex-1;\n\tint $num = ( $endIndex-$startIndex )+1;\n\n\tif( $startIndex == 0 ) return $array;\n\n\t//copy the original array to the newArray variable\n\tfor( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];\n\n\tint $i = $startIndex-1;\n\tfor( $n = 0; $n < $num; $n++, $i++) $newArray[$i] = $array[( $i+1 )];\n\n\t$newArray[$endIndex] = $array[$displaced];\n\treturn $newArray;\n\t}\n\n\n\n//------\n//shifts entries inclusive from the start index, to the end index down (ie away from zero) in an array\n//------\nglobal proc string[] zooAttrManUtilsArrayShiftDown( string $array[], int $startIndex, int $endIndex ) {\n\tstring $newArray[];\n\tint $displaced = $endIndex+1;\n\tint $num = ( $endIndex-$startIndex )+1;\n\n\tif( $endIndex >= `size $array`-1 ) return $array;\n\n\t//copy the original array to the newArray variable\n\tfor( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];\n\n\tint $i = $startIndex+$num;\n\tfor( $n = 0; $n < $num; $i--, $n++ ) $newArray[$i] = $array[( $i-1 )];\n\n\t$newArray[$startIndex] = $array[$displaced];\n\treturn $newArray;\n\t}\n\n\n\n//------\n//returns the first entry in an array.\n//this is useful for commands that only return a single string, but return an array\n//\n//example: string $constraint = zooAttrManUtilsReturnElement( 0,`parentConstraint -mo $obj2 $obj1` );\n//example: string $parent = zooAttrManUtilsReturnElement( 0,`listRelatives -p $obj2` );\n//------\nglobal proc string zooAttrManUtilsReturnElement( int $entry, string $array[] ) {\n\tif( $entry<0 ) $entry = `size $array` + $entry;\n\treturn $array[$entry];\n\t}\n\n\n\n//------\n//this proc deals with getting the attribute selection from the UI, and passing it to the reorder proc below\n//------\nglobal proc zooDoReorder( string $dir ) {\n\tstring $validTypes[] = { \"bool\", \"enum\", \"long\", \"double\" };\n\tstring $obj = `text -q -l dwAttrManObjTXT`;\n\tstring $selAttrs[] = `textScrollList -q -si dwAttrManTSL`;\n\tif( !`size $selAttrs` ) return;\n\n\tstring $attrs[] = `listAttr -k -ud $obj`;\n\tstring $validAttrs[];\n\tint $toReorder[];\n\n\t//filters the list of attributes - the re-ordering process only works on attributes that show up in the channel box\n\tfor( $n=0; $n<`size $attrs`; $n++ ) {\n\t\tstring $type = `addAttr -q -at ( $obj +\".\"+ $attrs[$n] )`;\n\t\tint $isValid = 0;\n\t\tfor( $a in $validTypes ) if( $type == $a ) { $isValid = 1; break; }\n\t\tif( $isValid ) $validAttrs[( `size $validAttrs` )] = $attrs[$n];\n\t\t}\n\n\t//gets a list of which attributes are selected, and puts their indicies into an array\n\tfor( $n=0; $n<`size $validAttrs`; $n++ ) for( $a in $selAttrs ){\n\t\tif( $a == $validAttrs[$n] ) $toReorder[( `size $toReorder` )] = $n;\n\t\t}\n\n\tstring $newOrder[] = `zooAttrManUtilsArrayReorder $validAttrs $toReorder $dir`;\n\tzooAttrManReorder $obj $newOrder;\n\tdwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;\n\tfor( $a in $selAttrs ) textScrollList -e -si $a dwAttrManTSL;\n\t}\n\n\n\n//------\n//reorders dynamic attributes on an object\n//NOTE: this proc is taken from zooReorderAttribs - its put here for the sake of simplicity\n//------\nglobal proc zooAttrManReorder ( string $obj, string $newAttribOrder[] ) {\n\tstring $selObjs[] = `ls -sl`;\n\tfor ( $attrib in $newAttribOrder ) {\n\t\t//if the attribute is locked, we'll need to unlock it to rename it\n\t\tint $isAttrLocked = `getAttr -l ( $obj + \".\" + $attrib )`;\n\t\tif( $isAttrLocked ) setAttr -l 0 ( $obj + \".\" + $attrib );\n\n\t\t//rename the attribute to a temporary name.  You can't rename it to its own name, so we need to rename it to a proxy name, and then back again\n\t\tstring $tempAttrib = `renameAttr ( $obj + \".\" + $attrib ) \"temp\"`;\n\t\trenameAttr ( $obj + \".\" + $tempAttrib ) $attrib;\n\n\t\t//if the attribute WAS locked, lock it again, in order to maximise transparency\n\t\tif( $isAttrLocked ) setAttr -l 1 ( $obj + \".\" + $attrib );\n\t\t}\n\n\tselect -r $selObjs;\n\tselect $selObjs;\n\t}\n\n\n\n//------\n//this proc deals with getting the new attribute name from the UI, and renaming the attribute\n//------\nglobal proc zooAttrManDoRename() {\n\tstring $obj = `text -q -l dwAttrManObjTXT`;\n\tstring $selAttrs[] = `textScrollList -q -si dwAttrManTSL`;\n\tstring $oldName = $selAttrs[0];\n\tstring $newName = `textField -q -tx dwNewAttrName`;\n\n\tzooAttrManRenameAttrInPlace $obj $oldName $newName;\n\n\tdwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;\n\ttextScrollList -e -si $newName dwAttrManTSL;\n\t}\n\n\n\n//------\n//renames an attribute without changing its order\n//NOTE: this proc is taken from zooReorderAttribs - its put here for the sake of simplicity\n//------\nglobal proc zooAttrManRenameAttrInPlace( string $obj, string $oldAttr, string $newAttr ) {\n\tstring $attrs[] = `listAttr -k -ud $obj`;\n\n\tfor( $n=0; $n<`size $attrs`; $n++ ) if( $attrs[$n] == $oldAttr ) {\n\t\tint $isLocked = `getAttr -l ( $obj + \".\" + $attrs[$n] )`;\n\t\tsetAttr -l 0 ( $obj + \".\" + $attrs[$n] );\n\t\trenameAttr ( $obj + \".\" + $attrs[$n] ) $newAttr;\n\t\t$attrs[$n] = $newAttr;\n\t\tsetAttr -l $isLocked ( $obj + \".\" + $attrs[$n] );\n\t\t}\n\n\tzooAttrManReorder $obj $attrs;\n\t}\n\n\n\n///////////////////////////////////////////////////////////////\n\n//Proc loads the attributes for the selected object into the UI.\n//For now we´re skipping all compound attributes...they´re tricky lil´ bastards...!\nglobal proc dwAttrMan_LoadAttributes (string $obj, int $keyableCheck)\n{\n//string $sel[] = `ls -sl -o`;\nif (! `objExists $obj`)\n\t{\n\tprint \"Object invalid or unspecified. Try again.\\n\";\n\treturn;\n\t}\n\n//Query user-defined attrs, depending on $keyableCheck int.\nstring $attrs[];\nif ($keyableCheck)\n\t$attrs = `listAttr -ud -k $obj`;\nelse\n\t$attrs = `listAttr -ud $obj`;\n\n\n//if the attribute is a \"vector\" (ie the vector type was checked when the attribute was added)\n//then explicitly list all its children\nstring $expandedAttrs[];\nfor( $a in $attrs ) {\n\tstring $children[] = `attributeQuery -listChildren -n $obj $a`;\n\tif( `size $children` ) for( $b in $children ) $expandedAttrs[( `size $expandedAttrs` )] = $b;\n\telse $expandedAttrs[( `size $expandedAttrs` )] = $a;\n\t}\n//clear $attrs;\n//$attrs = $expandedAttrs;\n//$attrs = `stringArrayRemoveDuplicates $attrs`;\n\n\n//if (! `size $attrs`)\n//\tprint ($obj + \" has no custom attributes.\\n\");\n\n\n//Load obj name\ntext -e -l $obj dwAttrManObjTXT;\n//Remove all from TSL.\ntextScrollList -e -ra dwAttrManTSL;\n//Load attrs\nfor ($a in $attrs)\n\t{\n\t//Skip over compound attributes for now.\n\t//string $parent = `addAttr -q -parent ($obj + \".\" + $a)`;\n\t//string $parentType = `addAttr -q -attributeType ($obj + \".\" + $parent)`;\n\t//if (($parentType == \"double3\") || ($parentType == \"double2\") || ($parentType == \"float3\") || ($parentType == \"float2\"))\n\t//\tcontinue;\n\tstring $parent = `addAttr -q -parent ($obj + \".\" + $a)`;\n\t//Only add parent attributes (for compound). Compound attrs should be transferred as a group.\n\t//print $parent;\n\tif ($parent == $a)\n\t\ttextScrollList -e -a $a dwAttrManTSL;\n\t}\n}\n\n///////////////////////////////////////////////////////////////\n\n\n//Proc transfers connections from a given object attribute to a target object attribute.\nglobal proc int dwAttrMan_TransferConnections(string $sourceObj, \t\t//Source obj.\n\t\t\t\t\t\t\tstring $attr, \t\t//Source attribute.\n\t\t\t\t\t\t\tstring $targetObj, \t//Target obj.\n\t\t\t\t\t\t\tint $isMulti)\t\t//Is the attribute a multi attribute?\n{\n//Get all connection to- and from- the source object attribute.\nstring $sourceConnections[] = `listConnections -source 1 -destination 0 -plugs 1 ($sourceObj + \".\" + $attr)`;\nstring $destinationConnections[] = `listConnections -source 0 -destination 1 -plugs 1 ($sourceObj + \".\" + $attr)`;\n\n\n//If the source obj´s \".message\" attribute is connected to the same obj as $sourceConnections, then it is locked and we can´t transfer it.\nstring $messageConnections[] = `listConnections -source 0 -destination 1 -plugs 1 ($sourceObj + \".message\")`;\nstring $messageBuffer[];\nstring $destinationBuffer[];\nint $isLockedByMessage = 0;\nint $n = 0;\nif (`size $messageConnections`)\n\t{\n\ttokenize $messageConnections[0] \".\" $messageBuffer;\n\ttokenize $destinationConnections[0] \".\" $destinationBuffer;\n\tfor ($n = 0; $n < `size $destinationConnections`; $n++)\n\t\t{\n\t\tif ($messageBuffer[0] == $destinationBuffer[$n])\n\t\t\t{\n\t\t\twarning ($sourceObj + \".\" + $attr + \" is locked to \" + $destinationBuffer[$n] + \". Cannot transfer connections for this attribute.\");\n\t\t\t$isLockedByMessage = 1;\n\t\t\t}\n\t\t}\n\t}\nif ($isLockedByMessage)\n\treturn $isLockedByMessage;\n\n\n//Disconnect old attributes and make connections for new attribute.\n//SOURCE CONNECTIONS (CONNECTIONS COMING FROM OTHER OBJECTS).\nint $i = 0;\nfor ($s in $sourceConnections)\n\t{\n\t//If the attribute is multi, we have to find the indexes that are connected.\n\tif ($isMulti)\n\t\t{\n\t\t//Not sure how important $indexMatters really is... it seems to work fine without specifiying it, so let´s ignore it for now.\n\t\t//if ($indexMatters)\n\t\t//\t{\n\t\t\tdisconnectAttr $s ($sourceObj + \".\" + $attr + \"[\" + $i + \"]\");\n\t\t\tconnectAttr -f $s ($targetObj + \".\" + $attr + \"[\" + $i + \"]\");\n\t\t//\t}\n\t\t//else if (! $indexMatters)\n\t\t//\t{\n\t\t//\tdisconnectAttr -na $s ($sourceObj + \".\" + $attr);\n\t\t//\tconnectAttr -f -na $s ($targetObj + \".\" + $attr);\n\t\t//\t}\n\t\t}\n\telse\n\t\t{\n\t\tdisconnectAttr $s ($sourceObj + \".\" + $attr);\n\t\tconnectAttr -f $s ($targetObj + \".\" + $attr);\n\t\t}\n\t$i++;\n\t}\n//DESTINATION CONNECTIONS (CONNECTIONS GOING TO OTHER OBJECTS).\n$i = 0;\nfor ($d in $destinationConnections)\n\t{\n\t//If the attribute is multi, we have to find the indexes that are connected.\n\tif ($isMulti)\n\t\t{\n\t\t//if ($indexMatters)\n\t\t//\t{\n\t\t\tdisconnectAttr ($sourceObj + \".\" + $attr + \"[\" + $i + \"]\") $d;\n\t\t\tconnectAttr -f ($targetObj + \".\" + $attr + \"[\" + $i + \"]\") $d;\n\t\t//\t}\n\t\t//else if (! $indexMatters)\n\t\t//\t{\n\t\t//\tdisconnectAttr -na ($sourceObj + \".\" + $a) $d;\n\t\t//\tconnectAttr -f -na ($targetObj + \".\" + $a) $d;\n\t\t//\t}\n\t\t}\n\telse\n\t\t{\n\t\tdisconnectAttr ($sourceObj + \".\" + $attr) $d;\n\t\tconnectAttr -f ($targetObj + \".\" + $attr) $d;\n\t\t}\n\t$i++;\n\t}\n\n//Return if the object is locked by its message attribute.\nreturn $isLockedByMessage;\n}\n\n///////////////////////////////////////////////////////////////\n\n\n//Proc returns 1 if the attribute is a compound type attr, 0 if not. \"Compound\" attributes require the \"-nc\" flag, other\n//attribs of compound type do not.\nglobal proc int dwAttrMan_IsCompoundType(string $sourceObj, string $attribute)\n{\nstring $type = `addAttr -q -attributeType ($sourceObj + \".\" + $attribute)`;\n\nif (($type == \"reflectance\") || ($type == \"spectrum\") || ($type == \"float2\") || ($type == \"float3\")\n\t\t || ($type == \"double2\") || ($type == \"double3\") || ($type == \"long2\") || ($type == \"long3\")\n\t\t || ($type == \"short2\") || ($type == \"short3\") || ($type == \"compound\"))\n\treturn 1;\nelse\n\treturn 0;\n}\n\n\n///////////////////////////////////////////////////////////////\n//Proc returns 1 if the attr requires the \"-dataType\" flag. 0 if not.\nglobal proc int dwAttrMan_IsDataType(string $object, string $attr)\n{\nstring $type = `addAttr -q -attributeType ($object + \".\" + $attr)`;\n\nif ($type == \"typed\")\n\treturn 1;\nelse\n\treturn 0;\n}\n\n///////////////////////////////////////////////////////////////\n\n//Proc transfers attributes from the selection in the UI list to the selected obj.\n//All connections to- and from- the attribute are maintained (if user desires), and attributes on original obj are deleted (if user desires).\n//Note: for compound attributes, we will only input the parent attribute into this procedure. That means we need to query the children attrs.\nglobal proc dwAttrMan_TransferAttributes(string $sourceObj,\t\t\t  //Source object\n\t\t\t\t\t\tstring $attrs[], \t  //Attr list\n\t\t\t\t\t\tstring $parent,\t\t  //Parent attr (necessary for compound attrs)\n\t\t\t\t\t\tint $transferConnections, //Transfer connections?\n\t\t\t\t\t\tint $deleteOriginals)\t  //Delete original attrs?\n{\nif (! `objExists $sourceObj`)\n\terror \"Source object specified incorrectly. Try again.\";\nif (! `size $attrs`)\n\terror \"No attributes selected in list. Try again.\";\nstring $sel[] = `ls -sl -o`;\nif (! `size $sel`)\n\terror \"Nothing selected. Select one object and try again.\";\nif (`size $sel` > 1)\n\terror \"Select only one object and try again.\";\n\n//Report error if user wants to transfer attribute to same obj.\nif ($sel[0] == $sourceObj)\n\terror (\"Selected object is the same as the source. Try again.\");\n\n//Report error if attribute already exists on target obj. Do this BEFORE transferring anything.\nfor ($a in $attrs)\n\t{\n\tif (`attributeExists $a $sel[0]`)\n\t\terror (\"Attribute \\\"\" + $a + \"\\\" conflicts with name of existing attribute on target \" + $sel[0] + \". Try again.\");\n\t}\n\nint $numberOfChildren;\nfor ($a in $attrs)\n\t{\n\t//GET ALL THE INFORMATION ABOUT THE ATTRIBUTE.\n\t//Get the -attributeType flag. For now we are skipping attributes that require the \"-dataType\" flag.\n\tstring $type = `addAttr -q -attributeType ($sourceObj + \".\" + $a)`;\n\t//IF THE ATTRIBUTE IS A COMPOUND ATTRIBUTE, GET ITS CHILDREN.\n\n\tstring $children[];\n\tint $isCompoundType = `dwAttrMan_IsCompoundType $sourceObj $a`;\n\tif ($isCompoundType)\n\t\t{\n\t\t//Assign $numberOfChildren only if the attr is a compound type.\n\t\t$numberOfChildren = `addAttr -q -numberOfChildren ($sourceObj + \".\" + $a)`;\n\t\t//Get list of children attrs.\n\t\t$children = `listAttr ($sourceObj + \".\" + $a)`;\n\t\t//Remove parent name from $children array.\n\t\t$children = `stringArrayRemove {$a} $children`;\n\t\t//print $children; return;\n\t\t}\n\n\tint $keyable = `getAttr -keyable ($sourceObj + \".\" + $a)`;\n\tint $locked = `getAttr -lock ($sourceObj + \".\" + $a)`;\n\t//Let´s ignore the attribute value for now.\n\t//$value = `getAttr ($sourceObj + \".\" + $a)`;\n\tstring $longName = `addAttr -q -longName ($sourceObj + \".\" + $a)`;\n\tstring $shortName = `addAttr -q -shortName ($sourceObj + \".\" + $a)`;\n\n\t//Get range information (if attr is not a string type or a vector type (double3)).\n\tint $hasMin; int $hasMax; float $minValue; float $maxValue; int $hasSoftMin;\n\tint $hasSoftMax; float $softMinValue; float $softMaxValue;\n\tif (($type != \"typed\") && ($type != \"message\") && ($type != \"fltMatrix\") && ($type != \"matrix\") && (! $isCompoundType))\n\t\t{\n\t\t$hasMin = `addAttr -q -hasMinValue ($sourceObj + \".\" + $a)`;\n\t\t$hasMax = `addAttr -q -hasMaxValue ($sourceObj + \".\" + $a)`;\n\t\t$minValue = `addAttr -q -minValue ($sourceObj + \".\" + $a)`;\n\t\t$maxValue = `addAttr -q -maxValue ($sourceObj + \".\" + $a)`;\n\t\t$hasSoftMin = `addAttr -q -hasSoftMinValue ($sourceObj + \".\" + $a)`;\n\t\t$hasSoftMax = `addAttr -q -hasSoftMaxValue ($sourceObj + \".\" + $a)`;\n\t\t$softMinValue = `addAttr -q -softMinValue ($sourceObj + \".\" + $a)`;\n\t\t$softMaxValue = `addAttr -q -softMaxValue ($sourceObj + \".\" + $a)`;\n\t\t}\n\n\n\t//Find out if the attribute is a string attribute.\n\tint $isString = 0;\n\tstring $typedDataType[]; //For some reason querying \"-dataType\" returns an array (while \"-attributeType\" returns a string).\n\tif ($type == \"typed\")\n\t\t{\n\t\t$typedDataType = `addAttr -q -dataType ($sourceObj + \".\" + $a)`;\n\t\tif ($typedDataType[0] == \"string\")\n\t\t\t$isString = 1;\n\t\t}\n\n\t//Find out if the attribute is a multi attribute.\n\tint $isMulti = `attributeQuery -n $sourceObj -multi $a`;\n\tint $multiSize = `getAttr -size ($sourceObj + \".\" + $a)`;\n\tint $indexMatters = `addAttr -q -indexMatters ($sourceObj + \".\" + $a)`;\n\n\t//Get the -enumName value if the attribute is an \"enum\" type.\n\tstring $enumName;\n\tif ($type == \"enum\")\n\t\t$enumName = `addAttr -q -enumName ($sourceObj + \".\" + $a)`;\n\n\t//print ($a + \" : \" + $type + \"\\n\");return;\n\n\t//ADD THE ATTR TO THE SELECTED OBJECT.\n\t//We need special cases for \"enum\" type, \"string\" type, and for multi attributes.\n\t//Criteria for multi attributes.\n\tif (! $isMulti)\n\t\t{\n\t\t//Criteria for enum attributes.\n\t\tif ($type != \"enum\")\n\t\t\t{\n\t\t\t//Criteria for string attributes.\n\t\t\tif (! $isString)\n\t\t\t\t{\n\t\t\t\t//If there is a specified parent, add the attr using the \"-parent\" flag.\n\t\t\t\tif (`size $parent`)\n\t\t\t\t\t{\n\t\t\t\t\t//print `addAttr -q -numberOfChildren ($sel[0] + \".\" + $parent)`; return;\n\t\t\t\t\taddAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];\n\t\t\t\t\t}\n\t\t\t\telse\n\t\t\t\t\taddAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];\n\n\t\t\t\t}\n\t\t\telse\n\t\t\t\t{\n\t\t\t\t//If there is a specified parent, add the attr using the \"-parent\" flag.\n\t\t\t\t//Note: attributes using the \"-dataType\" flag cannot use the -numberOfChildren flag... cool!\n\t\t\t\tif (`size $parent`)\n\t\t\t\t\taddAttr -parent $parent -dataType \"string\" -longName $longName -shortName $shortName $sel[0];\n\t\t\t\telse\n\t\t\t\t\taddAttr -dataType \"string\" -longName $longName -shortName $shortName $sel[0];\n\t\t\t\t}\n\t\t\t}\n\t\telse\n\t\t\t{\n\t\t\t//If there is a specified parent, add the attr using the \"-parent\" flag.\n\t\t\tif (`size $parent`)\n\t\t\t\taddAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType \"enum\" -enumName $enumName -longName $longName -shortName $shortName $sel[0];\n\t\t\telse\n\t\t\t\taddAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType \"enum\" -enumName $enumName -longName $longName -shortName $shortName $sel[0];\n\t\t\t}\n\t\t}\n\telse if ($isMulti)\n\t\t{\n\t\t//If there is a specified parent, add the attr using the \"-parent\" flag.\n\t\tif (`size $parent`)\n\t\t\taddAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -m -indexMatters $indexMatters -longName $longName -shortName $shortName $sel[0];\n\t\telse\n\t\t\taddAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -m -indexMatters $indexMatters -longName $longName -shortName $shortName $sel[0];\n\t\t}\n\n\t//Now, after transferring the attr: if the attr is a compound type, transfer all its children before continuing.\n\t//This is a recursive part because we are calling this same procedure for each child.\n\tif ($isCompoundType)\n\t\t{\n\t\tfor ($c in $children)\n\t\t\tdwAttrMan_TransferAttributes($sourceObj,\t\t//Source obj\n\t\t\t\t\t\t\t {$c}, \t\t\t//child attribute to add.\n\t\t\t\t\t\t\t $a, \t\t\t//Parent attribute (same as current attr).\n\t\t\t\t\t\t\t $transferConnections,  //transfer connections?\n\t\t\t\t\t\t\t 0);\t\t\t//Don´t delete attr (we´ll delete the parent attr later).\n\t\t}\n\n\n\n\n\t//Edit attribute accordingly. Attributes of type \"typed\" are string attributes and do not have min-max ranges.\n\tif (($type != \"typed\") && ($type != \"message\") && ($type != \"fltMatrix\") && ($type != \"matrix\") && (! $isCompoundType))\n\t\t{\n\t\tif ($hasMin)\n\t\t\taddAttr -e -minValue $minValue ($sel[0] + \".\" + $a);\n\t\tif ($hasMax)\n\t\t\taddAttr -e -maxValue $maxValue ($sel[0] + \".\" + $a);\n\t\tif ($hasSoftMin)\n\t\t\taddAttr -e -softMinValue $softMinValue ($sel[0] + \".\" + $a);\n\t\tif ($hasSoftMax)\n\t\t\taddAttr -e -softMaxValue $softMaxValue ($sel[0] + \".\" + $a);\n\t\t}\n\n\n\n\t//For some reason, this produces a very bizarre error message. Instead, let´s specifiy the -keyable state upon adding the attr (above).\n\t//if ($keyable)\n\t//\tsetAttr -keyable 1 ($sel[0] + \".\" + $a);\n\tif ($locked)\n\t\tsetAttr -lock 1 ($sel[0] + \".\" + $a);\n\n\t//For now we can ignore the value of the attribute.\n\t//Set the attribute value. String attributes require special case.\n\t//if ($type != \"typed\")\n\t//\tsetAttr ($sel[0] + \".\" + $a) $value;\n\t//else if ($isString)\n\t//\tsetAttr -type \"string\" ($sel[0] + \".\" + $a) $value;\n\n\n\t//TRANSFER CONNECTIONS.\n\tint $isLockedByMessage = 0;\n\tif ($transferConnections)\n\t\t{\n\t\t//For compound attrib members, let´s wait until all children are transferred before we do the connections.\n\t\t//***I learned something really important: the parent (compound) attribute exists ONLY when all the children exist.\n\t\t//Only when they ALL exist (the entire compound group, parent and all children) are any of them editable.\n\t\t//So, first check to see if the attr has a given parent, and if that parent indeed exists. If the parent exists,\n\t\t//it exists because all the children attributes have been added to the group. Only then can we proceed to\n\t\t//transfer connections to/from compound attributes and their children attributes.\n\t\tif ((`size $parent`) && (`attributeExists $parent $sel[0]`))\n\t\t\t{\n\t\t\t//Get the children of the parent.\n\t\t\t$children = `listAttr ($sel[0] + \".\" + $parent)`;\n\t\t\t//Remove parent name from $children array.\n\t\t\t$children = `stringArrayRemove {$parent} $children`;\n\t\t\tfor ($c in $children)\n\t\t\t\t$isLockedByMessage = `dwAttrMan_TransferConnections $sourceObj $c $sel[0] $isMulti`;\n\t\t\t}\n\t\telse if (! `size $parent`)\n\t\t\t$isLockedByMessage = `dwAttrMan_TransferConnections $sourceObj $a $sel[0] $isMulti`;\n\t\t}\n\n\t//Continue the loop if the attribute is locked by its message attr.\n\tif ($isLockedByMessage)\n\t\tcontinue;\n\n\t//DELETE ATTR FROM SOURCE OBJ.\n\tif ($deleteOriginals)\n\t\t{\n\t\t//We need to unlock it first.\n\t\tif ($locked)\n\t\t\tsetAttr -lock 0 ($sourceObj + \".\" + $a);\n\t\t//Delete it only if it has no specified parent (ie, not a member of a compound attr group)\n\t\tif (! `size $parent`)\n\t\t\tdeleteAttr ($sourceObj + \".\" + $a);\n\t\t}\n\t}\n\n\n//Refresh TSL to reflect transferred attributes (but only if not a child of a compound attr).\nif (! `size $parent`)\n\tdwAttrMan_LoadAttributes $sourceObj `checkBox -q -v dwAttrManListKeyableCheck`;\n}\n\n\n\n\n///////////////////////////////////////////////////////////////\n\n\nglobal proc doHideConXnList() {\n\tint $hideState = `control -q -vis dwAttrManConXnForm`;\n\tstring $buttonLabel = ( $hideState )? \"<\": \">\";\n\tint $newPos = ( $hideState )? 100: 50;\n\n\tbutton -e -width 12 -l $buttonLabel dwAttrManButtonCollapseConXn;\n\tcontrol -e -vis (!$hideState) dwAttrManConXnForm;\n\n\tformLayout -e\n\t\t-ap dwAttrManConXnForm left -3 $newPos\n\t\t//-af dwAttrManConXnForm top 0\n\t\t//-af dwAttrManConXnForm right 0\n\t\t//-ac dwAttrManConXnForm bottom 0 dwAttrManBottomForm\n\t\tdwAttrManFormMaster;\n\t}\n\n\n\n\n\n///////////////////////////////////////////////////////////////\n//Proc shows connections in the right-hand TSL in the main UI.\nglobal proc dwAttrMan_ShowConnections(int $kind)\n{\n//Clear the TSL\ntextScrollList -e -ra dwAttrManConXnTSL;\n//Get the full object attribute name.\nstring $obj = `text -q -l dwAttrManObjTXT`;\nif (! `objExists $obj`)\n\treturn;\nstring $attr[] = `textScrollList -q -si dwAttrManTSL`;\n//If many attributes are selected, display \"...\"\nif (`size $attr` > 1)\n\ttextScrollList -e -a \"...\" dwAttrManConXnTSL;\nelse if (`size $attr` == 1)\n\t{\n\tstring $connections[];\n\tif ($kind == 1)\n\t\t$connections = `listConnections -s 1 -d 0 -p 1 ($obj + \".\" + $attr[0])`;\n\telse if ($kind == 2)\n\t\t$connections = `listConnections -s 0 -d 1 -p 1 ($obj + \".\" + $attr[0])`;\n\n\tfor ($c in $connections)\n\t\t{\n\t\t//Get the nodeType.\n\t\tstring $nodeBuffer[];\n\t\ttokenize $c \".\" $nodeBuffer;\n\t\tstring $nodeType = `nodeType $nodeBuffer[0]`;\n\t\t//Show the connection name as well as its nodeType.\n\t\ttextScrollList -e -a ($c + \" (\" + $nodeType + \")\") dwAttrManConXnTSL;\n\t\t}\n\t}\n}\n\n\n///////////////////////////////////////////////////////////////\n//Proc deletes selected attributes.\nglobal proc dwAttrMan_DeleteAttributes(string $obj, string $attrs[])\n{\nif (! `size $attrs`)\n\treturn;\n\nfor ($a in $attrs)\n\tdeleteAttr ($obj + \".\" + $a);\n\n//Refresh source TSL\ndwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;\n//Refresh connection TSL\ndwAttrMan_ShowConnections `radioButtonGrp -q -sl attrManConnectionsRBG`;\n}\n\n///////////////////////////////////////////////////////////////\n//Procedure selects a connected obj, as listed in the connection TSL.\nglobal proc dwAttrMan_SelectConnectionObject()\n{\nstring $objAttr[] = `textScrollList -q -si dwAttrManConXnTSL`;\nif (! `size $objAttr`)\n\treturn;\n\n//Tokenize the $objAttrs by \".\", make sure the buffer exists, then add it to a final selection string.\nstring $objBuffer[];\nstring $selectionString;\nfor ($i = 0; $i < `size $objAttr`; $i++)\n\t{\n\ttokenize $objAttr[$i] \".\" $objBuffer;\n\tif (`objExists $objBuffer[$i]`)\n\t\t$selectionString += ($objBuffer[$i] + \" \");\n\t}\n\nif (`size $selectionString`)\n\tselect -r $selectionString;\n}\n\n///////////////////////////////////////////////////////////////\n\n//Procedure selects the original source obj.\nglobal proc dwAttrMan_SelectSourceObject()\n{\nstring $obj = `text -q -l dwAttrManObjTXT`;\nif (! `objExists $obj`)\n\treturn;\nselect -r $obj;\n}\n\n///////////////////////////////////////////////////////////////\n\n\n//Proc sets the source attr´s keyable or not.\nglobal proc dwAttrMan_SetKeyable()\n{\nstring $obj = `text -q -l dwAttrManObjTXT`;\nstring $attrs[] = `textScrollList -q -si dwAttrManTSL`;\nfor ($a in $attrs)\n\t{\n\t//If attribute is a compound attr, then set children keyable.\n\tif (`dwAttrMan_IsCompoundType $obj $a `)\n\t\t{\n\t\tstring $children[] = `listAttr ($obj + \".\" + $a)`;\n\t\t$children = `stringArrayRemove {($obj + \".\" + $a)} $children`;\n\t\tint $keyable;\n\t\tfor ($c in $children)\n\t\t\t{\n\t\t\t$keyable = `getAttr -k ($obj + \".\" + $c)`;\n\t\t\tsetAttr -k (! $keyable) ($obj + \".\" + $c);\n\t\t\t//print ($c + \" ----> \" + (! $keyable) + \"\\n\");\n\t\t\t}\n\t\t//Another bizarre anomoly: I must set the compound parent´s \"keyability\" to the *opposite* of the children (???)\n\t\tsetAttr -k ($keyable) ($obj + \".\" + $a);\n\t\t//print ($a + \" ----> \" + ($keyable) + \"\\n\");\n\t\t}\n\n\tif (`dwAttrMan_IsDataType $obj $a`)\n\t\t{\n\t\twarning ($obj + \".\" + $a + \" is a dataType attribute. Attributes that require the \\\"-dataType\\\" flag cannot be keyable.\");\n\t\tcontinue;\n\t\t}\n\n\tif (`getAttr -k ($obj + \".\" + $a)` == 0)\n\t\tsetAttr -k 1 ($obj + \".\" + $a);\n\telse\n\t\tsetAttr -k 0 ($obj + \".\" + $a);\n\t}\n//Refresh TSL.\ndwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;\n}\n\n\n///////////////////////////////////////////////////////////////\n//Returns the exact attribute type, regardless whether it is an -at or a -dt type.\nglobal proc string dwAttrManGetAttrTypeGeneral(string $object, string $attribute)\n{\nstring $type = `addAttr -q -attributeType ($object + \".\" + $attribute)`;\n\nif ($type == \"typed\")\n\t{\n\t//Data typed attrs return an array for their -dataType\n\tstring $dataType[] = `addAttr -q -dataType ($object + \".\" + $attribute)`;\n\treturn $dataType[0];\n\t}\n\nelse\n\treturn $type;\n}\n\n\n///////////////////////////////////////////////////////////////\n//Returns 1 if the attribute is a multi attribute, 0 if not\nglobal proc int dwAttrManIsMulti(string $object, string $attribute)\n{\nstring $isMulti = `addAttr -q -multi ($object + \".\" + $attribute)`;\n\nreturn $isMulti;\n}\n\n///////////////////////////////////////////////////////////////\n\nglobal proc attrManHelp()\n{\nif (`window -ex attrManHelpUI`)\n\tdeleteUI attrManHelpUI;\n\nwindow -t \"AttributeMan Help\" -wh 450 350 attrManHelpUI;\n\tstring $form = `formLayout`;\n\t\tstring $scroll = `scrollLayout`;\n\t\t\tcolumnLayout;\n\n\t\t\t\trowColumnLayout -nc 2 -cw 1 75 -cw 2 300;\n\t\t\t\t\ttext -label \"Authors: \" -font boldLabelFont;\n\t\t\t\t\ttext -label \"Hamish McKenzie:  www.macaronikazoo.com\";\n\t\t\t\t\ttext -label \"\";\n\t\t\t\t\ttext -label \"David Walden:        www.davidwalden.com\";\n\t\t\t\t\ttext -label \"\";\n\t\t\t\t\ttext -label \"\";\n\t\t\t\t\ttext -label \"Created:\" -font boldLabelFont;\n\t\t\t\t\ttext -label \"May 5-18, 2004\";\n\t\t\t\t\tsetParent..;\n\n\t\t\t\ttext -label \"\" -h 30;\n\n\n\t\t\t\ttext -label \"   About: \" -font boldLabelFont;\n\t\t\t\tstring $noteText = \"  This tool allows the user to manage custom object attributes, providing the following\\n\";\n\t\t\t\t$noteText += \"   functionality:  reordering of attributes, renaming attributes, and transferring attributes\\n\";\n\t\t\t\t$noteText += \"   between objects. To use, simply select an object and load it into the UI via the \\\"Load Obj\\\"\\n\";\n\t\t\t\t$noteText += \"   button. \\n\";\n\t\t\t\t$noteText += \"   \\n\";\n\t\t\t\t$noteText += \"   Reordering of attributes is done via the \\\"Move Up\\\" and \\\"Move Down\\\" buttons. User can  \\n\" ;\n\t\t\t\t$noteText += \"   rename attributes by simply providing a new name for the selected attribute in the text  \\n\";\n\t\t\t\t$noteText += \"   field below the attribute list. \\n\";\n\t\t\t\t$noteText += \"   \\n\";\n\t\t\t\t$noteText += \"   Transferring attributes allows the user to move custom attributes between objects. User  \\n\";\n\t\t\t\t$noteText += \"   has the option of transferring all input and output connections. The original object \\n\";\n\t\t\t\t$noteText += \"   attributes can either be preserved or deleted. \\n\";\n\t\t\t\t$noteText += \"   \\n\";\n\t\t\t\t$noteText += \"   In the main attribute UI list, the user can access additional functionality via the RMB popup \\n\";\n\t\t\t\t$noteText += \"   menu. Here the user can see the exact attribute type, toggle the attribute´s keyable status, \\n\";\n\t\t\t\t$noteText += \"   and delete the attribute. On the right-hand side of the UI is a button that opens another text \\n\";\n\t\t\t\t$noteText += \"   list which allows the user to view both input and output connections on the selected attribute.\\n\";\n\t\t\t\t$noteText += \"   Double clicking in this list selects the connected object. \\n\";\n\t\t\t\t$noteText += \"   \\n\";\n\t\t\t\t$noteText += \"   Virtually all attribute types are supported. Compound attributes, for example vector attributes, \\n\";\n\t\t\t\t$noteText += \"   are shown in the UI according to their parent attribute name. Compound children attributes \\n\";\n\t\t\t\t$noteText += \"   must be transferred together with their parent, and thus are not available in the UI. \\\"Move Up\\\"   \\n\";\n\t\t\t\t$noteText += \"   and \\\"Move Down\\\" is currently not supported with compound attributes, nor with attributes that   \\n\";\n\t\t\t\t$noteText += \"   require the \\\"-dataType\\\" flag upon creation.  \\n\";\n\t\t\t\t$noteText += \"   \\n\";\n\t\t\t\t$noteText += \"   There are some known bugs with transferring compound attributes multiple times in the same \\n\";\n\t\t\t\t$noteText += \"   Maya session.  Compound attributes (with their connections) can be transferred once per \\n\";\n\t\t\t\t$noteText += \"   Maya session; more than that and Maya will report errors, or worse, crash. There is currently \\n\";\n\t\t\t\t$noteText += \"   no known fix for this, so just try to avoid it.   \\n\";\n\t\t\t\t$noteText += \"   \\n\";\n\t\t\t\t$noteText += \"   Comments etc. can be sent to mel@macaroniKazoo.com or dwalden74@hotmail.com. \\n\";\n\t\t\t\ttext -label $noteText -align left;\n\n\t\t\t\ttext -label \"\" -h 10;\n\n\n\t\t\t\tsetParent..;\n\t\t\tsetParent..;\n\t\tstring $closeButton = `button -label \"Close Window\" -c \"deleteUI attrManHelpUI\"`;\n\t\tsetParent..;\n\n\tformLayout -e\n\t\t-attachForm $scroll left 0\n\t\t-attachForm $scroll top 0\n\t\t-attachForm $scroll right 0\n\t\t-attachControl $scroll bottom 0 $closeButton\n\n\t\t-attachForm $closeButton left 0\n\t\t-attachNone $closeButton top\n\t\t-attachForm $closeButton right 0\n\t\t-attachForm $closeButton bottom 0\n\t\t$form;\n\nshowWindow attrManHelpUI;\n}\n\n///////////////////////////////////////////////////////////////\n\n//Proc creates main UI.\nglobal proc attributeMan()\n{\nif (`window -ex dwAttrManWin`)\n\tdeleteUI dwAttrManWin;\n\nwindow -t \"AttributeMan\" -menuBar true dwAttrManWin;\nmenu -label \"Help\" -tearOff true attributeMangerHelpMenu;\n\tmenuItem -l \"AttributeMan Help\" -c \"attrManHelp\";\n\n//Master form layout; contains three children formLayouts ($sourceForm, $conXnform, and $bottomForm)\nstring $masterForm = `formLayout dwAttrManFormMaster`;\n\n\n//Source object formLayout.\nstring $sourceForm = `formLayout sourceObjForm`;\n\n\tstring $sourceText = `text -l \"Source Object:\"`;\n\tstring $objText = `text -l \"\" -font boldLabelFont -align left dwAttrManObjTXT`;\n\t\tpopupMenu -p $objText -b 3;\n\t\t\tmenuItem -l \"Select\" -c \"dwAttrMan_SelectSourceObject\";\n\n\tstring $TSL = `textScrollList\n\t\t\t-ams 1\n\t\t\t-sc (\"textField -e -tx (zooAttrManUtilsReturnElement(0,`textScrollList -q -si dwAttrManTSL`)) dwNewAttrName; \\\n\t\t\t\tdwAttrMan_ShowConnections `radioButtonGrp -q -sl attrManConnectionsRBG`;\")\n\t\t\tdwAttrManTSL`;\n\n\t\t//PopupMenu for main TSL.\n\t\t//Show the attribute type via a popup menu.\n\t\tpopupMenu -p $TSL -b 3 -postMenuCommand \"{string $obj = `text -q -l dwAttrManObjTXT`; \\\n\t\t\t\t\t\t\t\tif (`objExists $obj`) { \\\n\t\t\t\t\t\t\t\t\tstring $attr[] = `textScrollList -q -si dwAttrManTSL`; \\\n\t\t\t\t\t\t\t\tif (`attributeExists $attr[0] $obj`) {\\\n\t\t\t\t\t\t\t\t\tstring $attrType; \\\n\t\t\t\t\t\t\t\tif (`size $attr` > 1) \\\n\t\t\t\t\t\t\t\t\t$attrType = \\\"\\\"; \\\n\t\t\t\t\t\t\t\telse \\\n\t\t\t\t\t\t\t\t\t{$attrType = `dwAttrManGetAttrTypeGeneral $obj $attr[0]`; \\\n\t\t\t\t\t\t\t\t\tif (`dwAttrManIsMulti $obj $attr[0]`) \\\n\t\t\t\t\t\t\t\t\t$attrType += \\\" (multi)\\\";} \\\n\t\t\t\t\t\t\t\tstring $newMenuLabel = (\\\"Attribute Type: \\\" + $attrType); \\\n\t\t\t\t\t\t\t\tmenuItem -e -l $newMenuLabel attrMan_AttrTypeMI;}}}\";\n\t\t\tmenuItem -l \"Attribute Type: \" attrMan_AttrTypeMI;\n\t\t\tmenuItem -d 1;\n\t\t\tmenuItem -l \"Toggle keyable\" -c \"dwAttrMan_SetKeyable\";\n\t\t\tmenuItem -l \"Delete attribute\" -c \"dwAttrMan_DeleteAttributes `text -q -l dwAttrManObjTXT` `textScrollList -q -si dwAttrManTSL`\";\n\n\tstring $moveUpBTN = `button -l \"Move Up\" -c ( \"zooDoReorder up\" )`;\n\tstring $moveDownBTN = `button -l \"Move Down\" -c ( \"zooDoReorder down\" )`;\n\n\t//Button form is a child of $sourceForm.\n\t//string $buttForm = `formLayout`;\n\t//\tstring $upButt = `symbolButton -i \"arrowup.xpm\" -width 15 -c( \"zooDoReorder up\" )`;\n\t//\tstring $dnButt = `symbolButton -i \"arrowdown.xpm\" -width 15 -c( \"zooDoReorder down\" )`;\n\t//setParent ..;\n\n\tstring $collapseButton = `button -l \">\" -width 13 -c( \"doHideConXnList\" ) dwAttrManButtonCollapseConXn`;\nsetParent ..;\n\n\n//Show connections formLayout.\nstring $conXnform = `formLayout -vis 0 dwAttrManConXnForm`;\n\tstring $connectionsTXT = `text\n\t\t\t\t\t-l \"Show Connections:\"\n\t\t\t\t\t-align left`;\n\tstring $conXnRBG = `radioButtonGrp\n\t\t\t\t-nrb 2\n\t\t\t\t-cw 1 70\n\t\t\t\t-la2 \"Inputs\" \"Outputs\"\n\t\t\t\t-on1 \"dwAttrMan_ShowConnections 1\"\n\t\t\t\t-on2 \"dwAttrMan_ShowConnections 2\"\n\t\t\t\tattrManConnectionsRBG`;\n\t\tradioButtonGrp -e -sl 1 attrManConnectionsRBG;\n\tstring $conXnTSL = `textScrollList\n\t\t\t-en 1\n\t\t\t-ams 0\n\t\t\t-dcc \"dwAttrMan_SelectConnectionObject\"\n\t\t\t-sc \"\"\n\t\t\tdwAttrManConXnTSL`;\n\t\tpopupMenu -p $conXnTSL -b 3;\n\t\t\tmenuItem -l \"Select object\" -c \"dwAttrMan_SelectConnectionObject\";\nsetParent ..;\n\n\n//Bottom formLayout.\nstring $bottomForm = `formLayout dwAttrManBottomForm`;\n\tstring $renameTF = `textField -cc( \"zooAttrManDoRename\" ) dwNewAttrName`;\n\tstring $keyableCheck = `checkBox\n\t\t\t\t\t-l \"List keyable only\"\n\t\t\t\t\t-v 1\n\t\t\t\t\t-ofc \"dwAttrMan_LoadAttributes `text -q -l dwAttrManObjTXT` 0;\"\n\t\t\t\t\t-onc \"dwAttrMan_LoadAttributes `text -q -l dwAttrManObjTXT` 1;\"\n\t\t\t\t\tdwAttrManListKeyableCheck`;\n\tstring $separator = `separator`;\n\tstring $spacerTXT = `text -l \"\" -h 5`;\n\tstring $transferOptionsTXT = `text -l \"Transfer Attribute Options:\" -font boldLabelFont`;\n\tstring $deleteOriginalsCheck = `checkBox\n\t\t\t\t\t\t-l \"Delete source attributes\"\n\t\t\t\t\t\t-v 1\n\t\t\t\t\t\t-ofc \"checkBox -e -en 1 dwAttrManConnectionsCheck;\"\n\t\t\t\t\t\t-onc \"checkBox -e -en 0 dwAttrManConnectionsCheck; checkBox -e -v 1 dwAttrManConnectionsCheck;\"\n\t\t\t\t\t\tdwAttrManDeleteSourceAttrsCheck`;\n\tstring $transferConnectionsCheck = `checkBox\n\t\t\t\t\t\t-l \"Transfer connections\"\n\t\t\t\t\t\t-v 1\n\t\t\t\t\t\t-en 0\n\t\t\t\t\t\tdwAttrManConnectionsCheck`;\n\n\tstring $loadButton = `button -l \"Load Obj\" -c \"{string $sel[] = `ls -sl -o`; \\\n\t\t\t\t\t\t\tdwAttrMan_LoadAttributes $sel[0] `checkBox -q -v dwAttrManListKeyableCheck`; \\\n\t\t\t\t\t\t\ttextField -e -tx \\\"\\\" dwNewAttrName; \\\n\t\t\t\t\t\t\ttextScrollList -e -ra dwAttrManConXnTSL;}\"`;\n\tstring $transferButton = `button -l \"Transfer Attrs\" -c \"dwAttrMan_TransferAttributes \\\n\t\t\t\t\t\t\t\t\t`text -q -l dwAttrManObjTXT` \\\n\t\t\t\t\t\t\t\t\t`textScrollList -q -si dwAttrManTSL` \\\n\t\t\t\t\t\t\t\t\t\\\"\\\" \\\n\t\t\t\t\t\t\t\t\t`checkBox -q -v dwAttrManConnectionsCheck` \\\n\t\t\t\t\t\t\t\t\t`checkBox -q -v dwAttrManDeleteSourceAttrsCheck`;\"`;\nsetParent ..;\n\n//Edit button form\n/*formLayout -e\n\t-an $upButt left\n\t-af $upButt top 0\n\t-af $upButt right 0\n\t-ap $upButt bottom 0 50\n\n\t-an $dnButt left\n\t-ac $dnButt top 0 $upButt\n\t-af $dnButt right 0\n\t-af $dnButt bottom 0\n\t$buttForm;\n*/\n//Edit source form.\nformLayout -e\n\t-af $sourceText left 0\n\t-af $sourceText top 0\n\t-an $sourceText right\n\t-an $sourceText bottom\n\n\t-ac $objText left 5 $sourceText\n\t-af $objText top 0\n\t-af $objText right 0\n\t-an $objText bottom\n\n\t-af $TSL left 0\n\t-ac $TSL top 0 $sourceText\n\t-ac $TSL right 5 $collapseButton\n\t-ac $TSL bottom 5 $moveUpBTN\n\n\t-af $moveUpBTN left 5\n\t-an $moveUpBTN top\n\t-ap $moveUpBTN right 5 50\n\t-af $moveUpBTN bottom 0\n\n\t-ac $moveDownBTN left 5 $moveUpBTN\n\t-an $moveDownBTN top\n\t-ac $moveDownBTN right 10 $collapseButton\n\t-af $moveDownBTN bottom 0\n\n\t//-an $buttForm left\n\t//-ac $buttForm top 0 $sourceText\n\t//-ac $buttForm right 3 $collapseButton\n\t//-af $buttForm bottom 0\n\n\t-an $collapseButton left\n\t-ac $collapseButton top 0 $sourceText\n\t-af $collapseButton right 0\n\t-af $collapseButton bottom 0\n\t$sourceForm;\n\n//Edit connection form\nformLayout -e\n\t-af $connectionsTXT left 3\n\t-af $connectionsTXT top 0\n\t-af $connectionsTXT right 0\n\t-an $connectionsTXT bottom\n\n\t-af $conXnRBG left 3\n\t-ac $conXnRBG top 0 $connectionsTXT\n\t-af $conXnRBG right 0\n\t-an $conXnRBG bottom\n\n\t-af $conXnTSL left 3\n\t-ac $conXnTSL top 5 $conXnRBG\n\t-af $conXnTSL right 0\n\t-af $conXnTSL bottom 0\n\t$conXnform;\n\n//Edit bottom form.\nformLayout -e\n\t-af $renameTF left 0\n\t-an $renameTF top\n\t-af $renameTF right 0\n\t-ac $renameTF bottom 0 $keyableCheck\n\n\t-af $keyableCheck left 0\n\t-an $keyableCheck top\n\t-af $keyableCheck right 0\n\t-ac $keyableCheck bottom 0 $separator\n\n\t-af $separator left 0\n\t-an $separator top\n\t-af $separator right 0\n\t-ac $separator bottom 0 $spacerTXT\n\n\t-af $spacerTXT left 0\n\t-an $spacerTXT top\n\t-af $spacerTXT right 0\n\t-ac $spacerTXT bottom 0 $transferOptionsTXT\n\n\t-af $transferOptionsTXT left 0\n\t-an $transferOptionsTXT top\n\t-af $transferOptionsTXT right 0\n\t-ac $transferOptionsTXT bottom 0 $deleteOriginalsCheck\n\n\t-af $deleteOriginalsCheck left 0\n\t-an $deleteOriginalsCheck top\n\t-af $deleteOriginalsCheck right 0\n\t-ac $deleteOriginalsCheck bottom 0 $transferConnectionsCheck\n\n\t-af $transferConnectionsCheck left 0\n\t-an $transferConnectionsCheck top\n\t-af $transferConnectionsCheck right 0\n\t-ac $transferConnectionsCheck bottom 0 $loadButton\n\n\t-af $loadButton left 0\n\t-an $loadButton top\n\t-ap $loadButton right 0 50\n\t-af $loadButton bottom 0\n\n\t-ac $transferButton left 0 $loadButton\n\t-an $transferButton top\n\t-af $transferButton right 0\n\t-af $transferButton bottom 0\n\t$bottomForm;\n\n\n//Edit master form\nint $spacer = 3;\nformLayout -e\n\t-af $sourceForm left $spacer\n\t-af $sourceForm top $spacer\n\t-ac $sourceForm right $spacer $conXnform\n\t-ac $sourceForm bottom $spacer $bottomForm\n\n\t-ap $conXnform left -2 100\n\t-af $conXnform top $spacer\n\t-af $conXnform right $spacer\n\t-ac $conXnform bottom $spacer $bottomForm\n\t//-ap $conXnform left 0 50\n\t//-af $conXnform top 0\n\t//-af $conXnform right 0\n\t//-af $conXnform bottom 0\n\n\t-af $bottomForm left $spacer\n\t-an $bottomForm top\n\t-af $bottomForm right $spacer\n\t-af $bottomForm bottom $spacer\n\t$masterForm;\n\n\nshowWindow dwAttrManWin;\n}\nattributeMan();" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "import pymel.core as pm \ndef c():\n    c=pm.promptDialog(\n    \t\ttitle='ConnectAttrs',\n    \t\tmessage='t for trans,r for rotate,s for scale,a for all',\n    \t\tbutton=['Connect', \"Don't Connect\"],\n    \t\tdefaultButton='Connect',\n    \t\tcancelButton=\"Don't Connect\",\n    \t\tdismissString='Bitch')\n    \t\t\n    \n    if c=='Connect':\n        \n        text = pm.promptDialog(query=True, text=True)\n        a = str(text)\n        sel = pm.ls(sl=True)\n        if a == 't':\n            pm.connectAttr((str(sel[0])+'.'+'t'),(str(sel[1])+'.'+'t'))\n            print 'Connected Translation'\n        elif a == 'r':\n            pm.connectAttr((str(sel[0])+'.'+'r'),(str(sel[1])+'.'+'r'))\n            print 'Connected Rot'\n        elif a == 's':\n            pm.connectAttr((str(sel[0])+'.'+'s'),(str(sel[1])+'.'+'s'))\n            print 'Connected Scale'\n        elif a == 'a':\n            pm.connectAttr((str(sel[0])+'.'+'s'),(str(sel[1])+'.'+'s'))\n            pm.connectAttr((str(sel[0])+'.'+'t'),(str(sel[1])+'.'+'t'))\n            pm.connectAttr((str(sel[0])+'.'+'r'),(str(sel[1])+'.'+'r'))\n            \n            print 'Connected All'\n        \n\n        \n    elif c ==\"Don't Connect\":\n       \n        pass\n        sys.stdout.write('Nothing connected')\n        \nc()" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Connect" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Connect" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import pymel.core as pm \ndef c():\n    c=pm.promptDialog(\n    \t\ttitle='ConnectAttrs',\n    \t\tmessage='t for trans,r for rotate,s for scale,a for all',\n    \t\tbutton=['Connect', \"Don't Connect\"],\n    \t\tdefaultButton='Connect',\n    \t\tcancelButton=\"Don't Connect\",\n    \t\tdismissString='Bitch')\n    \t\t\n    \n    if c=='Connect':\n        \n        text = pm.promptDialog(query=True, text=True)\n        a = str(text)\n        sel = pm.ls(sl=True)\n        if a == 't':\n            pm.connectAttr((str(sel[0])+'.'+'t'),(str(sel[1])+'.'+'t'))\n            print 'Connected Translation'\n        elif a == 'r':\n            pm.connectAttr((str(sel[0])+'.'+'r'),(str(sel[1])+'.'+'r'))\n            print 'Connected Rot'\n        elif a == 's':\n            pm.connectAttr((str(sel[0])+'.'+'s'),(str(sel[1])+'.'+'s'))\n            print 'Connected Scale'\n        elif a == 'a':\n            pm.connectAttr((str(sel[0])+'.'+'s'),(str(sel[1])+'.'+'s'))\n            pm.connectAttr((str(sel[0])+'.'+'t'),(str(sel[1])+'.'+'t'))\n            pm.connectAttr((str(sel[0])+'.'+'r'),(str(sel[1])+'.'+'r'))\n            \n            print 'Connected All'\n        \n\n        \n    elif c ==\"Don't Connect\":\n       \n        pass\n        sys.stdout.write('Nothing connected')\n        \nc()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Cui" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Cui" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "Cui" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "import pymel.core as pm\nfrom pymel.core import *    \n\nif window('TheRiggersToolkitX',ex=True):\n\tdeleteUI('TheRiggersToolkitX')\nif window('ExamplaeWindow',ex=True):\n\tdeleteUI('ExamplaeWindow')\n\nif cmds.windowPref('TheRiggersToolkitX', exists=True ):\n   cmds.windowPref( 'TheRiggersToolkitX', r=1 )\n\t\ntemplate = uiTemplate('TheRiggersToolkitXtemplate', force=True)\ntemplate.define(formLayout)\n\nwind = pm.window( 'TheRiggersToolkitX',t = 'RigToolkitX',w=300,h=330,s=1,bgc = [(.17),(.18),(.19)])\nTab = tabLayout('Tabs',p='TheRiggersToolkitX',tc =1,stb=1,snt=1,ntc = 'NewTab()')\n\nToolsSc = pm.scrollLayout('Controls',p='Tabs',w=300,h=350)\nToolsSc = pm.scrollLayout('Tools',p='Tabs')\nchannelbox = pm.channelBox('ChannelBox',p = 'Tabs',ac = [(.8),(.9),(1)],bc = [(.3),(.3),(.3)],ekf =1,fw=150,hlc=[(.2),(.6),(.4)],hol =1,ln=1,nn=0,m=1,pre = 5,)\nout = pm.formLayout('Outliner',p='Tabs',w=300,h=330)\noutpanel = pm.outlinerPanel(p = 'Outliner')\n\n\nSkinSc= pm.scrollLayout('Skin',p='Tabs')\nScriptEdt = pm.scrollLayout('MelCmd',p='Tabs')\nMiscSc = pm.scrollLayout('Misc',p='Tabs')\n\n\ncmdShll = cmds.cmdShell(p='MelCmd',w=290,h=260 , bgc = [(.17),(.18),(.19)])\nclearBtn = pm.symbolButton('minusBtn',p = 'MelCmd',i = 'clearAll.png',w = 285,h=43,ebg =1 , bgc = [(.1),(.11),(.11)],en = 1,command=('cmds.cmdShell(\\\"' + cmdShll + '\\\", edit=True, clear=True)' ))\n\n\nControlsForm = pm.formLayout( 'ControlsForm',p='Controls')\n\nToolsForm = pm.formLayout('ToolkitForm',p='Tools')\nSkinForm = pm.formLayout('SkinForm',p='Skin')\nMiscForm = pm.formLayout('MiscForm',p='Misc')\n\nGlobalName = pm.textField('Globalfield', w = 270 , h=25 ,pht = 'Name for Ctrls or Attrs',p = 'ControlsForm',bgc = [(.17),(.18),(.19)])\n\nBaseCtlBtn = pm.iconTextButton('ControlBase',style='iconAndTextHorizontal', image1='polyColorSetEditor.png', label='Control Class',p = 'ControlsForm',w=130,h=40, bgc = [(.3),(.5),(.5)])\nBaseCtlShapeBtn = pm.iconTextButton('ControlShape',style='iconAndTextHorizontal', image1='fluidCreate3D.png', label='Control Shape',p = 'ControlsForm',w=130,h=40,  bgc = [(.3),(.5),(.5)])\nBorder01Btn = pm.button('Border01',l = '',p = 'ControlsForm',w= 260,h = 60,en=0)\n\nCtrlSizeText = pm.iconTextButton('Sizetxt',style='iconAndTextHorizontal',image1='StandinShelf.png',l = 'SHAPE SIZE',p = 'ControlsForm',w = 105,h=40, bgc = [(.2),(.3),(.3)],en = 1)\nintensityTxtFld = pm.floatField('intenTxf',min = .10,p = 'ControlsForm',v=.10,w= 45,h =40,bgc = [(.17),(.18),(.19)] )\nplusBtn = pm.symbolButton('plusBtn',p = 'ControlsForm',i = 'UVTBAdd.png',w = 40,h=40,ebg =1 , bgc = [(.2),(.3),(.3)],en = 1)\nminusBtn = pm.symbolButton('minusBtn',p = 'ControlsForm',i = 'UVTBRemove.png',w = 40,h=40,ebg =1 , bgc = [(.2),(.3),(.3)],en = 1)\n\n\nattrsBtn = pm.button('atrBtn',l= 'Attributes',p = 'ControlsForm',w = 270,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\n\n\n\nlockatBtn = pm.symbolButton('lockatrBtn',p = 'ControlsForm',i = 'Lock_ON.png',w = 63,h=25,ebg =1 , bgc = [(.3),(.2),(.2)],en = 1)\nunlockatBtn = pm.symbolButton('unlockatrBtn',p = 'ControlsForm',i = 'Lock_OFF.png',w = 63,h=25,ebg =1 , bgc = [(.3),(.2),(.2)],en = 1)\nkeyableBtn = pm.symbolButton('keyableAtBtn',p = 'ControlsForm',i = 'keyIntoclip.png',w = 63,h=25,ebg =1 , bgc = [(.3),(.2),(.2)],en = 1)\nhideBtn = pm.symbolButton('hideAtBtn',p = 'ControlsForm',i = 'RS_visible.png',w = 63,h=25,ebg =1 , bgc = [(.3),(.2),(.2)],en = 1)\n\nOnOffAttr = pm.button('OnOff',l= 'Off/On',p = 'ControlsForm',w = 63,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\nZeroOneAttr = pm.button('ZeroOneAtr',l= '0.0-1.0',p = 'ControlsForm',w = 63,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\nZeroTenAttr = pm.button('ZeroTenAtr',l= '0-10',p = 'ControlsForm',w = 63,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\nIntAttr= pm.button('IntAtr',l= '0-1',p = 'ControlsForm',w = 63,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\n\nEnumAttrBtn= pm.button('EnumAtr',l= 'Enum',p = 'ControlsForm',w = 132,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\nStringAttrBtn= pm.button('StringAtr',l= 'String',p = 'ControlsForm',w = 132,h=19, bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1)\nJntCreate= pm.iconTextButton('CreateJnt',style='iconAndTextHorizontal',image1='CenterPivot.png',l = 'Create Joint CTR ',p = 'ControlsForm',w = 132,h=40, bgc = [(.2),(.3),(.3)],en = 1,c = 'CtrJnt()')\nEachJntCreate= pm.iconTextButton('EachCreateJnt',style='iconAndTextHorizontal',image1='out_particle.png',l = 'Create Joint Each',p = 'ControlsForm',w = 132,h=40, bgc = [(.2),(.3),(.3)],en = 1,c = 'CtrJntEach()')\n\noutliner = pm.outlinerPanel(outpanel, query=True,outlinerEditor=True)\n\npm.outlinerEditor( outliner, edit=True, mainListConnection='worldList', selectionConnection='modelList', showShapes=False, showReferenceNodes=False, showReferenceMembers=False, showAttributes=False, showConnected=False, showAnimCurvesOnly=False, autoExpand=False, showDagOnly=True, ignoreDagHierarchy=False, expandConnections=False, showNamespace=True, showCompounds=True, showNumericAttrsOnly=False, highlightActive=True, autoSelectNewObjects=False, doNotSelectNewObjects=False, transmitFilters=False, showSetMembers=True, setFilter='defaultSetFilter' )\n\n\npm.formLayout('Outliner',e =1,af=[(outpanel,'top',0),(outpanel,'left',0),(outpanel,'right',0),(outpanel,'bottom',0)])\npm.formLayout('ControlsForm',e=1,\n\tattachForm = [\n\t\n\t\n\t(GlobalName,'top',8),\n\t(BaseCtlBtn,'top',45),\n\t(BaseCtlShapeBtn,'top',45),\n\t\n\t(Border01Btn,'right',10),\n\t(BaseCtlShapeBtn,'right',10),\n\n\n\t\n\t(GlobalName,'left',10),\n\t(BaseCtlBtn,'left',10),\n\t(CtrlSizeText,'left',20),\n\t(Border01Btn,'left',10),\n\t(lockatBtn,'left',10),\n\t(attrsBtn,'left',10),\t\n\t(OnOffAttr,'left',10),\t\n\t(EnumAttrBtn,'left',10),\t\n\t(JntCreate,'left',10),\t\n\t(EachJntCreate,'left',10),\t\t\n\t\n\t],\n\tattachControl = [\n\t\n\t(BaseCtlShapeBtn, 'left' , 10 , BaseCtlBtn ),\n\n\t(plusBtn, 'left' , 6 , CtrlSizeText ),\n\t(intensityTxtFld, 'left' , 6 , plusBtn ),\n\t(minusBtn, 'left' , 6 , intensityTxtFld ),\n\t(attrsBtn, 'top' , 12 , Border01Btn ),\n\t(unlockatBtn, 'left' , 6 , lockatBtn ),\n\t(keyableBtn, 'left' , 6 , unlockatBtn ),\n\t(hideBtn, 'left' , 6 , keyableBtn ),\n\t(ZeroOneAttr, 'left' , 6 , OnOffAttr ),\n\t(ZeroTenAttr, 'left' , 6 , ZeroOneAttr ),\n\t(IntAttr, 'left' , 6 , ZeroTenAttr ),\n\t(StringAttrBtn, 'left' , 6 , EnumAttrBtn ),\n\t(EachJntCreate, 'left' , 6 , JntCreate ),\n\t\n\t\t\n\t(intensityTxtFld, 'top' , 18 , BaseCtlShapeBtn ),\n\t(Border01Btn, 'top' , 10 , BaseCtlShapeBtn ),\n\t(CtrlSizeText, 'top' , 18 , BaseCtlShapeBtn ),\n\t(plusBtn, 'top' , 18 , BaseCtlShapeBtn ),\n\t(minusBtn, 'top' , 18 , BaseCtlShapeBtn ),\n\t(unlockatBtn, 'top' , 10 , attrsBtn ),\n\t(lockatBtn, 'top' , 10 , attrsBtn ),\n\t(keyableBtn, 'top' , 10 , attrsBtn ),\t\n\t(hideBtn, 'top' , 10 , attrsBtn ),\n\t(OnOffAttr, 'top' , 10 , hideBtn ),\n\t(ZeroOneAttr, 'top' , 10 , hideBtn ),\n\t(ZeroTenAttr, 'top' , 10 , hideBtn ),\n\t(IntAttr, 'top' , 10 , hideBtn ),\n\t(EnumAttrBtn, 'top' , 10 , IntAttr ),\n\t(StringAttrBtn, 'top' , 10 , IntAttr ),\n\t(JntCreate, 'top' , 10 , StringAttrBtn ),\n\t(EachJntCreate, 'top' , 10 , StringAttrBtn ),\n\t]\n\t\n\t\n\t\n\t\n\t\n\t)\n\n\nwith wind:\n\twith template:\n\t\twith Tab:\n\t\t\tprint 'Launching ToolkitX'\n\t\t\t\n\ndef Control_MM_UI():\n\t\n\tif pm.popupMenu('ControlMenu', ex=1):\n\t\tpm.deleteUI('ControlMenu')\n    \t\n\t\n\tCtlMenu = pm.popupMenu('ControlMenu', mm=1, b=(1), aob=1, ctl=0, alt=0, sh=0, p=\"ControlBase\", pmo=1)\n    \n\tpm.menuItem(p=CtlMenu, l=\"Print Fn\", rp=\"SW\", c=\"print 'SouthWest'\")\n\tpm.menuItem(p=CtlMenu, l=\"Circle\", rp=\"NE\", c=\"pm.circle()\")\n\t\n\n\nControl_MM_UI()\n\ndef NewTab():\n    pm.scrollField( 'Notes',p = 'Tabs', bgc = [(.2),(.2),(.2)],hlc = [(.9),(.2),(.2)],en =1 )\n    Tab = tabLayout('Tabs',e =1 , snt=0)\n    \n    \n    \n    \ndef CtrJnt():\n    #createJoint\n\n    sl = pm.ls(sl=1)\n    try:\n        pm.select(sl)\n        tempPos = pm.cluster(n='Temp')[1]\n        Jnt = pm.createNode('joint',n = (sl[0]+'Jnt'))\n        pm.delete(pm.parentConstraint(tempPos,Jnt))\n        pm.delete(tempPos)\n        \n        \n        \n        \n    except:\n        tempPos = pm.createNode('transform',n = 'Temp')\n        pm.delete(pm.parentConstraint(sl,tempPos))\n        Jnt = pm.createNode('joint',n = (sl[0]+'_Jnt'))\n        pm.delete(pm.parentConstraint(tempPos,Jnt))\n        pm.delete(tempPos)\n        \n        \n        \n    \n    \n\ndef CtrJntEach():\n    \n    #createJoint\n    try:sl = getSelection()\n    except:sl= pm.ls(sl=1)\n    for i in sl:\n        \n        \n        try:\n            pm.select(i)\n            tempPos = pm.cluster(n='Temp')[1]\n            Jnt = pm.createNode('joint',n = (i+'Jnt'))\n            pm.delete(pm.parentConstraint(tempPos,Jnt))\n            pm.delete(tempPos)\n            \n            \n            \n            \n        except:\n            tempPos = pm.createNode('transform',n = 'Temp')\n            pm.delete(pm.parentConstraint(i,tempPos))\n            Jnt = pm.createNode('joint',n = (i+'_Jnt'))\n            pm.delete(pm.parentConstraint(tempPos,Jnt))\n            pm.delete(tempPos)\n            \n        \n        \ndef getSelection():\n    components = cmds.ls(sl=1)\n    selList = []\n    objName = components[0][0:components[0].index(\".\")]\n    # go through every component in the list. If it is a single component (\"pCube1.vtx[1]\"), add it to the list. Else,\n    # add each component in the index (\"pCube1.vtx[1:5]\") to the list\n    for c in components:\n        if \":\" not in c:\n            selList.append(c)\n        else:\n            print c\n            startComponent = int(c[c.index(\"[\") + 1: c.index(\":\")])\n            endComponent = int(c[c.index(\":\") + 1:c.index(\"]\")])\n            componentType = c[c.index(\".\") + 1:c.index(\"[\")]\n            while startComponent <= endComponent:\n                selList.append(objName + \".\" + componentType + \"[\" + str(startComponent) + \"]\")\n                startComponent += 1\n\n    return selList\n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n    \n" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "#souce:gitHub#\n\n#create soft selection &run the script\n\nimport maya.cmds as mc\nimport maya.OpenMaya as om\n\ndef softSelection():\n    selection = om.MSelectionList()\n    softSelection = om.MRichSelection()\n    om.MGlobal.getRichSelection(softSelection)\n    softSelection.getSelection(selection)\n    \n    dagPath = om.MDagPath()\n    component = om.MObject()\n    \n    iter = om.MItSelectionList( selection,om.MFn.kMeshVertComponent )\n    elements = []\n    while not iter.isDone(): \n        iter.getDagPath( dagPath, component )\n        dagPath.pop()\n        node = dagPath.fullPathName()\n        fnComp = om.MFnSingleIndexedComponent(component)   \n                \n        for i in range(fnComp.elementCount()):\n            elements.append([node, fnComp.element(i), fnComp.weight(i).influence()] )\n        iter.next()\n    return elements\n    \n\ndef createSoftCluster():\n    softElementData = softSelection()\n    selection = [\"%s.vtx[%d]\" % (el[0], el[1])for el in softElementData ] \n    \n    mc.select(selection, r=True)\n    cluster = mc.cluster(relative=True)\n    \n    for i in range(len(softElementData)):\n        mc.percent(cluster[0], selection[i], v=softElementData[i][2])\n    mc.select(cluster[1], r=True)\n    \ncreateSoftCluster()" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "SCL" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "SCL" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "pythonFamily.png" 
+        -image1 "pythonFamily.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "#souce:gitHub#\n\n#create soft selection &run the script\n\nimport maya.cmds as mc\nimport maya.OpenMaya as om\n\ndef softSelection():\n    selection = om.MSelectionList()\n    softSelection = om.MRichSelection()\n    om.MGlobal.getRichSelection(softSelection)\n    softSelection.getSelection(selection)\n    \n    dagPath = om.MDagPath()\n    component = om.MObject()\n    \n    iter = om.MItSelectionList( selection,om.MFn.kMeshVertComponent )\n    elements = []\n    while not iter.isDone(): \n        iter.getDagPath( dagPath, component )\n        dagPath.pop()\n        node = dagPath.fullPathName()\n        fnComp = om.MFnSingleIndexedComponent(component)   \n                \n        for i in range(fnComp.elementCount()):\n            elements.append([node, fnComp.element(i), fnComp.weight(i).influence()] )\n        iter.next()\n    return elements\n    \n\ndef createSoftCluster():\n    softElementData = softSelection()\n    selection = [\"%s.vtx[%d]\" % (el[0], el[1])for el in softElementData ] \n    \n    mc.select(selection, r=True)\n    cluster = mc.cluster(relative=True)\n    \n    for i in range(len(softElementData)):\n        mc.percent(cluster[0], selection[i], v=softElementData[i][2])\n    mc.select(cluster[1], r=True)\n    \ncreateSoftCluster()" 
+        -sourceType "python" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "Script Editor: Enter Maya Embedded Language (MEL) commands" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "Script Editor" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "cmdWndIcon.png" 
+        -image1 "cmdWndIcon.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "ScriptEditor" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+    shelfButton
+        -enableCommandRepeat 1
+        -flexibleWidthType 3
+        -flexibleWidthValue 32
+        -enable 1
+        -width 35
+        -height 34
+        -manage 1
+        -visible 1
+        -preventOverride 0
+        -annotation "commandPort -n \"localhost:7001\" -stp \"mel\" -echoOutput;" 
+        -enableBackground 0
+        -backgroundColor 0 0 0 
+        -highlightColor 0.321569 0.521569 0.65098 
+        -align "center" 
+        -label "VSPort" 
+        -labelOffset 0
+        -rotation 0
+        -flipX 0
+        -flipY 0
+        -useAlpha 1
+        -font "plainLabelFont" 
+        -imageOverlayLabel "VSPort" 
+        -overlayLabelColor 0.8 0.8 0.8 
+        -overlayLabelBackColor 0 0 0 0.5 
+        -image "commandButton.png" 
+        -image1 "commandButton.png" 
+        -style "iconOnly" 
+        -marginWidth 1
+        -marginHeight 1
+        -command "commandPort -n \"localhost:7001\" -stp \"mel\" -echoOutput;" 
+        -sourceType "mel" 
+        -commandRepeatable 1
+        -flat 1
+    ;
+
+} 

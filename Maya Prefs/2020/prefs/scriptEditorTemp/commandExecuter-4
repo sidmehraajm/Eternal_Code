@@ -1,0 +1,13 @@
+import pymel.core as pm
+
+sl = pm.ls(sl=1)[0]
+
+Tr = pm.ls(sl,typ='transform')
+
+if Tr:
+    print 'True'
+
+else:
+    print 'Sid'
+    
+pm.makeIdentity(a=1,t=1,r=1,s=1)        

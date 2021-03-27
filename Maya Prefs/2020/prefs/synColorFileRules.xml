@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rules version="1.0">
+	<default colorSpace="sRGB"/>
+	<FilePathRule name="exr" extension="exr" pattern="*" colorSpace="Raw" />
+	<FilePathRule name="hdr" extension="hdr" pattern="*" colorSpace="Raw" />
+	<FilePathRule name="tx" extension="tx" pattern="*" colorSpace="Raw" />
+</rules>

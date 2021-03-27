@@ -1,0 +1,25 @@
+ocio_profile_version: 2
+
+environment:
+  {}
+search_path: ""
+strictparsing: true
+luma: [0.2126, 0.7152, 0.0722]
+
+roles:
+  {}
+
+file_rules:
+  - !<Rule> {name: tx, colorspace: Raw, pattern: "*", extension: tx}
+  - !<Rule> {name: hdr, colorspace: Raw, pattern: "*", extension: hdr}
+  - !<Rule> {name: exr, colorspace: Raw, pattern: "*", extension: exr}
+  - !<Rule> {name: Default, colorspace: default}
+
+displays:
+  {}
+
+active_displays: []
+active_views: []
+
+colorspaces:
+  []

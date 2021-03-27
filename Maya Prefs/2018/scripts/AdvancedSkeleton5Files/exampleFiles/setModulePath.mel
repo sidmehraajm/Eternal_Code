@@ -1,0 +1,33 @@
+global proc asScriptExampleFilesLocatorProc (){}
+
+global proc string asGetScriptExampleFilesLocation ()
+{
+string $whatIs=`whatIs asScriptExampleFilesLocatorProc`;
+string $fullPath=`substring $whatIs 25 999`;
+string $buffer[];
+int $numTok=`tokenize $fullPath "/" $buffer`;
+int $numLetters=size($fullPath);
+int $numLettersLastFolder=size($buffer[$numTok-1]);
+string $scriptLocation=`substring $fullPath 1 ($numLetters-$numLettersLastFolder-1)`;
+return $scriptLocation;
+}
+
+string $buffer[];
+tokenize `asGetScriptExampleFilesLocation` "/" $buffer;
+string $asPath="";
+for ($i=0;$i<size($buffer)-2;$i++)
+	{
+	$asPath+=$buffer[$i];
+	if ($i<size($buffer)-3) $asPath+="/";
+	}
+string $asFile=$asPath+"/AdvancedSkeleton5.mel";
+string $modFile=$asPath+"/AdvancedSkeleton5Files/modules/wbDeltaMushDeformer.mod";
+if (!`file -q -ex $asFile`)
+	error ("file:\""+$asFile+"\" not found");
+if (!`file -q -ex $modFile`)
+	error ("file:\""+$modFile+"\" not found");
+
+evalEcho ("source \""+$asFile+"\"");
+evalEcho ("asAddModulePath");
+
+

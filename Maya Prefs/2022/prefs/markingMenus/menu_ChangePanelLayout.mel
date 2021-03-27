@@ -1,0 +1,171 @@
+
+    menuItem
+        -label "Single Perspective" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Single Perspective View\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "N" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem137;
+
+    menuItem
+        -label "Hypershade/Render/Persp" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Hypershade/Render/Persp\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "NE" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem138;
+
+    menuItem
+        -label "Hypershade/Outliner/Persp" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Hypershade/Outliner/Persp\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "SE" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem139;
+
+    menuItem
+        -label "Hypershade/Persp" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Hypershade/Persp\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "E" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem140;
+
+    menuItem
+        -label "Toggle Outliner" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "ToggleOutliner" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "S" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem141;
+
+    menuItem
+        -label "Persp/Graph/Outliner" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Persp/Graph/Outliner\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "SW" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem142;
+
+    menuItem
+        -label "Persp/Graph" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Persp/Graph\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "W" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem143;
+
+    menuItem
+        -label "Persp/Relationship Editor" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "setNamedPanelLayout \"Persp/Relationship Editor\";" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "NW" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem144;
+
+setParent -m ..;
+

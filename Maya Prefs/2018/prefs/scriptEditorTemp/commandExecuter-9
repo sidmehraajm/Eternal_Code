@@ -1,0 +1,132 @@
+#skintransfer
+
+
+
+import pymel.core as pm
+import maya.cmds as cmds
+import maya.mel as mel
+def sknTransferUI():
+            
+    if cmds.window('SkinTransfer', exists=True ):
+        cmds.deleteUI( 'SkinTransfer', window=True )
+    if cmds.windowPref('SkinTransfer', exists=True ):
+        cmds.windowPref( 'SkinTransfer', r=True )
+    
+    cmds.window('SkinTransfer', title='Skin Transfer', iconName='Short Name', widthHeight=(336,150),s=0 )
+    
+    form = cmds.formLayout(numberOfDivisions=100,bgc =[(.294),(.294),(.294)])
+    source = cmds.textField('sourcetxf',w=150,h=40)
+    
+    destination = cmds.textScrollList('asd',h=40,w=150)
+    
+    sourceButton = cmds.button(l='Source',w=150,bgc =[(.394),(.394),(.394)],c='sourceobjs()')
+    destinationButton = cmds.button(l='Destination',w=150,bgc =[(.394),(.394),(.394)],c='destinationObjs()')
+    transfer = cmds.button(l='Transfer',w=310,bgc =[(.2),(.5),(.4)],h=25,c='Transfer()')
+    author = cmds.symbolButton(i='UV_Freeze_Tool.png',c='author()')
+    
+    
+    cmds.formLayout(form,edit=True,attachForm=[
+    (source,'top',10),
+    (destination,'top',11),
+    (sourceButton,'top',60),
+    (destinationButton,'top',60),
+    (transfer,'top',91),
+    (author,'top',120),
+    
+    
+    
+    (source,'left',12),
+    (destination,'left',12),
+    (sourceButton,'left',12),
+    (destinationButton,'left',12),
+    (transfer,'left',12),
+    (author,'left',302),
+    
+            
+            
+            
+            	
+    
+    
+    
+    
+    
+    
+    ],
+    attachControl=[
+    
+    (destination, 'left', 10, source), 
+    (sourceButton, 'bottom', 20, source), 
+    (destinationButton, 'left', 10, sourceButton), 
+    
+    
+    
+    
+        	
+        	
+    
+    ]
+    
+    
+    
+    
+    
+    
+    
+    )
+            
+            
+            
+            
+    cmds.showWindow('SkinTransfer')
+        
+        
+objlst=[]    
+sourceobjctlst=[]
+def sourceobjs():
+    print 'f'
+    sel = cmds.ls(sl=True)[0]
+    a = sel.encode('utf8')
+    
+    cmds.textField('sourcetxf',e=True,tx=a,ed=0)
+    sourceobjctlst.append(a)
+    
+    
+def destinationObjs():
+    cmds.textScrollList('asd',e=True,ra=True)
+    
+    destsel = cmds.ls(sl=True)
+    for i in destsel:
+        cmds.textScrollList('asd',e=True,a=i)
+        objlst.append(i)
+        
+    
+    
+
+    
+def Transfer():
+    cmds.select(cl=True)
+    sel = str(sourceobjctlst[0])
+    a = mel.eval("findRelatedSkinCluster("+'"'+sel+'"'+")")
+    infJnts=cmds.skinCluster(a,q=True,wi=True)
+    cmds.select(infJnts,r=True)
+    for i in objlst:
+        try:
+            cmds.skinCluster(i,e=True,ub=True)
+        except:
+            
+            pass
+            
+        b = cmds.skinCluster(infJnts,i,mi=5)
+        cmds.select(sel,i)
+        mel.eval("copySkinWeights  -noMirror -surfaceAssociation closestPoint -influenceAssociation closestJoint -normalize;")
+        cmds.select(cl=True)
+        
+    
+
+def author():
+    cmds.launch(web='https://www.facebook.com/sidmehraajm/') 
+    
+    
+    
+sknTransferUI()

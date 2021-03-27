@@ -1,0 +1,30 @@
+#createJoint
+import pymel.core as pm
+sl = pm.ls(sl=1)
+try:
+    pm.select(sl)
+    tempPos = pm.cluster(n='Temp')[1]
+    Jnt = pm.createNode('joint',n = (sl[0]+'Jnt'))
+    pm.delete(pm.parentConstraint(tempPos,Jnt))
+    pm.delete(tempPos)
+    
+    
+    
+    
+except:
+    tempPos = pm.createNode('transform',n = 'Temp')
+    pm.delete(pm.parentConstraint(sl,tempPos))
+    Jnt = pm.createNode('joint',n = (sl[0]+'_Jnt'))
+    pm.delete(pm.parentConstraint(tempPos,Jnt))
+    pm.delete(tempPos)
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

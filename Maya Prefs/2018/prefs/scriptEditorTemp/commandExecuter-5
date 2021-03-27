@@ -1,0 +1,12 @@
+import sys
+import os
+sys.path.append('B:/Eternal_Code_Directory/Backup')
+
+import Impo
+import Test
+reload(Test)
+reload(Impo)
+a = Test.Sid()
+a.
+v = Impo.Sid()
+v.setTran(f

@@ -1,0 +1,34 @@
+class Sid(object):
+	"""Hare Krishna"""
+	def __init__(self, name= ''):
+		self.name = name
+
+	def setTran(self,trans = [1,1,1]):
+		pm.xform(self.name, t= trans)
+
+g= pm.circle()
+a = Sid(g)
+v = [2,3,4]
+
+
+a.setTran(trans = v)
+
+A= Impo.Sid()
+
+
+import pymel.core as pm
+from Test import Sid
+
+class SidN(object):
+	"""Hare Krishna"""
+	def __init__(self, name= ''):
+		self.name = name
+		Sid.__init__(self)
+
+
+
+
+
+
+
+

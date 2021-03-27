@@ -1,0 +1,15 @@
+sl = cmds.ls(sl=1)
+selList=[]
+objname = sl[0][0:sl[0].index(".")]
+
+for i in sl:
+    if ':' not in i:
+        print 'l'
+    else:
+        start = int(i[i.index('[')+1:i.index(':')])
+        end = int(i[i.index(':')+1:i.index(']')])
+        
+        
+        
+        
+        

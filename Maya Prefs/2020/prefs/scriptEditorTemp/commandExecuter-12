@@ -1,0 +1,3 @@
+geo = pm.PyNode('nurbsPlane1')
+geoShp = pm.listRelatives(geo,s=1)[0]
+pm.duplicateCurve((geoShp.v[.5]),local = 0, rn =0)

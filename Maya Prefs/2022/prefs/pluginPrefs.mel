@@ -1,0 +1,46 @@
+//Maya Preference 2022 (Release 1)
+//
+//
+evalDeferred("autoLoadPlugin(\"\", \"mayaHIK\", \"mayaHIK\")");
+evalDeferred("autoLoadPlugin(\"\", \"invertShape\", \"invertShape\")");
+evalDeferred("autoLoadPlugin(\"\", \"curveWarp\", \"curveWarp\")");
+evalDeferred("autoLoadPlugin(\"\", \"hairPhysicalShader\", \"hairPhysicalShader\")");
+evalDeferred("autoLoadPlugin(\"\", \"ATFPlugin\", \"ATFPlugin\")");
+evalDeferred("autoLoadPlugin(\"\", \"ikSpringSolver\", \"ikSpringSolver\")");
+evalDeferred("autoLoadPlugin(\"\", \"sweep\", \"sweep\")");
+evalDeferred("autoLoadPlugin(\"\", \"lookdevKit\", \"lookdevKit\")");
+evalDeferred("autoLoadPlugin(\"\", \"Type\", \"Type\")");
+evalDeferred("autoLoadPlugin(\"\", \"Boss\", \"Boss\")");
+evalDeferred("autoLoadPlugin(\"\", \"bifrostGraph\", \"bifrostGraph\")");
+evalDeferred("autoLoadPlugin(\"\", \"meshReorder\", \"meshReorder\")");
+evalDeferred("autoLoadPlugin(\"\", \"modelingToolkit\", \"modelingToolkit\")");
+evalDeferred("autoLoadPlugin(\"\", \"MayaMuscle\", \"MayaMuscle\")");
+evalDeferred("autoLoadPlugin(\"\", \"matrixNodes\", \"matrixNodes\")");
+evalDeferred("autoLoadPlugin(\"\", \"bifmeshio\", \"bifmeshio\")");
+evalDeferred("autoLoadPlugin(\"\", \"shaderFXPlugin\", \"shaderFXPlugin\")");
+evalDeferred("autoLoadPlugin(\"\", \"objExport\", \"objExport\")");
+evalDeferred("autoLoadPlugin(\"\", \"bifrostshellnode\", \"bifrostshellnode\")");
+evalDeferred("autoLoadPlugin(\"\", \"ufeSupport.py\", \"ufeSupport\")");
+evalDeferred("autoLoadPlugin(\"\", \"mayaVnnPlugin\", \"mayaVnnPlugin\")");
+evalDeferred("autoLoadPlugin(\"\", \"GamePipeline\", \"GamePipeline\")");
+evalDeferred("autoLoadPlugin(\"\", \"tiffFloatReader\", \"tiffFloatReader\")");
+evalDeferred("autoLoadPlugin(\"\", \"MASH\", \"MASH\")");
+evalDeferred("autoLoadPlugin(\"\", \"poseInterpolator\", \"poseInterpolator\")");
+evalDeferred("autoLoadPlugin(\"\", \"bifrostvisplugin\", \"bifrostvisplugin\")");
+evalDeferred("autoLoadPlugin(\"\", \"ik2Bsolver\", \"ik2Bsolver\")");
+evalDeferred("autoLoadPlugin(\"\", \"xgenToolkit\", \"xgenToolkit\")");
+evalDeferred("autoLoadPlugin(\"\", \"AbcExport\", \"AbcExport\")");
+evalDeferred("autoLoadPlugin(\"\", \"gameFbxExporter\", \"gameFbxExporter\")");
+evalDeferred("autoLoadPlugin(\"\", \"OpenEXRLoader\", \"OpenEXRLoader\")");
+evalDeferred("autoLoadPlugin(\"\", \"Unfold3D\", \"Unfold3D\")");
+evalDeferred("autoLoadPlugin(\"\", \"mayaCharacterization\", \"mayaCharacterization\")");
+evalDeferred("autoLoadPlugin(\"\", \"rotateHelper\", \"rotateHelper\")");
+evalDeferred("autoLoadPlugin(\"\", \"AbcImport\", \"AbcImport\")");
+evalDeferred("autoLoadPlugin(\"\", \"autoLoader\", \"autoLoader\")");
+evalDeferred("autoLoadPlugin(\"\", \"sceneAssembly\", \"sceneAssembly\")");
+evalDeferred("autoLoadPlugin(\"\", \"gpuCache\", \"gpuCache\")");
+evalDeferred("autoLoadPlugin(\"\", \"mayaUsdPlugin\", \"mayaUsdPlugin\")");
+evalDeferred("autoLoadPlugin(\"\", \"OneClick\", \"OneClick\")");
+evalDeferred("autoLoadPlugin(\"\", \"ArubaTessellator\", \"ArubaTessellator\")");
+evalDeferred("autoLoadPlugin(\"\", \"quatNodes\", \"quatNodes\")");
+evalDeferred("autoLoadPlugin(\"\", \"fbxmaya\", \"fbxmaya\")");

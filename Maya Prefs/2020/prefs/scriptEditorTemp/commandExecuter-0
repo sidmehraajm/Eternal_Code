@@ -1,0 +1,21 @@
+from PySide2 import QtWidgets,QtCore,QtGui
+import pymel.core as pm
+import json
+import os
+import sys
+import pprint
+
+print 'Qt Modules Imported'
+
+
+userDir = pm.internalVar(userAppDir=1)
+print userDir
+a = os.path.join(userDir,'First')
+print a
+
+
+
+
+
+
+

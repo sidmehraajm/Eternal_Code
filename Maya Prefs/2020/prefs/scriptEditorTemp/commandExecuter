@@ -1,0 +1,6 @@
+import First
+reload(First)
+
+First.GC(teeth = 50)
+ 
+a,b = pm.polyPipe(sa=10)

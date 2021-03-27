@@ -1,0 +1,22 @@
+Div = 3
+for i in range(0,Div):
+    val = ((.5/float(Div))*(i+1)*2)-((.5/float(Div*2))*2)
+
+    fol = pm.createNode('transform',n=('Tst_'+str(i)+'_Follicle'),ss=1)
+    folShape = pm.createNode('follicle',n  = fol.name()+'Shape',p = fol,ss=1)
+    geo =  pm.PyNode('pCube1')
+    geo.local >> folShape.inputSurface
+    geo.worldMatrix[0] >> folShape.inputWorldMatrix
+    folShape.outRotate >> fol.rotate
+    folShape.outTranslate >> fol.translate
+    fol.inheritsTransform.set(False)
+    folShape.parameterV.set(0.5)
+    folShape.parameterU.set(val)
+    #fols.append(fol)
+    Ctrl = mel.eval("sphere -esw 360 -r 0.3 -d 1 -ut 0 -tol 0.01 -s 4 -nsp 2 -ch 0;")
+    pm.PyNode(Ctrl[0])
+    Ctrl = pm.rename(Ctrl[0],'Follicle_'+str(i)+'_Ctrl')
+    pm.delete(pm.parentConstraint(fol,Ctrl))
+    Grp = ZeroOut(Ctrl)
+    #ctrls.append(Ctrl)
+    

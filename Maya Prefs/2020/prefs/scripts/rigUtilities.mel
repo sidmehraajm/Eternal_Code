@@ -1,0 +1,2289 @@
+global proc rigUtilities()
+{
+	if(`window -q -exists rigUtilitiesWindow`) deleteUI rigUtilitiesWindow;
+	
+	window -t "Utils" rigUtilitiesWindow;
+		columnLayout;
+		text -l "[ UTILITIES ]";
+		separator -h 8 -style none;
+		rowLayout -nc 7;
+		text -l "Shape node color: " -annotation "Click any of these buttons to apply these colors to all shape nodes of all selected objects." ;
+			button -w 24 -l " " -annotation "Apply this color to all shape nodes of all selected objects." -bgc 1 0 0 -c "uColorShape(13)";
+			button -w 24 -l " " -annotation "Apply this color to all shape nodes of all selected objects." -bgc 0 0 1  -c "uColorShape(6)";
+			button -w 24 -l " " -annotation "Apply this color to all shape nodes of all selected objects." -bgc 1 1 0  -c "uColorShape(17)";
+			button -w 24 -l " " -annotation "Apply this color to all shape nodes of all selected objects." -bgc 0 0 0  -c "uColorShape(1)";
+			button -w 24 -l " " -annotation "Apply this color to all shape nodes of all selected objects." -bgc 0 .3 .05 -c "uColorShape(7)";
+			button -w 24 -l " " -annotation "Apply this color to all shape nodes of all selected objects." -bgc .12 .7 1  -c "uColorShape(18)";
+			setParent..;
+		separator -h 14 -style none;
+		rowLayout -nc 2;
+			button -l "Snap position" -c "uSnapObject" uSnapButton;
+			button -l "Snap orient" -c "uSnapOrientObject" uSnapOrientButton;		
+			setParent..;
+		separator -h 14 -style none;
+		text -align left -l "Transforms :";
+		rowLayout -nc 5;
+			optionMenu -annotation "Select objects and hit 'Go' button to apply selected setting on transform channels of all of them." transformOptionMenu; menuItem -l "Lock-Hide"; menuItem -l "Lock"; menuItem -l "Unlock";
+			checkBox -v 1 -l "Trans" transCbox;
+			checkBox -v 1 -l "Rot" rotCbox;
+			checkBox -v 1 -l "Scale" scaleCbox;
+			checkBox -v 1 -l "Vis" visCbox;
+			setParent..;
+		button -l "Go!" -annotation "Select objects and hit 'Go' button to apply selected setting on transform channels of all of them." -c "prTransformChannels";
+		separator -h 14 -style none;
+		rowLayout -nc 3;
+			text -w 100 -align left -l "Offset group :";
+			textField offsetGroupText;
+			button -w 80 -l "Create" -annotation "Enter offset group keyword to create offset group on all selected transforms. Make sure no channels are locked or hidden on selected transforms." -c "prCreateOffset";
+			setParent..;
+		separator -h 14 -style none;
+		rowLayout -nc 3;
+			text -w 100 -align left -l "Joint offset group : ";
+			textField offsetJointGroupText;
+			button -w 80 -l "Create" -annotation "Enter offset group keyword to create offset group on all selected joints. Make sure no channels are locked or hidden on selected joints." -c "prCreateJointOffset";					
+			setParent..;
+		separator -h 14 -style none;
+		rowLayout -nc 3;
+			text -w 100 -align left -l "Group :";
+			textField groupText;
+			button -w 80 -l "Create" -annotation "Enter group keyword to create offset group on all selected transforms. Make sure no channels are locked or hidden on selected objects." -c "prCreateGroup";					
+			setParent..;
+		separator -h 14 -style none;
+		rowLayout -nc 3;
+			text -w 100 -align left -l "Group :";
+			textField jointGroupText;
+			button -w 80 -l "Create" -annotation "Enter group keyword to create offset group on all selected joints. Make sure no channels are locked or hidden on selected objects." -c "prCreateJointGroup";					
+			setParent..;
+		separator -h 14 -style none;
+		rowLayout -nc 3;
+			text -w 100 -align left -l "FK Rig Name";
+			textField fkRigName;
+			checkBox -l "Symmetry" fkSymmetry;
+			setParent..;
+		rowLayout -nc 5;	
+			text -w 50 -align left "Primary:";
+			intField -w 30 -v 3 fkPrimaryAxis;
+			text -w 50 -align left "Up:";
+			intField -w 30 -v 2 fkUpAxis;
+			button -w 80 -l "Create" -c "prCreateFkRig";
+			setParent..;
+		separator -h 18;
+		rowLayout -nc 3;
+			button -w 200 -l "Add control on selection" -annotation "Add a controller with offset group on selection." -c "uAddController";
+			text -l "Axis: (x=1, y=2, z=3)";
+			intField -v 2 controlAxisInput;
+			setParent..;
+		separator -h 18;
+		button -w 200 -l "Prop from locator" -annotation "Select one locator and run the command. The position and scale of locator will be used for position and scale of global controller." -c "prPropFromLoc";
+		
+		button -w 200 -l "Clean shape nodes" -annotation "Remove empty shape nodes from all geometry in the scene." -c "prCleanShapes";
+		
+		rowLayout -nc 2;
+			button -w 200 -l "Multi-prop from geo" -annotation "Select different geo pieces and run the command. The position and scale of locator will be used for position and scale of global controller." -c "prMultiPropFromGeo";
+			text -l "(Only one locator required for global control)";
+			setParent..;
+		
+		rowLayout -nc 2;
+			button -w 200 -l "Multi-Prop from locator" -annotation "Select multiple locators and run the command. The position and scale of first locator will be used for position and scale of global controller and rest of the locators will create other controls." -c "prMultiPropFromLoc";
+			button -w 200 -l "Locators at Pivot" -annotation "Creates locators at pivot of each selected transform" -c "prLocatorAtPivot";
+			setParent..;
+		rowLayout -nc 7;
+			button -w 110 -l "FK Rig Joint Chains" -annotation "Select start joints of multiple joint chains and run this command to create FK rig on selected joint chains." -c "prFkJointChains";
+			separator -w 5;
+			text -l "Rig Name :";
+			textField -w 80 prFkJointRigName;
+			separator -w 5;
+			text -l "Primary(1=X,2=Y,3=Z)";
+			intField -v 1 -w 20 prFkJointPrimaryAxis;
+			setParent..;
+		separator -h 18;
+		rowLayout -nc 6;
+			button -l "Rig selected" -c "prRigSelected" prRigSelectedButton;
+			text -l "    Primary :";
+			textField -w 30 -text "Z" prRigPrimaryAxis;
+			optionMenu -l "    Up :" prRigConstraintOptionMenu;
+				menuItem -l "parent";
+				menuItem -l "point";
+				menuItem -l "orient";
+				menuItem -l "scale";
+			separator -w 20 -style none;
+			checkBox -l "Symmetry :" prRigSymCheck;
+			setParent..;
+		separator -h 25;
+		text -l "Advanced Skeleton Mods(Make sure confirmation dialog appears after each command)";
+		rowLayout -nc 3;
+			text -l "Motion System Joints ";
+			button -l "Hide" -annotation "Hide the motion system joints of advanced skeleton rig" -c "asMotionVis(2)";
+			button -l "Show" -annotation "Hide the motion system joints of advanced skeleton rig" -c "asMotionVis(0)";
+			setParent..;		
+		button -l "Add Global Control" -annotation "Add second global control with single channel scale attribute and joint switch" -c "asAddGlobal";
+		button -l "Chest follow" -annotation "Add chest follow option on IK hands" -c "asChestFollow";
+		rowLayout -nc 2;
+			button -l "Hold joints" -annotation "Add hold joints on selected joints." -c "asHoldJoints";
+			text -l "(reuires joints selection)";
+			setParent..;
+		button -l "Driven setup for pelvis" -annotation "Add driven hold joints for pelvis and crotch." -c "asDrivenPelvisJoints";
+		button -l "Sliding bicep" -annotation "Add join based sliding bicep setup with rotation driven bulge." -c "asSlidingBicep";
+		//button -l "Curve face controls" -annotation "Replace advanced skeleton surface controls with curve controls." -c "asCurveControls";
+	showWindow rigUtilitiesWindow;
+}
+
+global proc asMotionVis(int $vis)
+{
+	string $sel[] = `listRelatives -ad -type "joint" MotionSystem`;
+	int $counter = 0;
+	while($counter < size($sel))
+	{
+		setAttr ($sel[$counter]+".drawStyle") $vis;
+		$counter++;
+	}
+}
+
+global proc uAddController()
+{
+	int $axis = `intField -q -v controlAxisInput`;
+	if($axis < 1 || $axis >3) confirmDialog -t "Error!" -m "Invalid axis value. Please enter valid value for axis." -b "Okay";
+	else
+	{
+		string $sel[] = `ls -sl`;
+		int $counter = 0;
+		while ($counter < size($sel))
+		{
+			if($axis == 1) circle -name ($sel[$counter]+"_cc") -nr 1 0 0 -r 2;
+			if($axis == 2) circle -name ($sel[$counter]+"_cc") -nr 0 1 0 -r 2;
+			if($axis == 3) circle -name ($sel[$counter]+"_cc") -nr 0 0 1 -r 2;
+			DeleteHistory;
+			group -em -name ($sel[$counter]+"_cc_off");
+			parent ($sel[$counter]+"_cc") ($sel[$counter]+"_cc_off");
+			select -r ($sel[$counter]+"_cc.cv[0:7]");
+			if($axis == 1) move -r -os -wd 2 0 0 ;
+			if($axis == 2) move -r -os -wd 0 2 0 ;
+			if($axis == 3) move -r -os -wd 0 0 2 ;
+			select -r $sel[$counter] ($sel[$counter]+"_cc_off");
+			parentConstraint -name tempCon;
+			delete tempCon;
+			select -r ($sel[$counter]+"_cc") $sel[$counter];
+			parentConstraint;
+			$counter++;
+		}
+		select -cl;
+		confirmDialog -t "Success!" -m ("Controllers successfully added for" + $counter +" objects. Adjust scale and shape if required.") -b "Okay";
+	}
+}
+
+global proc prFkJointChains()
+{
+	string $rigName = `textField -q -text prFkJointRigName`;
+	string $pri = `intField -q -v prFkJointPrimaryAxis`;
+	if($rigName == "") confirmDialog -t "Error!" -m "Please enter a valid name for rig. This name will be used for controllers." -b "Okay";
+	else uFkJointChains($rigName, $pri);
+}
+
+global proc prRigSelected()
+{
+	string $outAxis = `textField -q -text prRigPrimaryAxis`;
+	string $constraintType = `optionMenu -q -v prRigConstraintOptionMenu`;
+	int $isSym = `checkBox -q -v prRigSymCheck`;
+	uRigSelected($outAxis, $constraintType, $isSym);
+}
+
+global proc uJointAtPivot()
+{	
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while($counter < size($selection))
+	{
+		select -cl;
+		float $scaleFactor[] = `xform -q -r -scale $selection[$counter]`;
+		joint -name ($selection[$counter]+"_jnt");
+		setAttr ($selection[$counter]+"_jnt.radius") $scaleFactor[0];
+		select -r $selection[$counter] ($selection[$counter]+"_jnt");
+		uSnapOrientObject;
+		select -r ($selection[$counter]+"_jnt");
+		makeIdentity -a 1 -r 1;
+		$counter++;
+	}	
+}
+
+global proc uNamePrefix(string $prefixTag) // Prefix names of hierarchy of selected object with given string argument. Does not change the selected object.
+{	
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while ($counter < size($selection))
+	{
+		string $sourceNames[] = `listRelatives -ad $selection[$counter]`;
+		string $currentHierarchy[] = `listRelatives -f -ad $selection[$counter]`;
+		int $counterObj = 0;
+		while ($counterObj < size($currentHierarchy))
+		{
+			rename $currentHierarchy[$counterObj] ($prefixTag+$sourceNames[$counterObj]);
+			$counterObj++;
+		}
+		$counter++;
+	}	
+}
+
+global proc uMirrorJoints(int $silent)		// mirror all selected joints at once. If argument value if zero, various options will be prompted for mirror operation
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) > 0)
+	{
+		int $counter = 0;
+		string $sourceSide = "L_";
+		string $targetSide = "R_";
+		string $mirrorAxis = " -mirrorYZ";
+		string $mirrorType = " -mirrorBehavior";
+		if($silent == 0)
+		{
+			
+			string $targetResponse = `confirmDialog -t "Target side?" -m "Please select target side. \nIf existing joints are on left side of character then select 'Right' as target side." -b "Right" -b "Left" -db "Right"`;
+			if ($targetResponse == "Left")
+			{
+				$sourceSide = "R_";
+				$targetSide = "L_";
+			}
+			
+			string $axisResponse = `confirmDialog -t "Mirror Axis?" -m "Please select mirror axis. This is the axis that you want your joints to mirror along. \nMirror planes tip: X axis for YZ plane, Y axis for XZ plane and Z axis for XY plane." -b "X" -b "Y" -b "Z" -db "X"`;
+			if($axisResponse == "Y") $mirrorAxis = " -mirrorXZ";
+			if($axisResponse == "Z") $mirrorAxis = " -mirrorXY";
+			
+			string $mirrorTypeResponse = `confirmDialog -t "Mirror type?" -m "Please select the type of mirror operation. \n(behavior recommended)" -b "Behavior" -b "Orientation" -db "Behavior"`;
+			if($mirrorTypeResponse == "Orientation") $mirrorType = " ";
+		}
+			
+		while($counter < size($selection))
+		{		
+			string $mirrorCommand =	"mirrorJoint "+$mirrorAxis+$mirrorType+" -searchReplace "+$sourceSide+" "+$targetSide+" "+$selection[$counter];
+			eval($mirrorCommand);
+			$counter++;
+		}
+	}	
+}
+
+global proc uMirrorObjects(int $silent)		// mirror all selected objects at once. If argument value if zero, mirror axis options will be shown. Mirrored objects will behave symmetrically.
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) > 0)
+	{
+		int $counter = 0;
+		string $sourceSide = "L_";
+		string $targetSide = "R_";
+		string $mirrorAxis = "scaleX";
+		if($silent == 0)
+		{
+			
+			string $targetResponse = `confirmDialog -t "Target side?" -m "Please select target side. \nIf existing objects are on left side of character then select 'Right' as target side." -b "Right" -b "Left" -db "Right"`;
+			if ($targetResponse == "Left")
+			{
+				$sourceSide = "R_";
+				$targetSide = "L_";
+			}
+			
+			string $axisResponse = `confirmDialog -t "Mirror Axis?" -m "Please select mirror axis. This is the axis that you want your objects to mirror along. \nMirror planes tip: X axis for YZ plane, Y axis for XZ plane and Z axis for XY plane." -b "X" -b "Y" -b "Z" -db "X"`;
+			if($axisResponse == "Y") $mirrorAxis = "scaleY";
+			if($axisResponse == "Z") $mirrorAxis = "scaleZ";			
+		}
+			while($counter < size($selection))
+		{		
+			string $parentName[] = `listRelatives -p $selection[$counter]`;
+			group -em -name tempMirrorObjectsGroup;
+			select -r $selection[$counter];
+			duplicate;
+			searchReplaceNames $sourceSide $targetSide "hierarchy";
+			searchReplaceNames "_off1" "_off" "hierarchy";
+			searchReplaceNames "_cc1" "_cc" "hierarchy";
+			searchReplaceNames "_grp1" "_grp" "hierarchy";
+			searchReplaceNames "_curve1" "_curve" "hierarchy";
+			searchReplaceNames "_parent1" "_parent" "hierarchy";
+			string $currentObj[] = `ls -sl`;
+			parent $currentObj[0] tempMirrorObjectsGroup;
+			setAttr ("tempMirrorObjectsGroup."+$mirrorAxis) -1;
+			
+			if($parentName[0] != "") parent $currentObj[0] $parentName[0];
+			else parent -w $currentObj[0];
+			
+			$counter++;
+			if (`objExists tempMirrorObjectsGroup`) delete tempMirrorObjectsGroup;
+		}		
+	}
+}
+
+global proc uRigSelected(string $outAxis, string $constraintType, int $isSym)
+{	
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while ($counter < size($selection))
+	{
+		float $scaleFactor[] = `xform -q -r -scale $selection[$counter]`;
+		select -r $selection[$counter];
+		uJointAtPivot;
+		rename ($selection[$counter]+"_jnt") ($selection[$counter]+"_skin");
+				
+		if($outAxis == "x" || $outAxis == "X") circle -name ($selection[$counter]+"_cc") -nr 1 0 0 -r $scaleFactor[0];
+		else if($outAxis == "y" || $outAxis == "Y") circle -name ($selection[$counter]+"_cc") -nr 0 1 0 -r $scaleFactor[0];
+		else circle -name ($selection[$counter]+"_cc") -nr 0 0 1 -r $scaleFactor[0];
+		DeleteHistory;
+		uCreateOffset("off");
+		
+		select -r ($selection[$counter]+"_skin") ($selection[$counter]+"_cc_off");
+		uSnapOrientObject;
+		select -r ($selection[$counter]+"_cc") ($selection[$counter]+"_skin");
+		if($constraintType == "orient") orientConstraint -mo;
+		else if($constraintType == "point") pointConstraint -mo;
+		else parentConstraint -mo;
+		
+		select -r ($selection[$counter]+"_cc.cv[0:7]");
+		move -r -os -wd 0 0 $scaleFactor[2];
+		
+		if($isSym == 1)
+		{
+			select -r ($selection[$counter]+"_skin") ($selection[$counter]+"_cc_off");
+			uNamePrefix("L_");
+			rename ($selection[$counter]+"_skin") ("L_"+$selection[$counter]+"_skin");
+			rename ($selection[$counter]+"_cc_off") ("L_"+$selection[$counter]+"_cc_off");
+			select -r ("L_"+$selection[$counter]+"_skin");
+			uMirrorJoints(1);
+			select -r ("R_"+$selection[$counter]+"_skin");
+			pickWalk -d down;
+			delete;
+			select -r ("L_"+$selection[$counter]+"_cc_off");
+			uMirrorObjects(1);
+			select -r ("R_"+$selection[$counter]+"_cc") ("R_"+$selection[$counter]+"_skin");
+			if($constraintType == "orient") orientConstraint -mo;
+			else if($constraintType == "point") pointConstraint -mo;
+			else parentConstraint -mo;
+			
+			select -r ("R_"+$selection[$counter]+"_cc_off") ("L_"+$selection[$counter]+"_cc_off") ("L_"+$selection[$counter]+"_skin") ("R_"+$selection[$counter]+"_skin");
+			searchReplaceNames "_face_" "_" "hierarchy";
+			searchReplaceNames "face_" "" "hierarchy";
+		}
+		
+		else
+		{	
+			select -r ($selection[$counter]+"_skin") ($selection[$counter]+"_cc_off");
+			searchReplaceNames "_face_" "_" "hierarchy";
+			searchReplaceNames "face_" "" "hierarchy";
+		}
+				
+		select -cl;
+		$counter++;
+	}	
+}
+
+global proc uFkJointChains(string $rigName, int $pri)
+{
+	string $chains[] = `ls -sl`;	
+	if(size($chains) < 1) confirmDialog -t "Error!" -m "Please select one or more start joints of joint chain." -b "Okay";
+	else
+	{
+		int $i = 0;
+		while($i < size($chains))
+		{
+			select -r `listRelatives -ad -type "joint" $chains[$i]` $chains[$i];
+			string $sel[] = `ls -sl`;
+			int $counter = 1;		
+			int $nameCounter = (size($sel) -1);
+			while($counter < size($sel))
+			{
+				// Controller name				
+				float $radius = `getAttr ($sel[0]+".radius")`;
+				circle -name ($rigName+"_"+$nameCounter+"_cc") -nr 1 0 0 -r $radius;
+				DeleteHistory;
+				if($pri == 2)
+				{
+					rotate 0 0 90 ($rigName+"_"+$nameCounter+"_cc");
+					makeIdentity -a 1 -r 1 ($rigName+"_"+$nameCounter+"_cc");
+				}
+				if($pri == 3)
+				{
+					rotate 0 90 0 ($rigName+"_"+$nameCounter+"_cc");
+					makeIdentity -a 1 -r 1 ($rigName+"_"+$nameCounter+"_cc");
+				}
+				
+				select -r $sel[$counter] ($rigName+"_"+$nameCounter+"_cc");
+				parentConstraint -name tempCon;
+				delete tempCon;
+				makeIdentity -a 1 -t 1 ($rigName+"_"+$nameCounter+"_cc");
+				select -r ($rigName+"_"+$nameCounter+"_cc");
+				uCreateOffset("off");
+				if(`objExists ($rigName+"_"+($nameCounter+1)+"_cc")`) parent ($rigName+"_"+($nameCounter+1)+"_cc_off") ($rigName+"_"+$nameCounter+"_cc");
+				select -r ($rigName+"_"+$nameCounter+"_cc") $sel[$counter];
+				parentConstraint -mo;
+				$counter++;
+				$nameCounter--;
+			}
+			select -r ($rigName+"_*_cc_off");
+			select -d ($rigName+"_1_cc_off");
+			uTransforms("hide", 1, 1, 1, 1);
+			select -r ($rigName+"_*_cc");
+			uColorShape(17);
+			uTransforms("hide", 0, 0, 1, 1);			
+			$i++;
+		}
+	}
+}
+
+global proc prPropFromLoc()
+{
+	string $sel[] = `ls -sl`;
+	if(size($sel) < 1) confirmDialog -t "Error!" -m "No transform was selected. Please select a locator to define position and scale of controls." -b "Okay";
+	else
+	{
+		string $prompt = `promptDialog -t "Rig name?" -m "Please enter a rig name.(Use alphabets, numbers and underscore only. Name should start with alphabet)" -b "Okay" -b "Cancel"`;
+		if($prompt == "Okay")
+		{
+			string $rigName = `promptDialog -q -text`;
+			float $scale[] = `xform -q -r -scale $sel[0]`;
+			circle -name global_cc -nr 0 1 0 -r $scale[0];
+			DeleteHistory;
+			duplicate -name transform_cc global_cc;
+			scale .8 .8 .8 transform_cc;			
+			parent transform_cc global_cc;
+			if(size($sel) == 2)
+			{
+				select -r $sel[1] transform_cc;
+				parentConstraint -name tempCon;
+				delete tempCon;
+				select -r transform_cc;
+				uCreateOffset("off");
+			}
+			makeIdentity -a 1 -t 1 -s 1 global_cc;
+			select -cl;
+			joint -name bind_jnt -p 0 0 0;
+			select -r transform_cc bind_jnt;
+			pointConstraint -name tempCon;
+			delete tempCon;
+			parent bind_jnt transform_cc;
+			group -em -name bound_geo_grp;
+			select -r `ls -type "mesh"`;
+			int $counter = 0;
+			while ($counter < 12)
+			{
+				pickWalk -d up;
+				$counter++;
+			}
+			select -add bound_geo_grp;
+			parent;
+			group -em -name $rigName;
+			parent bound_geo_grp global_cc $rigName;
+			addAttr -ln globalScale -at "float" -dv 1 -k 1 global_cc;
+			connectAttr global_cc.globalScale global_cc.scaleX;
+			connectAttr global_cc.globalScale global_cc.scaleY;
+			connectAttr global_cc.globalScale global_cc.scaleZ;
+			addAttr -ln "geoVis" -at "enum" -en "Off:On" -k 1 -dv 1 global_cc;
+			connectAttr global_cc.geoVis bound_geo_grp.visibility;
+			
+			//Cleanup
+			select -r global_cc transform_cc;	
+			uTransforms("hide", 0, 0, 1, 1);
+			select -r global_cc;
+			uColorShape(13);
+			select -r transform_cc;
+			uColorShape(17);			
+			setAttr bind_jnt.visibility 0;
+			addAttr -ln geoMode -at "enum" -en "Normal:Template:Reference" -k 1 -dv 2 global_cc;
+			setAttr "bound_geo_grp.overrideEnabled" 1;
+			connectAttr -f "global_cc.geoMode" "bound_geo_grp.overrideDisplayType";
+			select -r `ls "*_off"`;
+			string $offsets[] = `ls -sl`;
+			if(size($offsets) > 0) uTransforms("hide", 1, 1, 1, 1);
+			
+			//binding mesh
+			string $rigLoc = $sel[0];
+			string $rigLoc2;
+			if(size($sel) == 2) $rigLoc2 = $sel[1];
+			
+			select -r `listRelatives -ad -type "mesh" bound_geo_grp`;
+			pickWalk -d up;
+			$sel = `ls -sl`;
+			$counter = 0;
+			while($counter < size($sel))
+			{
+				skinCluster -nw 1 -tsb bind_jnt $sel[$counter];
+				$counter++;
+			}
+			
+			delete $rigLoc;	
+			if($rigLoc2 != "") delete $rigLoc2;
+			
+			confirmDialog -t "Success!" -m "Done!" -b "Okay";
+		}
+	}
+}
+
+global proc prLocatorAtPivot()
+{
+	string $sel[] = `ls -sl`;
+	int $counter = 0;
+	while($counter < size($sel))
+	{
+		float $bBox[] = `exactWorldBoundingBox $sel[$counter]`;
+		float $xRange = $bBox[3] - $bBox[0];
+		float $yRange = $bBox[4] - $bBox[1];
+		float $zRange = $bBox[5] - $bBox[2];
+		float $diameter = $xRange;
+		if ($yRange > $diameter) $diameter = $yRange;
+		if ($zRange > $diameter) $diameter = $zRange;
+		
+		spaceLocator -name ($sel[$counter]+"_loc") -p 0 0 0;
+		scale ($diameter / 2) ($diameter / 2) ($diameter / 2) ($sel[$counter]+"_loc");
+		select -r $sel[$counter] ($sel[$counter]+"_loc");
+		parentConstraint -name tempCon;
+		delete tempCon;
+		$counter++;
+	}
+	select -cl;
+	confirmDialog -t "Success!" -m "Done!" -b "Okay";
+}
+
+global proc prMultiPropFromLoc()
+{
+	string $sel[] = `ls -sl`;
+	if(size($sel) < 2) confirmDialog -t "Error!" -m "Invalid selection. Please select at least two locators to define position and scale of controls." -b "Okay";
+	else
+	{
+		string $prompt = `promptDialog -t "Rig name?" -m "Please enter a rig name.(Use alphabets, numbers and underscore only. Name should start with alphabet)" -b "Okay" -b "Cancel"`;
+		if($prompt == "Okay")
+		{
+			string $rigName = `promptDialog -q -text`;
+			float $scale[] = `xform -q -r -scale $sel[0]`;
+			circle -name global_cc -nr 0 1 0 -r $scale[0];
+			DeleteHistory;
+			duplicate -name transform_cc global_cc;
+			scale .85 .85 .85 transform_cc;
+			makeIdentity -a 1 -s 1 transform_cc;
+			parent transform_cc global_cc;
+			group -em -name joints_grp;
+			int $counter = 1;
+			while($counter < size($sel))
+			{
+				float $tScale[] = `xform -q -r -scale $sel[$counter]`;
+				select -cl;
+				joint -name ($sel[$counter]+"_jnt");
+				select -r $sel[$counter] ($sel[$counter]+"_jnt");
+				parentConstraint -name tempCon;
+				delete tempCon;
+				makeIdentity -a 1 -r 1 ($sel[$counter]+"_jnt");
+				parent ($sel[$counter]+"_jnt") joints_grp;
+				
+				circle -name ($sel[$counter]+"_cc") -nr 0 1 0 -r $tScale[0];
+				DeleteHistory;
+				select -r $sel[$counter] ($sel[$counter]+"_cc");
+				parentConstraint -name tempCon;
+				delete tempCon;
+				makeIdentity -a 1 -t 1 ($sel[$counter]+"_cc");
+				select -r ($sel[$counter]+"_cc");
+				uCreateOffset("off");
+				parent ($sel[$counter]+"_cc_off") transform_cc;
+				select -r ($sel[$counter]+"_cc") ($sel[$counter]+"_jnt");
+				parentConstraint -mo;
+				
+				select -r ($sel[$counter]+"_cc");
+				uColorShape(17);
+				uTransforms("hide", 0, 0, 1, 1);
+				
+				$counter++;
+			}			
+						
+			group -em -name bound_geo_grp;
+			select -r `ls -type "mesh"`;
+			$counter = 0;
+			while ($counter < 12)
+			{
+				pickWalk -d up;
+				$counter++;
+			}
+			select -add bound_geo_grp;
+			parent;
+			group -em -name $rigName;
+			parent joints_grp transform_cc;
+			parent bound_geo_grp global_cc $rigName;
+			addAttr -ln globalScale -at "float" -dv 1 -k 1 global_cc;
+			connectAttr global_cc.globalScale global_cc.scaleX;
+			connectAttr global_cc.globalScale global_cc.scaleY;
+			connectAttr global_cc.globalScale global_cc.scaleZ;
+			addAttr -ln "geoVis" -at "enum" -en "Off:On" -k 1 -dv 1 global_cc;
+			addAttr -ln "jointVis" -at "enum" -en "Off:On" -k 1 global_cc;
+			connectAttr global_cc.geoVis bound_geo_grp.visibility;
+			connectAttr global_cc.jointVis joints_grp.visibility;
+						
+			//Cleanup
+			select -r global_cc transform_cc;
+			uTransforms("hide", 0, 0, 1, 1);
+			select -r global_cc;
+			uColorShape(1);
+			select -r transform_cc;
+			uColorShape(13);
+			addAttr -ln geoMode -at "enum" -en "Normal:Template:Reference" -k 1 -dv 2 global_cc;
+			setAttr "bound_geo_grp.overrideEnabled" 1;
+			connectAttr -f "global_cc.geoMode" "bound_geo_grp.overrideDisplayType";
+			select -r `ls "*_off"`;
+			string $offsets[] = `ls -sl`;
+			if(size($offsets) > 0) uTransforms("hide", 1, 1, 1, 1);
+			
+			select -r transform_cc;
+			searchReplaceNames "_loc_" "_" "hierarchy";
+			
+			confirmDialog -t "Success!" -m "Done!" -b "Okay";
+		}
+	}
+}
+
+global proc prCleanShapes()
+{
+	select -r `ls -type "mesh"`;
+	pickWalk -d up;
+	string $sel[] = `ls -sl`;
+	int $counter = 0;
+	while($counter < size($sel))
+	{
+		string $shapes[] = `listRelatives -shapes $sel[$counter]`;
+		int $i = 1;
+		while($i < size($shapes))
+		{
+			delete $shapes[$i];
+			$i++;
+		}
+		$counter++;
+	}
+}
+
+global proc prMultiPropFromGeo()
+{
+	string $sel[] = `ls -sl`;
+	if(size($sel) < 2) confirmDialog -t "Error!" -m "Invalid selection. Please select at least two geo objects to define position and scale of controls." -b "Okay";
+	else
+	{
+		string $prompt = `promptDialog -t "Rig name?" -m "Please enter a rig name.(Use alphabets, numbers and underscore only. Name should start with alphabet)" -b "Okay" -b "Cancel"`;
+		if($prompt == "Okay")
+		{
+			string $rigName = `promptDialog -q -text`;
+			float $scale[] = `xform -q -r -scale $sel[0]`;
+			circle -name global_cc -nr 0 1 0 -r $scale[0];
+			DeleteHistory;
+			duplicate -name transform_cc global_cc;
+			scale .85 .85 .85 transform_cc;
+			makeIdentity -a 1 -s 1 transform_cc;
+			parent transform_cc global_cc;
+			int $counter = 1;
+			while($counter < size($sel))
+			{
+				float $bBox[] = `exactWorldBoundingBox $sel[$counter]`;
+				float $xRange = $bBox[3] - $bBox[0];
+				float $yRange = $bBox[4] - $bBox[1];
+				float $zRange = $bBox[5] - $bBox[2];
+				float $diameter = $xRange;
+				if ($yRange > $diameter) $diameter = $yRange;
+				if ($zRange > $diameter) $diameter = $zRange;
+								
+				select -cl;
+								
+				circle -name ($sel[$counter]+"_cc") -nr 0 1 0 -r ($diameter/2);
+				DeleteHistory;
+				select -r $sel[$counter] ($sel[$counter]+"_cc");
+				parentConstraint -name tempCon;
+				delete tempCon;
+				makeIdentity -a 1 -t 1 ($sel[$counter]+"_cc");
+				select -r ($sel[$counter]+"_cc");
+				uCreateOffset("off");
+				parent ($sel[$counter]+"_cc_off") transform_cc;
+				select -r ($sel[$counter]+"_cc") $sel[$counter];
+				parentConstraint -mo;
+				scaleConstraint -mo;
+				
+				select -r ($sel[$counter]+"_cc");
+				uColorShape(17);
+				uTransforms("hide", 0, 0, 1, 1);
+				addAttr -ln "vis" -at "bool" -k 1 -dv 1 ($sel[$counter]+"_cc");
+				connectAttr ($sel[$counter]+"_cc.vis") ($sel[$counter]+".visibility");
+				
+				$counter++;
+			}			
+						
+			group -em -name bound_geo_grp;
+			select -r `ls -type "mesh"`;
+			$counter = 0;
+			while ($counter < 12)
+			{
+				pickWalk -d up;
+				$counter++;
+			}
+			select -add bound_geo_grp;
+			parent;
+			group -em -name $rigName;
+			parent bound_geo_grp global_cc $rigName;
+			addAttr -ln globalScale -at "float" -dv 1 -k 1 global_cc;
+			connectAttr global_cc.globalScale global_cc.scaleX;
+			connectAttr global_cc.globalScale global_cc.scaleY;
+			connectAttr global_cc.globalScale global_cc.scaleZ;
+			addAttr -ln "geoVis" -at "enum" -en "Off:On" -k 1 -dv 1 global_cc;
+			connectAttr global_cc.geoVis bound_geo_grp.visibility;
+									
+			//Cleanup
+			select -r global_cc transform_cc;
+			uTransforms("hide", 0, 0, 1, 1);
+			select -r global_cc;
+			uColorShape(1);
+			select -r transform_cc;
+			uColorShape(13);
+			addAttr -ln geoMode -at "enum" -en "Normal:Template:Reference" -k 1 -dv 2 global_cc;
+			setAttr "bound_geo_grp.overrideEnabled" 1;
+			connectAttr -f "global_cc.geoMode" "bound_geo_grp.overrideDisplayType";
+			select -r `ls "*_off"`;
+			string $offsets[] = `ls -sl`;
+			if(size($offsets) > 0) uTransforms("hide", 1, 1, 1, 1);
+			
+			select -r transform_cc;
+			searchReplaceNames "_loc_" "_" "hierarchy";
+			
+			confirmDialog -t "Success!" -m "Done!" -b "Okay";
+		}
+	}
+}
+
+global proc prCreateFkRig()
+{
+	string $sel[] = `ls -sl`;
+	string $rigName = `textField -q -text fkRigName`;
+	int $symmetry = `checkBox -q -v fkSymmetry`;
+	int $primary = `intField -q -v fkPrimaryAxis`;
+	int $up = `intField -q -v fkUpAxis`;
+	uFkRig($rigName, $primary, $up, $symmetry);
+}
+
+global proc prTransformChannels()
+{
+	string $operation = "hide";
+	string $operationInput = `optionMenu -q -v transformOptionMenu`;
+	if ($operationInput == "Lock") $operation = "lock";
+	if ($operationInput == "Unlock") $operation = "unlock";
+	int $trans = `checkBox -q -v transCbox`;
+	int $rot = `checkBox -q -v rotCbox`;
+	int $scl = `checkBox -q -v scaleCbox`;
+	int $vis = `checkBox -q -v visCbox`;
+	
+	uTransforms($operation, $trans, $rot, $scl, $vis);
+}
+
+global proc prCreateJointOffset()
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) < 1) confirmDialog -t "Warning!" -m "Nothing was selected. Please select transforms to perform operation." -b "Okay";
+	else
+	{	
+		string $nameTag = `textField -q -text offsetJointGroupText`;
+		if($nameTag == "") confirmDialog -t "Warning!" -m "Offset keyword field empty! You must enter the keyword to be used as offset group suffix. Enter offset group keyword and try again." -b "Okay";
+		else
+		{
+			uCreateJointOffset($nameTag);
+			select -cl;
+		}
+	}
+}
+
+global proc prCreateOffset()
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) < 1) confirmDialog -t "Warning!" -m "Nothing was selected. Please select transforms to perform operation." -b "Okay";
+	else
+	{	
+		string $nameTag = `textField -q -text offsetGroupText`;
+		if($nameTag == "") confirmDialog -t "Warning!" -m "Offset keyword field empty! You must enter the keyword to be used as offset group suffix. Enter offset group keyword and try again." -b "Okay";
+		else
+		{
+			uCreateOffset($nameTag);
+			select -cl;
+		}
+	}
+}
+
+global proc prCreateGroup()
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) < 1) confirmDialog -t "Warning!" -m "Nothing was selected. Please select transforms to perform operation." -b "Okay";
+	else
+	{	
+		string $nameTag = `textField -q -text groupText`;
+		if($nameTag == "") confirmDialog -t "Warning!" -m "Group field empty! You must enter the name to be used as group. Enter group name and try again." -b "Okay";
+		else
+		{
+			uCreateGroup($nameTag);
+			select -cl;
+		}
+	}
+}
+
+global proc prCreateJointGroup()
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) < 1) confirmDialog -t "Warning!" -m "Nothing was selected. Please select transforms to perform operation." -b "Okay";
+	else
+	{	
+		string $nameTag = `textField -q -text jointGroupText`;
+		if($nameTag == "") confirmDialog -t "Warning!" -m "Group field empty! You must enter the name to be used as group. Enter group name and try again." -b "Okay";
+		else
+		{
+			uCreateJointGroup($nameTag);
+			select -cl;
+		}
+	}
+}
+
+global proc prCreateGroup()
+{
+	string $selection[] = `ls -sl`;
+	if(size($selection) < 1) confirmDialog -t "Warning!" -m "Nothing was selected. Please select transforms to perform operation." -b "Okay";
+	else
+	{	
+		string $nameTag = `textField -q -text groupText`;
+		if($nameTag == "") confirmDialog -t "Warning!" -m "Group field empty! You must enter the name to be used as group. Enter group name and try again." -b "Okay";
+		else
+		{
+			uCreateGroup($nameTag);
+			select -cl;
+		}
+	}
+}
+
+global proc uSnapObject() // requires two or more objects selected, will snap all objects to pivot of first selected object
+{
+	string $selection[] = `ls -sl`;
+	if( size($selection) > 1)
+	{
+		int $counter = 1;
+		while ($counter < size($selection))
+		{
+			select -r $selection[0] $selection[$counter];
+			pointConstraint -name tempConstraint;
+			delete tempConstraint;
+			$counter++;
+		}
+		select -cl;
+	}
+}
+
+global proc uSnapOrientObject() // requires two or more objects selected, will snap and align local axes of all objects to pivot of first selected object
+{
+	string $selection[] = `ls -sl`;
+	if( size($selection) > 1)
+	{
+		int $counter = 1;
+		while ($counter < size($selection))
+		{
+			select -r $selection[0] $selection[$counter];
+			parentConstraint -name tempConstraint;
+			delete tempConstraint;
+			$counter++;
+		}
+		select -cl;
+	}
+}
+
+global proc uCreateOffset(string $nameTag) // creates offset group on selected object using given string argument as suffix tag.
+{
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while ($counter < size($selection))
+	{
+		string $parentName[] = `listRelatives -p $selection[$counter]`;
+		$offsetName = ($selection[$counter]+"_"+$nameTag);
+		if($offsetName == $parentName[0]) // rename the existing offset group if names clash
+		{
+			rename $parentName[0] ($parentName[0]+"_"+$nameTag);
+		}
+		$parentName = `listRelatives -f -p $selection[$counter]`;
+		select -cl;
+		duplicate -name $offsetName $selection[$counter];
+		delete `listRelatives -ad -f $offsetName`;
+		
+		select -r $selection[$counter] $offsetName;
+		parentConstraint -name tempConstraint;
+		delete tempConstraint;
+		parent $selection[$counter] $offsetName;
+		
+		$counter++;
+	}	
+}
+
+global proc uCreateJointOffset(string $nameTag) // creates offset group on selected object using given string argument as suffix tag.
+{
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while ($counter < size($selection))
+	{
+		string $parentName[] = `listRelatives -p $selection[$counter]`;
+		$offsetName = ($selection[$counter]+"_"+$nameTag);
+		if($offsetName == $parentName[0]) // rename the existing offset group if names clash
+		{
+			rename $parentName[0] ($parentName[0]+"_"+$nameTag);
+		}
+		$parentName = `listRelatives -f -p $selection[$counter]`;
+		select -cl;
+		group -em -name $offsetName;
+		if($parentName[0] != "") parent $offsetName $parentName[0];
+		select -r $selection[$counter] $offsetName;
+		parentConstraint -name tempConstraint;
+		delete tempConstraint;
+		parent $selection[$counter] $offsetName;
+		
+		$counter++;
+	}	
+}
+
+global proc uFkRig(string $nameTag, int $primaryAxis, int $upAxis, int $isSym) // string arguments takes name for rig and int argument takes symmetry info, 0 = non symmetrical
+{	
+		
+		string $selection[] = `ls -sl`;
+		if(size($selection) > 1)
+		{
+			float $scaleFactor[3] = `xform -q -r -scale $selection[0]`;
+			select -cl;
+			joint -name tempFkJoint -radius $scaleFactor[0] -p 0 0 0;
+			string $namePrefix = $nameTag+"_";
+			if ($isSym == 1) $namePrefix = ("L_"+$nameTag+"_");
+			
+			string $aimVector = " 1 0 0";
+			string $upVector = " 0 1 0";
+			if($upAxis == 1) $upVector = " 1 0 0";
+			if($upAxis == 3) $upVector = " 0 0 1";
+			if($primaryAxis == 2) 
+			{
+				$aimVector = " 0 1 0";
+				if($upAxis == 2) $upVector = " 0 0 1";
+			}
+			if($primaryAxis == 3)
+			{
+				$aimVector = " 0 0 1";
+				if($upAxis == 3) $upVector = " 1 0 0";
+			}
+			// Creating circle according to primary axis direction
+			string $circleCommand = "circle -name tempFkCurve -nr"+$aimVector+" -r "+$scaleFactor[0];
+			eval($circleCommand);
+			DeleteHistory;
+			
+			string $aimCommand = "aimConstraint -name \"tempAimConstraint\" -aimVector"+$aimVector+" -upVector"+$upVector+" -worldUpType \"objectrotation\" -worldUpVector"+$upVector+" -worldUpObject "+$selection[0];
+			int $counter = 0;
+			while($counter < size($selection)) // creating and orienting joints
+			{
+				duplicate -name ($namePrefix+($counter+1)+"_skin") tempFkJoint;
+				select -r $selection[$counter] ($namePrefix+($counter+1)+"_skin");
+				uSnapObject;
+				if(`objExists ($namePrefix+$counter+"_skin")`)
+				{
+					select -r ($namePrefix+($counter+1)+"_skin") ($namePrefix+$counter+"_skin");
+					eval($aimCommand);
+					delete tempAimConstraint;
+					parent ($namePrefix+($counter+1)+"_skin") ($namePrefix+$counter+"_skin");
+					select -r ($namePrefix+$counter+"_skin")  ($namePrefix+($counter+1)+"_skin");
+					orientConstraint -name tempOrientConstraint;
+					delete tempOrientConstraint;
+				}
+				$counter++;
+			}
+			select -r ($namePrefix+"1_skin");
+			makeIdentity -a 1 -r 1;
+			string $jointList[] = `listRelatives -ad -type "joint" ($namePrefix+"1_skin")`;
+			rename $jointList[0] ($namePrefix+"null");
+			
+			if($isSym == 1)	uMirrorJoints(1);
+			
+			$counter = 0;
+			while($counter < (size($selection) - 1)) // Creating and connecting controllers
+			{
+				duplicate -name ($namePrefix+($counter+1)+"_cc") tempFkCurve;
+				select -r ($namePrefix+($counter+1)+"_cc");
+				uCreateOffset("off");
+				select -r ($namePrefix+($counter+1)+"_skin") ($namePrefix+($counter+1)+"_cc_off");
+				uSnapOrientObject;
+				if(`objExists ($namePrefix+$counter+"_cc")`) parent ($namePrefix+($counter+1)+"_cc_off") ($namePrefix+$counter+"_cc");
+				select -r ($namePrefix+($counter+1)+"_cc") ($namePrefix+($counter+1)+"_skin");
+				parentConstraint;
+				$counter++;
+			}
+			
+			if($isSym == 1) // Adding symmetrical controls if needed
+			{
+				select -r ($namePrefix+"1_cc_off");
+				uMirrorObjects(1);
+				makeIdentity -a 1 -t 1;
+				
+				string $symNamePrefix =  ("R_"+$nameTag+"_");
+				$counter = 0;
+				while($counter < (size($selection)-1))
+				{
+					select -r ($symNamePrefix+($counter+1)+"_cc") ($symNamePrefix+($counter+1)+"_skin");
+					parentConstraint;		
+					$counter++;
+				}
+			}
+		}
+		if (`objExists tempFkCurve`) delete tempFkCurve;
+		if (`objExists tempFkJoint`) delete tempFkJoint;
+		select -cl;	
+}
+
+global proc uColorShape(int $colorV)
+{
+	/* 
+		Argument will define the color index to be used by the command.
+			1 = black
+			6 = blue
+			7 = dark green
+			13 = red
+			17 = yellow
+			18 = sky blue
+	*/
+		
+		string $selection[] = `ls -l -sl`;
+		if (size($selection) > 0)
+		{
+			int $counter = 0;
+			string $currentObj;
+			while ($counter < size($selection))
+			{
+				$currentObj = $selection[$counter];
+				string $shapeList[] = `listRelatives -f -shapes $currentObj`;
+				int $i = 0;
+				string $currentShape;
+				while ($i<size($shapeList))
+				{
+					$currentShape = $shapeList[$i];
+					setAttr ($currentShape+".overrideEnabled") 1;
+					setAttr ($currentShape+".overrideColor") $colorV;
+					$i++;
+				}
+				$counter++;
+			}
+		}
+	
+}
+
+// Create a joint and a controller to control the joint. outAxis will define the axis that should point outwards.
+// Constraint type will define which constraint must be used. if anything except 'point' and 'orient' is used for this argument, parent constraint will be applied.
+// isSym decides whether a symmetrical rig needs to be created. If value is 1, similar rig will be created on the right side also.
+global proc uRigSelected(string $outAxis, string $constraintType, int $isSym)
+{
+		
+		string $selection[] = `ls -sl`;
+		int $counter = 0;
+		while ($counter < size($selection))
+		{
+			float $scaleFactor[] = `xform -q -r -scale $selection[$counter]`;
+			select -r $selection[$counter];
+			uJointAtPivot;
+			rename ($selection[$counter]+"_jnt") ($selection[$counter]+"_skin");
+					
+			if($outAxis == "x" || $outAxis == "X") circle -name ($selection[$counter]+"_cc") -nr 1 0 0 -r $scaleFactor[0];
+			else if($outAxis == "y" || $outAxis == "Y") circle -name ($selection[$counter]+"_cc") -nr 0 1 0 -r $scaleFactor[0];
+			else circle -name ($selection[$counter]+"_cc") -nr 0 0 1 -r $scaleFactor[0];
+			DeleteHistory;
+			uCreateOffset("off");
+			
+			select -r ($selection[$counter]+"_skin") ($selection[$counter]+"_cc_off");
+			uSnapOrientObject;
+			select -r ($selection[$counter]+"_cc") ($selection[$counter]+"_skin");
+			if($constraintType == "orient") orientConstraint -mo;
+			else if($constraintType == "point") pointConstraint -mo;
+			else parentConstraint -mo;
+			
+			select -r ($selection[$counter]+"_cc.cv[0:7]");
+			move -r -os -wd 0 0 $scaleFactor[2];
+			
+			if($isSym == 1)
+			{
+				select -r ($selection[$counter]+"_skin") ($selection[$counter]+"_cc_off");
+				uNamePrefix("L_");
+				rename ($selection[$counter]+"_skin") ("L_"+$selection[$counter]+"_skin");
+				rename ($selection[$counter]+"_cc_off") ("L_"+$selection[$counter]+"_cc_off");
+				select -r ("L_"+$selection[$counter]+"_skin");
+				uMirrorJoints(1);
+				select -r ("R_"+$selection[$counter]+"_skin");
+				pickWalk -d down;
+				delete;
+				select -r ("L_"+$selection[$counter]+"_cc_off");
+				uMirrorObjects(1);
+				select -r ("R_"+$selection[$counter]+"_cc") ("R_"+$selection[$counter]+"_skin");
+				if($constraintType == "orient") orientConstraint -mo;
+				else if($constraintType == "point") pointConstraint -mo;
+				else parentConstraint -mo;
+				
+				select -r ("R_"+$selection[$counter]+"_cc_off") ("L_"+$selection[$counter]+"_cc_off") ("L_"+$selection[$counter]+"_skin") ("R_"+$selection[$counter]+"_skin");
+				searchReplaceNames "_face_" "_" "hierarchy";
+				searchReplaceNames "face_" "" "hierarchy";
+			}
+			
+			else
+			{	
+				select -r ($selection[$counter]+"_skin") ($selection[$counter]+"_cc_off");
+				searchReplaceNames "_face_" "_" "hierarchy";
+				searchReplaceNames "face_" "" "hierarchy";
+			}
+					
+			select -cl;
+			$counter++;
+		}
+	
+}
+
+
+// To lock, unlock or lock-hide transform channels. opeation argument will define the action, possible values are 'lock', 'unlock' and 'hide'.
+// All other arguments decide which are the channels that the operation needs to be performed upon. If value is 1 for any argument then the action defined with 'operation' will be performed on that transform.
+global proc uTransforms(string $operation, int $trans, int $rot, int $scl, int $vis)
+{
+		
+		string $selection[] = `ls -sl`;
+		int $agCounter = 0;
+		int $keyable = 1;
+		int $locked = 0;
+		int $channelBox = 0;
+		if($operation == "lock")
+		{
+			$locked = 1;
+		}
+		else if($operation =="unlock")
+		{
+			$keyable = 1;
+			$locked = 0;		
+		}
+		else if($operation =="hide")
+		{
+			$locked = 1;
+			$keyable = 0;
+			$channelBox = 0;
+		}
+		
+		while ($agCounter < size($selection))
+		{
+			if($trans == 1)
+			{
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".translateX");
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".translateY");
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".translateZ");
+			}
+			if($rot == 1)
+			{
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".rotateX");
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".rotateY");
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".rotateZ");
+			}
+			if($scl == 1)
+			{
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".scaleX");
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".scaleY");
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".scaleZ");
+			}
+			if($vis == 1)
+			{
+				setAttr -l $locked -k $keyable -cb $channelBox ($selection[$agCounter]+".visibility");
+			}
+			
+			$agCounter++;
+		}
+	
+}
+
+
+// Generate IK-FK rig on selected transforms. rigName argument will define the name used for the rig.
+// primaryAxis argument will define the primary axis for joint orientation.
+// sideAxis argument will define the axis that needs to poin sideways, the axis that is left after defining 'primary' and 'side' axis will be the up axis of joint chain.
+//			use first locator's rotation to define secondary axis. Whichever axis you select in argument, make that axis point towards required direction on first locator.
+// isSym argument, if set to 1 will create a symmetrical rig on right side.
+
+global proc uIkFkRig(string $rigName, string $primaryAxis, string $sideAxis, int $isSym)
+{
+		
+		string $selection[] = `ls -sl`;
+		if(size($selection) > 2)
+		{
+			string $aimVector = " 0 1 0";
+			string $upVector = " 1 0 0";
+			string $worldUpVector = " 1 0 0";
+			
+			if ($primaryAxis == "x" || $primaryAxis == "X") $aimVector = " 1 0 0";
+			else if ($primaryAxis == "z" || $primaryAxis == "Z") $aimVector = " 0 0 1";
+			
+			if ($sideAxis == "x" || $sideAxis == "X")
+			{
+				if ($primaryAxis == "x" || $primaryAxis == "X") $upVector = " 0 0 1";
+				else $upVector = " 1 0 0";
+			}
+			
+			if ($sideAxis == "y" || $sideAxis == "Y")
+			{
+				if ($primaryAxis == "y" || $primaryAxis == "Y") $upVector = " 1 0 0";
+				else $upVector = " 0 1 0";
+			}
+			
+			if ($sideAxis == "z" || $sideAxis == "Z")
+			{
+				if ($primaryAxis == "z" || $primaryAxis == "Z") $upVector = " 1 0 0";
+				else $upVector = " 0 0 1";
+			}
+			
+			select -cl;
+			float $scaleFactor[] = `xform -q -r -scale $selection[0]`;
+			joint -name tempIkFkJoint -p 0 0 0;
+			setAttr "tempIkFkJoint.radius" $scaleFactor[0];
+			int $counter = 0;
+			
+			string $aimCommand = "aimConstraint -name tempAimConstraint -aimVector"+$aimVector+" -upVector"+$upVector+" -worldUpType objectrotation -worldUpVector"+$upVector+" -worldUpObject "+$selection[0];
+			
+			while($counter < size($selection)) // Creating joint chain, with one joint at every locator and an extra joint between locators
+			{
+				duplicate -name ($rigName+($counter+1)+"_temp") tempIkFkJoint;
+				select -r $selection[$counter] ($rigName+($counter+1)+"_temp");
+				uSnapObject;
+				
+				if(`objExists $selection[($counter+1)]`)
+				{
+					duplicate -name ($rigName+"_extra"+($counter+1)+"_temp") tempIkFkJoint;
+					select -r $selection[$counter] $selection[($counter+1)] ($rigName+"_extra"+($counter+1)+"_temp");
+					pointConstraint -name tempConstraint;
+					delete tempConstraint;
+					select -r $selection[($counter+1)] ($rigName+"_extra"+($counter+1)+"_temp");
+					eval($aimCommand);
+					delete tempAimConstraint;
+					
+					select -r ($rigName+"_extra"+($counter+1)+"_temp") ($rigName+($counter+1)+"_temp");
+					eval($aimCommand);
+					delete tempAimConstraint;
+					
+					parent ($rigName+"_extra"+($counter+1)+"_temp") ($rigName+($counter+1)+"_temp");
+				}
+				
+				if(`objExists ($rigName+"_extra"+$counter+"_temp")`) parent ($rigName+($counter+1)+"_temp") ($rigName+"_extra"+$counter+"_temp");
+				
+				$counter++;
+			}
+			
+			spaceLocator -name tempLoc1 -p 0 0 0;
+			spaceLocator -name tempLoc2 -p 0 0 0;
+			
+			select -r $selection[0] $selection[1] tempLoc1;
+			pointConstraint -name tempConstraint;
+			delete tempConstraint;
+			select -r $selection[(size($selection)-1)] $selection[(size($selection)-2)] tempLoc2;
+			pointConstraint -name tempConstraint;
+			delete tempConstraint;
+			
+			float $pos1[] = `xform -q -ws -translation $selection[0]`;
+			float $pos2[] = `xform -q -ws -translation tempLoc1`;
+			float $pos3[] = `xform -q -ws -translation tempLoc2`;		
+			float $pos4[] = `xform -q -ws -translation $selection[(size($selection)-1)]`;
+			
+			curve -name ($rigName+"_curve") -d 1 -p $pos1[0] $pos1[1] $pos1[2] -p $pos2[0] $pos2[1] $pos2[2] -p $pos3[0] $pos3[1] $pos3[2] -p $pos4[0] $pos4[1] $pos4[2] -k 0 -k 1 -k 2 -k 3 ;
+			pickWalk -d down;
+			rename ($rigName+"_curveShape");
+			
+			rebuildCurve -ch 0 -rpo 1 -rt 0 -end 1 -kr 0 -kcp 0 -kep 1 -kt 0 -s (size($selection)-1) -d 3 -tol 0 ($rigName+"_curve");
+			
+			//Making sure softselect and symmetry are turned off
+			softSelect -e -softSelectEnabled 0;
+			symmetricModelling -e -symmetry 0;
+			
+			$counter =2;
+			
+			while($counter < size($selection))
+			{
+				float $currentPosition[];
+				
+				$currentPosition = `xform -q -ws -translation $selection[($counter-1)]`;
+				
+				select -r ($rigName+"_curve.cv["+$counter+"]");
+				move -ws $currentPosition[0] $currentPosition[1] $currentPosition[2];
+				
+				$counter++;
+			}
+			
+			select -r -hi ($rigName+"1_temp");
+			string $jointSelection[] = `ls -sl`;
+			$counter = 0;
+			while ($counter < size($jointSelection)) // Renaming the joint chain
+			{
+				rename $jointSelection[$counter] ($rigName+($counter+1)+"_skin");
+				$counter++;
+			}
+			select -r -hi ($rigName+"1_skin");
+			makeIdentity -a 1 -r 1;
+			$jointSelection = `ls -sl`;
+			
+			select -r $jointSelection[0] $jointSelection[(size($jointSelection)-1)];
+			ikHandle -name tempIk -c ($rigName+"_curve") -sol ikSplineSolver -ccv false -pcv false;
+			select -r $jointSelection[0];
+			makeIdentity -a true -r 1;
+			delete tempIk;
+			// delete tempLoc1 tempLoc2;
+			
+			select -r $selection[(size($selection)-1)] $jointSelection[(size($jointSelection)-1)];
+			uSnapObject;
+			select -r $jointSelection[0];
+			makeIdentity -a true -r 1;
+			
+			
+			
+			// Diabled due to undo bug of maya in favor of simpler alternate method
+			/* CREATING JOINTS ON CURVE 
+			int $totalJoints = (size($selection) * 2) - 1;
+			$counter = 1;
+			float $increament = 1.0/($totalJoints - 1);
+			float $currentPosition = $increament;
+			while ($counter <= $totalJoints)
+			{
+				duplicate -name ($rigName+$counter+"_skin") tempIkFkJoint;
+				if($counter == 1)
+				{
+					select -r $selection[0] ($rigName+$counter+"_skin");
+					uSnapObject;
+				}
+				else if($counter == $totalJoints)
+				{
+					select -r $selection[(size($selection)-1)] ($rigName+$counter+"_skin");
+					uSnapObject;
+				}
+				else
+				{
+					select -r ($rigName+$counter+"_skin") ($rigName+"_curve");
+					pathAnimation -name ("pathAnimTemp"+$counter) -fractionMode true -startTimeU 1 -endTimeU  10;
+					delete -c ("pathAnimTemp"+$counter+".uValue");
+					setAttr ("pathAnimTemp"+$counter+".uValue") $currentPosition;
+					delete ("pathAnimTemp"+$counter);
+					$currentPosition = $currentPosition + $increament;
+				}			
+				$counter++;	
+			}
+			
+			// Orienting and parenting joint chain
+			$counter = 0;
+			select -r ($rigName+"*_skin");
+			string $selection[] = `ls -sl`;
+			while($counter < size($selection))
+			{
+				if(`objExists $selection[($counter+1)]`)
+				{
+					select -r $selection[($counter+1)] $selection[$counter];
+					eval($aimCommand);
+					delete tempAimConstraint;
+				}
+				$counter++;
+			}
+			*/
+			
+			if ($isSym == 1) //Mirroring joints and IK curve if mirror option is on
+			{
+				select -r ($rigName+"1_skin");
+				uNamePrefix("L_");
+				rename ($rigName+"1_skin") ("L_"+$rigName+"1_skin");
+				select -r ("L_"+$rigName+"1_skin");
+				uMirrorJoints(1);
+				rename ($rigName+"_curve") ("L_"+$rigName+"_curve");
+				select -r ("L_"+$rigName+"_curve");
+				uMirrorObjects(1);
+				if(`objExists ("R_"+$rigName+"_curve1")`) rename ("R_"+$rigName+"_curve1") ("R_"+$rigName+"_curve");
+				select -r ("R_"+$rigName+"_curve");
+				makeIdentity -a 1 -r 1 -s 1;
+			}
+			
+			string $circleCommand = "circle -name tempFkCircle -nr "+$aimVector +"-r "+$scaleFactor[0];
+			eval($circleCommand); 	// Base circle for all controllers
+			curve -name "tempIkSquare" -d 1 -p -1 0 -1 -p 1 0 -1 -p 1 0 1 -p -1 0 1 -p -1 0 -1 -k 0 -k 1 -k 2 -k 3 -k 4 ;
+			pickWalk -d down;
+			rename "tempIkSquareShape";
+			pickWalk -d up;
+			scale $scaleFactor[0] $scaleFactor[1] $scaleFactor[2] "tempIkSquareShape";
+			
+			if($primaryAxis == "x" || $primaryAxis == "X") rotate 0 0 90; // rotating control according to primary axis
+			else if ($primaryAxis == "z" || $primaryAxis == "Z") rotate 90 0 0;
+			
+			makeIdentity -a 1 -r 1 -s 1;
+			
+			
+			//Setting up IK controls
+			
+			if($isSym == 1) select -r -hi ("L_"+$rigName+"1_skin");
+			else select -r -hi ($rigName+"1_skin");
+			$jointSelection = `ls -sl`;
+			
+			$counter = 0;
+			int $ikCounter = 1;
+			int $fkCounter = 1;
+			int $ik_fk = 1;			// 1 = create ik control, 0 = create FK control
+			while($counter < size($jointSelection))
+			{
+				if($ik_fk == 1)
+				{
+					duplicate -name ($rigName+"_ik"+$ikCounter+"_cc") tempIkSquare;
+					select -r $jointSelection[$counter] ($rigName+"_ik"+$ikCounter+"_cc");
+					uSnapOrientObject;
+					select -r ($rigName+"_ik"+$ikCounter+"_cc");
+					makeIdentity -a 1 -t 1;
+					if($counter == (size($jointSelection)-1))
+					{
+						select -r ($rigName+"_fk"+($ikCounter-1)+"_cc") ($rigName+"_ik"+$ikCounter+"_cc");
+						orientConstraint -name tempConstraint;
+						delete tempConstraint;
+					}
+					uCreateOffset("off");
+					if(`objExists ($rigName+"_fk"+($ikCounter-1)+"_cc")`) // parent constraint with previous FK control if it exists.
+					{
+						select -r ($rigName+"_fk"+($ikCounter-1)+"_cc") ($rigName+"_ik"+$ikCounter+"_cc_off");
+						parentConstraint -mo;
+					}
+					$ik_fk = 0;
+					$ikCounter++;
+				}
+				else
+				{
+					duplicate -name ($rigName+"_fk"+$fkCounter+"_cc") tempFkCircle;
+					select -r $jointSelection[$counter] ($rigName+"_fk"+$fkCounter+"_cc");
+					uSnapOrientObject;
+					select -r ($rigName+"_fk"+$fkCounter+"_cc");
+					makeIdentity -a 1 -t 1;
+					uCreateOffset("off");
+					if(`objExists ($rigName+"_fk"+($fkCounter-1)+"_cc")`) // parent with previous FK control if it exists.
+					{
+						parent ($rigName+"_fk"+$fkCounter+"_cc_off") ($rigName+"_fk"+($fkCounter-1)+"_cc");
+					}
+					$ik_fk = 1;
+					$fkCounter++;
+				}			
+				$counter++;			
+			}
+			select ($rigName+"_ik*_cc_off");
+			group -name ($rigName+"_ik_controls_grp");
+			xform -ws -piv 0 0 0;
+			
+			if($isSym == 1)
+			{
+				select -r ($rigName+"_fk1_cc_off") ($rigName+"_ik_controls_grp");
+				uNamePrefix("L_");
+				rename ($rigName+"_fk1_cc_off") ("L_"+$rigName+"_fk1_cc_off");
+				rename ($rigName+"_ik_controls_grp") ("L_"+$rigName+"_ik_controls_grp");
+				uMirrorObjects(1);
+				select ("R_"+$rigName+"_ik_controls_grp") ("R_"+$rigName+"_fk1_cc_off");
+				makeIdentity -a 1 -t 1;
+				select -r ("R_"+$rigName+"_ik*parentConstraint*");
+				delete;
+				
+				select -r ("R_"+$rigName+"_ik*_cc");
+				string $rightIkControls[] = `ls -sl`;
+				$counter = 0;
+				while($counter < size($rightIkControls))
+				{
+					if(`objExists ("R_"+$rigName+"_fk"+$counter+"_cc")`) // parent constraint with previous FK control if it exists.
+					{
+						select -r ("R_"+$rigName+"_fk"+$counter+"_cc") $rightIkControls[$counter];
+						parentConstraint -mo;
+					}
+					$counter++;
+				}
+				
+				// Creating two base controls for left and right rig
+				duplicate -name ("L_"+$rigName+"_base_cc") tempIkSquare;
+				scale 1.4 1.4 1.4 ("L_"+$rigName+"_base_cc");
+				select -r ("L_"+$rigName+"_base_cc");
+				makeIdentity -a 1 -t 1 -s 1;
+				select -r ("L_"+$rigName+"1_skin") ("L_"+$rigName+"_base_cc");
+				uSnapOrientObject;			
+				select -r ("L_"+$rigName+"_base_cc");
+				uCreateOffset("off");
+				select -r ("L_"+$rigName+"_base_cc_off");
+				uMirrorObjects(1);
+				
+				parent("L_"+$rigName+"_fk1_cc_off") ("L_"+$rigName+"1_skin") ("L_"+$rigName+"_curve") ("L_"+$rigName+"_ik_controls_grp") ("L_"+$rigName+"_base_cc");
+				parent("R_"+$rigName+"_fk1_cc_off") ("R_"+$rigName+"1_skin") ("R_"+$rigName+"_curve") ("R_"+$rigName+"_ik_controls_grp") ("R_"+$rigName+"_base_cc");
+			}
+			
+			else		// Creating base control for single rig
+			{
+				duplicate -name ($rigName+"_base_cc") tempIkSquare;
+				scale 1.4 1.4 1.4 ($rigName+"_base_cc");
+				select -r ($rigName+"_base_cc");
+				makeIdentity -a 1 -t 1 -s 1;
+				select -r ($rigName+"1_skin") ($rigName+"_base_cc");
+				uSnapOrientObject;			
+				select -r ($rigName+"_base_cc");
+				uCreateOffset("off");
+				parent($rigName+"_fk1_cc_off") ($rigName+"1_skin") ($rigName+"_curve") ($rigName+"_ik_controls_grp") ($rigName+"_base_cc");
+			}
+			
+			// Setting up IK handles ans stretchy setup
+			if($isSym == 1)
+			{
+				select -r $jointSelection[0] $jointSelection[(size($jointSelection)-1)];
+				ikHandle -name ("L_"+$rigName+"_spline_ik") -c ("L_"+$rigName+"_curve") -sol ikSplineSolver -ccv false -roc false -pcv false;
+				select -r ("R_"+$rigName+"*_skin");
+				string $rightJointSelection[] = `ls -sl`;
+				select -r $rightJointSelection[0] $rightJointSelection[(size($rightJointSelection)-1)];
+				ikHandle -name ("R_"+$rigName+"_spline_ik") -c ("R_"+$rigName+"_curve") -sol ikSplineSolver -ccv false -roc false -pcv false;
+				
+				parent ("L_"+$rigName+"_spline_ik") ("L_"+$rigName+"_base_cc");
+				parent ("R_"+$rigName+"_spline_ik") ("R_"+$rigName+"_base_cc");
+				
+				select -r ("L_"+$rigName+"_curve");
+				ClusterCurve;
+				select "|cluster*Handle";
+				group -name ("L_"+$rigName+"_clusters_grp");
+				
+				select -r ("R_"+$rigName+"_curve");
+				ClusterCurve;
+				select "|cluster*Handle";
+				group -name ("R_"+$rigName+"_clusters_grp");
+				
+				select -r `listRelatives ("L_"+$rigName+"_clusters_grp")`;
+				string $leftClusters[] = `ls -sl`;
+				$counter = 0;
+				while ($counter < size($leftClusters))
+				{
+					rename $leftClusters[$counter] ("L_"+$rigName+"_"+($counter+1)+"_cls");
+					if($counter == 0 || $counter == 1)
+					{
+						select -r ("L_"+$rigName+"_ik1_cc") ("L_"+$rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					else if ($counter == (size($leftClusters)-1))
+					{
+						select -r ("L_"+$rigName+"_ik"+($counter-1)+"_cc") ("L_"+$rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					else
+					{
+						select -r ("L_"+$rigName+"_ik"+$counter+"_cc") ("L_"+$rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					
+					$counter++;
+				}
+				parent ("L_"+$rigName+"_clusters_grp") ("L_"+$rigName+"_base_cc");
+				
+				select -r `listRelatives ("R_"+$rigName+"_clusters_grp")`;
+				string $rightClusters[] = `ls -sl`;
+				$counter = 0;
+				while ($counter < size($rightClusters))
+				{
+					rename $rightClusters[$counter] ("R_"+$rigName+"_"+($counter+1)+"_cls");
+					if($counter == 0 || $counter == 1)
+					{
+						select -r ("R_"+$rigName+"_ik1_cc") ("R_"+$rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					else if ($counter == (size($rightClusters)-1))
+					{
+						select -r ("R_"+$rigName+"_ik"+($counter-1)+"_cc") ("R_"+$rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					else
+					{
+						select -r ("R_"+$rigName+"_ik"+$counter+"_cc") ("R_"+$rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}				
+					$counter++;
+				}
+				parent ("R_"+$rigName+"_clusters_grp") ("R_"+$rigName+"_base_cc");
+				
+				// Stertchy setup
+				select -r ("L_"+$rigName+"_curve");
+				string $arclenNode = `arclen -ch 1`;
+				rename $arclenNode ("L_"+$rigName+"_curveInfo");
+				
+				if(`objExists ("L_"+$rigName+"_stretchy_div")`) delete ("L_"+$rigName+"_stretchy_div");
+				createNode -name ("L_"+$rigName+"_stretchy_div") multiplyDivide;
+				if(`objExists ("L_"+$rigName+"_stretchy_scale")`) delete ("L_"+$rigName+"_stretchy_scale");
+				createNode -name ("L_"+$rigName+"_stretchy_scale") multiplyDivide;
+				setAttr ("L_"+$rigName+"_stretchy_div.operation") 2;
+				
+				connectAttr -f ("L_"+$rigName+"_curveInfo.arcLength") ("L_"+$rigName+"_stretchy_div.input1X");
+				connectAttr -f ("L_"+$rigName+"_stretchy_scale.outputX") ("L_"+$rigName+"_stretchy_div.input2X");
+				copyAttr -values ("L_"+$rigName+"_stretchy_div.input1X") ("L_"+$rigName+"_stretchy_scale.input1X");
+				setAttr ("L_"+$rigName+"_stretchy_scale.operation") 1;
+				
+				// Connecting joints
+				select -r ("L_"+$rigName+"*_skin");
+				string $selection[] = `ls -sl`;
+				$counter = 0;
+				string $stretchAxis = "Y";
+				if($primaryAxis == "x" || $primaryAxis == "X") $stretchAxis = "X";
+				if($primaryAxis == "z" || $primaryAxis == "Z") $stretchAxis = "Z";
+				
+				while($counter < (size($selection)-1))			// Ignoring last joint by deducting 1
+				{
+					connectAttr -f ("L_"+$rigName+"_stretchy_div.outputX") ($selection[$counter]+".scale"+$stretchAxis);
+					$counter++;
+				}
+				
+				// Volume setup
+				addAttr -ln "controls" -at "enum" -en "FK:IK:Combined" -k 1 ("L_"+$rigName+"_base_cc");
+				addAttr -ln "preserve_volume" -at bool -k 1 ("L_"+$rigName+"_base_cc");
+				addAttr -ln "volume_multiplier" -at double -k 1 ("L_"+$rigName+"_base_cc_off");
+				setAttr ("L_"+$rigName+"_base_cc_off.volume_multiplier") .4;
+				
+				if(`objExists ("L_"+$rigName+"_volume_div")`) delete ("L_"+$rigName+"_volume_div");
+				createNode -name ("L_"+$rigName+"_volume_div") multiplyDivide;
+				if(`objExists ("L_"+$rigName+"_volume_multi")`) delete ("L_"+$rigName+"_volume_multi");
+				createNode -name ("L_"+$rigName+"_volume_multi") multiplyDivide;
+				setAttr ("L_"+$rigName+"_volume_div.operation") 2;
+				setAttr ("L_"+$rigName+"_volume_multi.operation") 3;
+				connectAttr -f ("L_"+$rigName+"_base_cc_off.volume_multiplier") ("L_"+$rigName+"_volume_multi.input2X");
+				connectAttr -f ("L_"+$rigName+"_volume_div.outputX") ("L_"+$rigName+"_volume_multi.input1X");
+				
+				if(`objExists ("L_"+$rigName+"_volume_condition")`) delete ("L_"+$rigName+"_volume_condition");
+				createNode -name ("L_"+$rigName+"_volume_condition") condition;
+				connectAttr -f ("L_"+$rigName+"_base_cc.preserve_volume") ("L_"+$rigName+"_volume_condition.firstTerm");
+				setAttr ("L_"+$rigName+"_volume_condition.secondTerm") 1;
+				
+				connectAttr -f ("L_"+$rigName+"_volume_multi.outputX") ("L_"+$rigName+"_volume_condition.colorIfTrueR");
+				setAttr ("L_"+$rigName+"_volume_div.input1X") 1;
+				connectAttr -f ("L_"+$rigName+"_stretchy_div.outputX") ("L_"+$rigName+"_volume_div.input2X");
+				
+				// Connecting volume scale values to joints
+				$counter = 0;
+				string $volumeAxis1 = "X";
+				string $volumeAxis2 = "Z";
+				if($primaryAxis == "x" || $primaryAxis == "X") $volumeAxis1 = "Y";
+				if($primaryAxis == "z" || $primaryAxis == "Z") $stretchAxis = "Y";
+				
+				while($counter < size($selection))
+				{
+					connectAttr -f ("L_"+$rigName+"_volume_condition.outColorR") ($selection[$counter]+".scale"+$volumeAxis1);
+					connectAttr -f ("L_"+$rigName+"_volume_condition.outColorR") ($selection[$counter]+".scale"+$volumeAxis2);
+					$counter++;
+				}
+				
+				// RIGHT SIDE
+				select -r ("R_"+$rigName+"_curve");
+				$arclenNode = `arclen -ch 1`;
+				rename $arclenNode ("R_"+$rigName+"_curveInfo");
+				
+				if(`objExists ("R_"+$rigName+"_stretchy_div")`) delete ("R_"+$rigName+"_stretchy_div");
+				createNode -name ("R_"+$rigName+"_stretchy_div") multiplyDivide;
+				if(`objExists ("R_"+$rigName+"_stretchy_scale")`) delete ("R_"+$rigName+"_stretchy_scale");
+				createNode -name ("R_"+$rigName+"_stretchy_scale") multiplyDivide;
+				setAttr ("R_"+$rigName+"_stretchy_div.operation") 2;
+				
+				connectAttr -f ("R_"+$rigName+"_curveInfo.arcLength") ("R_"+$rigName+"_stretchy_div.input1X");
+				connectAttr -f ("R_"+$rigName+"_stretchy_scale.outputX") ("R_"+$rigName+"_stretchy_div.input2X");
+				copyAttr -values ("R_"+$rigName+"_stretchy_div.input1X") ("R_"+$rigName+"_stretchy_scale.input1X");
+				setAttr ("R_"+$rigName+"_stretchy_scale.operation") 1;
+				
+				// Connecting joints
+				select -r ("R_"+$rigName+"*_skin");
+				$selection = `ls -sl`;
+				$counter = 0;
+				$stretchAxis = "Y";
+				if($primaryAxis == "x" || $primaryAxis == "X") $stretchAxis = "X";
+				if($primaryAxis == "z" || $primaryAxis == "Z") $stretchAxis = "Z";
+				
+				while($counter < (size($selection)-1))			// Ignoring last joint by deducting 1
+				{
+					connectAttr -f ("R_"+$rigName+"_stretchy_div.outputX") ($selection[$counter]+".scale"+$stretchAxis);
+					$counter++;
+				}
+				
+				// Volume setup
+				addAttr -ln "controls" -at "enum" -en "FK:IK:Combined" -k 1 ("R_"+$rigName+"_base_cc");
+				addAttr -ln "preserve_volume" -at bool -k 1 ("R_"+$rigName+"_base_cc");
+				addAttr -ln "volume_multiplier" -at double -k 1 ("R_"+$rigName+"_base_cc_off");
+				setAttr ("R_"+$rigName+"_base_cc_off.volume_multiplier") .4;
+				
+				if(`objExists ("R_"+$rigName+"_volume_div")`) delete ("R_"+$rigName+"_volume_div");
+				createNode -name ("R_"+$rigName+"_volume_div") multiplyDivide;
+				if(`objExists ("R_"+$rigName+"_volume_multi")`) delete ("R_"+$rigName+"_volume_multi");
+				createNode -name ("R_"+$rigName+"_volume_multi") multiplyDivide;
+				setAttr ("R_"+$rigName+"_volume_div.operation") 2;
+				setAttr ("R_"+$rigName+"_volume_multi.operation") 3;
+				connectAttr -f ("R_"+$rigName+"_base_cc_off.volume_multiplier") ("R_"+$rigName+"_volume_multi.input2X");
+				connectAttr -f ("R_"+$rigName+"_volume_div.outputX") ("R_"+$rigName+"_volume_multi.input1X");
+				
+				if(`objExists ("R_"+$rigName+"_volume_condition")`) delete ("R_"+$rigName+"_volume_condition");
+				createNode -name ("R_"+$rigName+"_volume_condition") condition;
+				connectAttr -f ("R_"+$rigName+"_base_cc.preserve_volume") ("R_"+$rigName+"_volume_condition.firstTerm");
+				setAttr ("R_"+$rigName+"_volume_condition.secondTerm") 1;
+				
+				connectAttr -f ("R_"+$rigName+"_volume_multi.outputX") ("R_"+$rigName+"_volume_condition.colorIfTrueR");
+				setAttr ("R_"+$rigName+"_volume_div.input1X") 1;
+				connectAttr -f ("R_"+$rigName+"_stretchy_div.outputX") ("R_"+$rigName+"_volume_div.input2X");
+				
+				// Connecting volume scale values to joints
+				$counter = 0;
+				$volumeAxis1 = "X";
+				$volumeAxis2 = "Z";
+				if($primaryAxis == "x" || $primaryAxis == "X") $volumeAxis1 = "Y";
+				if($primaryAxis == "z" || $primaryAxis == "Z") $stretchAxis = "Y";
+				
+				while($counter < size($selection))
+				{
+					connectAttr -f ("R_"+$rigName+"_volume_condition.outColorR") ($selection[$counter]+".scale"+$volumeAxis1);
+					connectAttr -f ("R_"+$rigName+"_volume_condition.outColorR") ($selection[$counter]+".scale"+$volumeAxis2);
+					$counter++;
+				}
+			}
+			
+			else // If no symettry needed
+			{
+				select -r $jointSelection[0] $jointSelection[(size($jointSelection)-1)];
+				ikHandle -name ($rigName+"_spline_ik") -c ($rigName+"_curve") -sol ikSplineSolver -ccv false -roc false -pcv false;
+				
+				parent  ($rigName+"_spline_ik") ($rigName+"_base_cc");
+				
+				select -r ($rigName+"_curve");
+				ClusterCurve;
+				select "|cluster*Handle";
+				group -name ($rigName+"_clusters_grp");
+				
+				select `listRelatives ($rigName+"_clusters_grp")`;
+				string $ikClusters[] = `ls -sl`;
+				$counter = 0;
+				while ($counter < size($ikClusters))
+				{
+					rename $ikClusters[$counter] ($rigName+"_"+($counter+1)+"_cls");
+									
+					if($counter == 0 || $counter == 1)
+					{
+						select -r ($rigName+"_ik1_cc") ($rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					else if ($counter == (size($ikClusters)-1))
+					{
+						select -r ($rigName+"_ik"+($counter-1)+"_cc") ($rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					else
+					{
+						select -r ($rigName+"_ik"+$counter+"_cc") ($rigName+"_"+($counter+1)+"_cls");
+						parentConstraint -mo;
+					}
+					
+					$counter++;				
+				}
+				parent ($rigName+"_clusters_grp") ($rigName+"_base_cc");			
+				
+				// Stertchy setup
+				select -r ($rigName+"_curve");
+				string $arclenNode = `arclen -ch 1`;
+				rename $arclenNode ($rigName+"_curveInfo");
+				
+				if(`objExists ($rigName+"_stretchy_div")`) delete ($rigName+"_stretchy_div");
+				createNode -name ($rigName+"_stretchy_div") multiplyDivide;
+				if(`objExists ($rigName+"_stretchy_scale")`) delete ($rigName+"_stretchy_scale");
+				createNode -name ($rigName+"_stretchy_scale") multiplyDivide;
+				setAttr ($rigName+"_stretchy_div.operation") 2;
+				
+				connectAttr -f ($rigName+"_curveInfo.arcLength") ($rigName+"_stretchy_div.input1X");
+				connectAttr -f ($rigName+"_stretchy_scale.outputX") ($rigName+"_stretchy_div.input2X");
+				copyAttr -values ($rigName+"_stretchy_div.input1X") ($rigName+"_stretchy_scale.input1X");
+				setAttr ($rigName+"_stretchy_scale.operation") 1;
+				
+				// Connecting joints
+				select -r ($rigName+"*_skin");
+				string $selection[] = `ls -sl`;
+				$counter = 0;
+				string $stretchAxis = "Y";
+				if($primaryAxis == "x" || $primaryAxis == "X") $stretchAxis = "X";
+				if($primaryAxis == "z" || $primaryAxis == "Z") $stretchAxis = "Z";
+				
+				while($counter < (size($selection)-1))			// Ignoring last joint by deducting 1
+				{
+					connectAttr -f ($rigName+"_stretchy_div.outputX") ($selection[$counter]+".scale"+$stretchAxis);
+					$counter++;
+				}
+				
+				// Volume setup
+				addAttr -ln "controls" -at "enum" -en "FK:IK:Combined" -k 1 ($rigName+"_base_cc");
+				addAttr -ln "preserve_volume" -at bool -k 1 ($rigName+"_base_cc");
+				addAttr -ln "volume_multiplier" -at double -k 1 ($rigName+"_base_cc_off");
+				setAttr ($rigName+"_base_cc_off.volume_multiplier") .4;
+				
+				if(`objExists ($rigName+"_volume_div")`) delete ($rigName+"_volume_div");
+				createNode -name ($rigName+"_volume_div") multiplyDivide;
+				if(`objExists ($rigName+"_volume_multi")`) delete ($rigName+"_volume_multi");
+				createNode -name ($rigName+"_volume_multi") multiplyDivide;
+				setAttr ($rigName+"_volume_div.operation") 2;
+				setAttr ($rigName+"_volume_multi.operation") 3;
+				connectAttr -f ($rigName+"_base_cc_off.volume_multiplier") ($rigName+"_volume_multi.input2X");
+				connectAttr -f ($rigName+"_volume_div.outputX") ($rigName+"_volume_multi.input1X");
+				
+				if(`objExists ($rigName+"_volume_condition")`) delete ($rigName+"_volume_condition");
+				createNode -name ($rigName+"_volume_condition") condition;
+				connectAttr -f ($rigName+"_base_cc.preserve_volume") ($rigName+"_volume_condition.firstTerm");
+				setAttr ($rigName+"_volume_condition.secondTerm") 1;
+				
+				connectAttr -f ($rigName+"_volume_multi.outputX") ($rigName+"_volume_condition.colorIfTrueR");
+				setAttr ($rigName+"_volume_div.input1X") 1;
+				connectAttr -f ($rigName+"_stretchy_div.outputX") ($rigName+"_volume_div.input2X");
+				
+				// Connecting volume scale values to joints
+				$counter = 0;
+				string $volumeAxis1 = "X";
+				string $volumeAxis2 = "Z";
+				if($primaryAxis == "x" || $primaryAxis == "X") $volumeAxis1 = "Y";
+				if($primaryAxis == "z" || $primaryAxis == "Z") $stretchAxis = "Y";
+				
+				while($counter < size($selection))
+				{
+					connectAttr -f ($rigName+"_volume_condition.outColorR") ($selection[$counter]+".scale"+$volumeAxis1);
+					connectAttr -f ($rigName+"_volume_condition.outColorR") ($selection[$counter]+".scale"+$volumeAxis2);
+					$counter++;
+				}
+			}
+			
+			// Cleaning up
+			if($isSym == 1)
+			{
+				setAttr ("L_"+$rigName+"_ik_controls_grp.visibility") 0; 
+				setDrivenKeyframe -currentDriver ("L_"+$rigName+"_base_cc.controls") ("L_"+$rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ("L_"+$rigName+"_base_cc.controls") ("L_"+$rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ("L_"+$rigName+"_base_cc.controls") 2;
+				setAttr ("L_"+$rigName+"_ik_controls_grp.visibility") 1; 			
+				setDrivenKeyframe -currentDriver ("L_"+$rigName+"_base_cc.controls") ("L_"+$rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ("L_"+$rigName+"_base_cc.controls") ("L_"+$rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ("L_"+$rigName+"_base_cc.controls") 1;
+				setAttr ("L_"+$rigName+"_fk1_cc_off.visibility") 0;
+				setDrivenKeyframe -currentDriver ("L_"+$rigName+"_base_cc.controls") ("L_"+$rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ("L_"+$rigName+"_base_cc.controls") ("L_"+$rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ("L_"+$rigName+"_base_cc.controls") 0;  // Set default to FK
+				
+				setAttr ("R_"+$rigName+"_ik_controls_grp.visibility") 0; 
+				setDrivenKeyframe -currentDriver ("R_"+$rigName+"_base_cc.controls") ("R_"+$rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ("R_"+$rigName+"_base_cc.controls") ("R_"+$rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ("R_"+$rigName+"_base_cc.controls") 2;
+				setAttr ("R_"+$rigName+"_ik_controls_grp.visibility") 1; 			
+				setDrivenKeyframe -currentDriver ("R_"+$rigName+"_base_cc.controls") ("R_"+$rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ("R_"+$rigName+"_base_cc.controls") ("R_"+$rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ("R_"+$rigName+"_base_cc.controls") 1;
+				setAttr ("R_"+$rigName+"_fk1_cc_off.visibility") 0;
+				setDrivenKeyframe -currentDriver ("R_"+$rigName+"_base_cc.controls") ("R_"+$rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ("R_"+$rigName+"_base_cc.controls") ("R_"+$rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ("R_"+$rigName+"_base_cc.controls") 0;  // Set default to FK
+				
+				
+			}
+			else
+			{
+				setAttr ($rigName+"_ik_controls_grp.visibility") 0; 
+				setDrivenKeyframe -currentDriver ($rigName+"_base_cc.controls") ($rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ($rigName+"_base_cc.controls") ($rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ($rigName+"_base_cc.controls") 2;
+				setAttr ($rigName+"_ik_controls_grp.visibility") 1; 
+				setDrivenKeyframe -currentDriver ($rigName+"_base_cc.controls") ($rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ($rigName+"_base_cc.controls") ($rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ($rigName+"_base_cc.controls") 1;
+				setAttr ($rigName+"_fk1_cc_off.visibility") 0;
+				setDrivenKeyframe -currentDriver ($rigName+"_base_cc.controls") ($rigName+"_ik_controls_grp.visibility");
+				setDrivenKeyframe -currentDriver ($rigName+"_base_cc.controls") ($rigName+"_fk1_cc_off.visibility");
+				
+				setAttr ($rigName+"_base_cc.controls") 0;  // Set default to FK
+			}
+			
+			if(`objExists tempLoc1`) delete tempLoc1;
+			if(`objExists tempLoc2`) delete tempLoc2;
+			if(`objExists tempIkFkJoint`) delete tempIkFkJoint;
+			if(`objExists tempIkSquare`) delete tempIkSquare;
+			if(`objExists tempFkCircle`) delete tempFkCircle;			
+		}
+	
+}
+
+
+global proc uCreateGroup(string $nameTag) // creates a group on top of all selected nodes. Argument will be used as name of group.
+{
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while ($counter < size($selection))
+	{
+		string $parentName[] = `listRelatives -p $selection[$counter]`;
+		if($nameTag != $parentName[0])
+		{
+			string $parentName[] = `listRelatives -f -p $selection[$counter]`;
+			select -cl;
+			duplicate -name $nameTag $selection[$counter];
+			delete `listRelatives -ad -f $nameTag`;
+			parent $selection[$counter] $nameTag;
+		}
+		$counter++;
+	}	
+}
+
+global proc uCreateJointGroup(string $nameTag) // creates a group on top of all selected nodes. Argument will be used as name of group.
+{
+	string $selection[] = `ls -sl`;
+	int $counter = 0;
+	while ($counter < size($selection))
+	{
+		string $parentName[] = `listRelatives -p $selection[$counter]`;
+		if($nameTag != $parentName[0] && $nameTag != $selection[$counter])
+		{
+			string $parentName[] = `listRelatives -f -p $selection[$counter]`;
+			select -cl;
+			group -em -name $nameTag;
+			select -r $selection[$counter] ("|"+$nameTag);
+			parentConstraint -name tempConstraint;
+			delete tempConstraint;
+			if($parentName[0] != "") parent ("|"+$nameTag) $parentName[0];
+			parent $selection[$counter] ($parentName[0]+"|"+$nameTag);
+		}
+		$counter++;
+	}	
+}
+
+global proc asAddGlobal()
+{
+	circle -name "Global" -nr 0 1 0 -r 12;
+	DeleteHistory;
+	if(`objExists "|Group"`) parent "Global" "Group";
+	else if(`objExists "|Character"`) parent "Global" "Character";
+	addAttr -ln "global_scale" -at "float" -dv 1 -k 1 Global;
+	addAttr -ln "joints" -at "bool" -k 1 Global;
+	connectAttr "Global.global_scale" "Global.scaleX";
+	connectAttr "Global.global_scale" "Global.scaleY";
+	connectAttr "Global.global_scale" "Global.scaleZ";
+	connectAttr "Global.global_scale" "Main.scaleX";
+	connectAttr "Global.global_scale" "Main.scaleY";
+	connectAttr "Global.global_scale" "Main.scaleZ";
+	setAttr -k 0 -cb 0 -l 1 Global.scaleX;
+	setAttr -k 0 -cb 0 -l 1 Global.scaleY;
+	setAttr -k 0 -cb 0 -l 1 Global.scaleZ;
+	setAttr -k 0 -cb 0 -l 1 Main.scaleX;
+	setAttr -k 0 -cb 0 -l 1 Main.scaleY;
+	setAttr -k 0 -cb 0 -l 1 Main.scaleZ;
+	connectAttr Global.joints DeformationSystem.visibility;
+	setAttr "GlobalShape.overrideEnabled" 1;
+	setAttr "GlobalShape.overrideColor" 13;
+	group -em -name "Main_off";
+	if(`objExists "|Group"`) parent "Main_off" "Group";
+	else if(`objExists "|Character"`) parent "Main_off" "Character";
+	parent "Main" "Main_off";
+	select -r Global Main_off;
+	parentConstraint -mo;
+	setAttr -l 1 "Main_off.translate";
+	setAttr -l 1 "Main_off.rotate";
+	select -cl;
+	confirmDialog -t "Success!" -m "Global control added. Use component mode to adjust scale if needed." -b "Okay";
+}
+
+global proc asChestFollow()
+{
+	if(`objExists IKArm_parent_L`)
+	{
+		string $pName[] = `listRelatives -p IKExtraArm_L`;
+		if($pName[0] !=  "IKOffsetArm_L")
+		{
+			parent IKExtraArm_L IKOffsetArm_L;
+			parent IKExtraArm_R IKOffsetArm_R;
+		}
+		delete IKArm_parent_L IKArm_parent_R;
+		if(`attributeExists followChest IKArm_L`) deleteAttr IKArm_L.followChest; 
+		if(`attributeExists followChest IKArm_R`) deleteAttr IKArm_R.followChest;
+	}
+	group -em -name IKArm_parent_L;
+	select -r IKArm_L IKArm_parent_L;
+	pointConstraint -name tempCon;
+	delete tempCon;
+	group -em -name IKArm_parent_R;
+	select -r IKArm_R IKArm_parent_R;
+	pointConstraint -name tempCon;
+	delete tempCon;
+	select -r IKArm_parent_R IKArm_parent_L;
+	makeIdentity -a 1 -t 1;
+	parent IKArm_parent_R IKOffsetArm_R;
+	makeIdentity -a 1 -t 1 IKArm_parent_R;
+	parent IKExtraArm_R IKArm_parent_R;
+	select -r Chest_M IKArm_parent_R;
+	parentConstraint -mo;
+	parent IKArm_parent_L IKOffsetArm_L;
+	makeIdentity -a 1 -t 1 IKArm_parent_L;
+	parent IKExtraArm_L IKArm_parent_L;
+	select -r Chest_M IKArm_parent_L;
+	parentConstraint -mo;
+
+	addAttr -ln followChest -at "float" -k 1 -min 0 -max 1 IKArm_L;
+	addAttr -ln followChest -at "float" -k 1 -min 0 -max 1 IKArm_R;
+
+	connectAttr IKArm_L.followChest IKArm_parent_L_parentConstraint1.Chest_MW0;
+	connectAttr IKArm_R.followChest IKArm_parent_R_parentConstraint1.Chest_MW0;
+	select -cl;
+	confirmDialog -t "Done!" -m "Follow switch for chest added on IK arm controls." -b "Okay";	
+}
+
+global proc asHoldJoints()
+{	
+	string $sel[] = `ls -sl`;
+	int $counter = 0;
+	int $invalidSelection = 0;
+	while($counter < size($sel))
+	{
+		if(`objectType $sel[$counter]` != "joint") $invalidSelection = 1;
+		$counter++;
+	}
+	
+	if($invalidSelection == 1 || size($sel) < 1) confirmDialog -t "Error!" -m "Invalid selection or nothing selected. Please make sure to select joints that require hold joints." -b "Okay";
+	else
+	{	
+		$counter = 0;
+		int $alreadyExists = 0;
+		string $overwriteString = "Hold joints for following already exist: ";
+		while($counter < size($sel))
+		{
+			if (`objExists ("HoldBase_"+$sel[$counter])`)
+			{
+				$alreadyExists = 1;
+				$overwriteString = $overwriteString+"\n"+$sel[$counter];
+			}
+			else
+			{
+				string $parent[] = `listRelatives -p $sel[$counter]`;
+				duplicate -name ("HoldBase_"+$sel[$counter]) $sel[$counter];
+				select -r ("HoldBase_"+$sel[$counter]);
+				pickWalk -d down;
+				delete;
+				duplicate -name ("Hold_"+$sel[$counter]) ("HoldBase_"+$sel[$counter]);
+				parent ("Hold_"+$sel[$counter]) ("HoldBase_"+$sel[$counter]);
+				parent ("HoldBase_"+$sel[$counter]) $sel[$counter];
+				float $outOffset = `getAttr ($sel[$counter]+".translateX")`;				
+				setAttr ("Hold_"+$sel[$counter]+".translateY") $outOffset;
+				
+				//Reverse rotation
+				createNode -name ("HoldBase_"+$sel[$counter]+"_reverseRot_multi") multiplyDivide;
+				connectAttr ($sel[$counter]+".rotateZ") ("HoldBase_"+$sel[$counter]+"_reverseRot_multi.input1X");
+				setAttr ("HoldBase_"+$sel[$counter]+"_reverseRot_multi.input2X") -.5;
+				connectAttr ("HoldBase_"+$sel[$counter]+"_reverseRot_multi.outputX") ("HoldBase_"+$sel[$counter]+".rotateZ");
+			}
+			$counter++;
+			
+		}
+		
+		if($alreadyExists == 0) confirmDialog -t "Success!" -m "Hold joints added for all selected joints." -b "Okay";
+		else confirmDialog -t "Success!" -m ("Hold joints added on some joints. "+$overwriteString) -b "Okay";
+	}
+}
+
+global proc asDrivenPelvisJoints()
+{
+	//Crotch setup
+	if(!`objExists Crotch_M`)
+	{
+		joint -name "Crotch_M_X" -p 0 0 0;
+		select -r Hip_L Hip_R Crotch_M_X;
+		pointConstraint -name tempCon;
+		delete tempCon;
+		duplicate -name Crotch_M Crotch_M_X;
+		select -r Root_M Crotch_M;
+		pointConstraint -skip x -skip z -name tempCon;
+		delete tempCon;
+		parent Crotch_M Crotch_M_X;
+		float $offset = `getAttr Crotch_M.translateY`;
+		setAttr Crotch_M.translateY ($offset * -1);
+		parent Crotch_M Root_M;
+		delete Crotch_M_X;
+		select -r Root_M Hip_L Hip_R Crotch_M;
+		parentConstraint -name "Crotch_M_parentConstraint1" -mo;
+		setAttr Crotch_M_parentConstraint1.interpType 2;
+		parent Crotch_M_parentConstraint1 ConstraintSystem;
+		
+		addAttr -ln "rootFollow" -at "float" -min 0 -max 1 -dv .5 -k 1 Crotch_M;
+		addAttr -ln "hipsFollow" -at "float" -min 0 -max 1 -dv 1 -k 1 Crotch_M;
+		connectAttr Crotch_M.rootFollow Crotch_M_parentConstraint1.Root_MW0;
+		connectAttr Crotch_M.hipsFollow Crotch_M_parentConstraint1.Hip_LW1;
+		connectAttr Crotch_M.hipsFollow Crotch_M_parentConstraint1.Hip_RW2;
+	}
+	
+	if(!`objExists Hold_Hip_L`)
+		{
+		//Thigh sliding hold setup
+			//Left
+		duplicate -name HoldBase_Hip_L Hip_L;
+		parent -w HoldBase_Hip_L;
+		select -r HoldBase_Hip_L;
+		pickWalk -d down;
+		delete;
+		duplicate -name Hold_Hip_L HoldBase_Hip_L;
+		duplicate -name Butt_L HoldBase_Hip_L;
+		parent Hold_Hip_L Butt_L HoldBase_Hip_L;
+		parent HoldBase_Hip_L Hip_L;
+		float $hipOffset = `getAttr Crotch_M.translateX`;
+		setAttr Hold_Hip_L.translateY ($hipOffset *.3);
+		setAttr Butt_L.translateY ($hipOffset * -.5);
+					
+		group -em -name Hold_Hip_L_off;
+		select -r Hold_Hip_L Hold_Hip_L_off;
+		parentConstraint -name tempCon;
+		delete tempCon;
+		parent Hold_Hip_L_off HoldBase_Hip_L;
+		parent Hold_Hip_L Hold_Hip_L_off;
+		
+		createNode -name Hip_ReverseRot_L_multi multiplyDivide;
+		connectAttr Hip_L.rotate Hip_ReverseRot_L_multi.input1;
+		setAttr Hip_ReverseRot_L_multi.input2 -.5 -.5 -.5;
+		connectAttr Hip_ReverseRot_L_multi.output HoldBase_Hip_L.rotate;
+		
+		createNode -name Hip_Slide_L_condition condition;	
+		connectAttr Hip_L.rotateZ Hip_Slide_L_condition.firstTerm;
+		setAttr Hip_Slide_L_condition.secondTerm 0;
+		setAttr Hip_Slide_L_condition.operation 2;
+		connectAttr Hip_L.rotateZ Hip_Slide_L_condition.colorIfTrueR;
+		setAttr Hip_Slide_L_condition.colorIfFalseR 0;
+		
+		createNode -name Hip_Slide_L_multi multiplyDivide;
+		connectAttr Hip_Slide_L_condition.outColorR Hip_Slide_L_multi.input1X;
+		setAttr Hip_Slide_L_multi.input2X -.1;	
+		connectAttr Hip_Slide_L_multi.outputX Hold_Hip_L.translateY;
+		
+			//Right
+		duplicate -name HoldBase_Hip_R Hip_R;
+		parent -w HoldBase_Hip_R;
+		select -r HoldBase_Hip_R;
+		pickWalk -d down;
+		delete;
+		duplicate -name Hold_Hip_R HoldBase_Hip_R;
+		duplicate -name Butt_R HoldBase_Hip_R;
+		parent Hold_Hip_R Butt_R HoldBase_Hip_R;
+		parent HoldBase_Hip_R Hip_R;
+		$hipOffset = `getAttr Crotch_M.translateX`;
+		setAttr Hold_Hip_R.translateY ($hipOffset * -.3);
+		setAttr Butt_R.translateY ($hipOffset * .5);
+		
+		
+		group -em -name Hold_Hip_R_off;
+		select -r Hold_Hip_R Hold_Hip_R_off;
+		parentConstraint -name tempCon;
+		delete tempCon;
+		parent Hold_Hip_R_off HoldBase_Hip_R;
+		parent Hold_Hip_R Hold_Hip_R_off;
+		
+		createNode -name Hip_ReverseRot_R_multi multiplyDivide;
+		connectAttr Hip_R.rotate Hip_ReverseRot_R_multi.input1;
+		setAttr Hip_ReverseRot_R_multi.input2 -.5 -.5 -.5;
+		connectAttr Hip_ReverseRot_R_multi.output HoldBase_Hip_R.rotate;
+		
+		createNode -name Hip_Slide_R_condition condition;	
+		connectAttr Hip_R.rotateZ Hip_Slide_R_condition.firstTerm;
+		setAttr Hip_Slide_R_condition.secondTerm 0;
+		setAttr Hip_Slide_R_condition.operation 2;
+		connectAttr Hip_R.rotateZ Hip_Slide_R_condition.colorIfTrueR;
+		setAttr Hip_Slide_R_condition.colorIfFalseR 0;
+		
+		createNode -name Hip_Slide_R_multi multiplyDivide;
+		connectAttr Hip_Slide_R_condition.outColorR Hip_Slide_R_multi.input1X;
+		setAttr Hip_Slide_R_multi.input2X .1;	
+		connectAttr Hip_Slide_R_multi.outputX Hold_Hip_R.translateY;
+	}
+	
+	confirmDialog -t "Success!" -m "Sliding hip setup updated." -b "Okay";
+}
+
+global proc asSlidingBicep()
+{
+	if(`objExists Bicep_L`) confirmDialog -t "Error!" -m "Bicep joints already exist. Please use existing joints or delete them and try again." -b "Okay";
+	else
+	{	
+		//Switch to fk
+		setAttr FKIKArm_L.FKIKBlend 0;
+		setAttr FKIKArm_R.FKIKBlend 0;
+		
+		// Left side 
+		select -cl;
+		joint -name Bicep_L -p 0 0 0;
+		setAttr Bicep_L.radius 2;
+		select -r Shoulder_L Elbow_L Bicep_L;
+		pointConstraint -name tempCon;
+		setAttr tempCon.Elbow_LW1 2;
+		delete tempCon;
+		select -r Shoulder_L Bicep_L;
+		orientConstraint -name tempCon;
+		delete tempCon;
+		makeIdentity -a 1 -r 1 Bicep_L;
+		group -em -name Bicep_L_off;
+		select -r Bicep_L Bicep_L_off;
+		parentConstraint -name tempCon;
+		delete tempCon;
+		parent Bicep_L Bicep_L_off;
+		parent Bicep_L_off ShoulderPart2_L;
+		
+		setDrivenKeyframe -currentDriver "Elbow_L.rotateZ" "Bicep_L.translate";	
+		setAttr FKElbow_L.rotateZ 110;
+		select -r ShoulderPart2_L Bicep_L;
+		pointConstraint -name tempCon;
+		setDrivenKeyframe -currentDriver "Elbow_L.rotateZ" "Bicep_L.translate";
+		delete tempCon;
+		setAttr Bicep_L.scale 1.4 1.4 1.4;
+		setDrivenKeyframe -currentDriver "Elbow_L.rotateZ" "Bicep_L.scaleY";
+		setDrivenKeyframe -currentDriver "Elbow_L.rotateZ" "Bicep_L.scaleZ";
+		setAttr FKElbow_L.rotateZ 0;
+		setAttr Bicep_L.scale 1 1 1;
+		setDrivenKeyframe -currentDriver "Elbow_L.rotateZ" "Bicep_L.scaleY";
+		setDrivenKeyframe -currentDriver "Elbow_L.rotateZ" "Bicep_L.scaleZ";
+		
+		//Right side	
+		select -cl;
+		joint -name Bicep_R -p 0 0 0;
+		setAttr Bicep_R.radius 2;
+		select -r Shoulder_R Elbow_R Bicep_R;
+		pointConstraint -name tempCon;
+		setAttr tempCon.Elbow_RW1 2;
+		delete tempCon;
+		select -r Shoulder_R Bicep_R;
+		orientConstraint -name tempCon;
+		delete tempCon;
+		makeIdentity -a 1 -r 1 Bicep_R;
+		group -em -name Bicep_R_off;
+		select -r Bicep_R Bicep_R_off;
+		parentConstraint -name tempCon;
+		delete tempCon;
+		parent Bicep_R Bicep_R_off;
+		parent Bicep_R_off ShoulderPart2_R;
+		
+		setDrivenKeyframe -currentDriver "Elbow_R.rotateZ" "Bicep_R.translate";	
+		setAttr FKElbow_R.rotateZ 110;
+		select -r ShoulderPart2_R Bicep_R;
+		pointConstraint -name tempCon;
+		setDrivenKeyframe -currentDriver "Elbow_R.rotateZ" "Bicep_R.translate";
+		delete tempCon;
+		setAttr Bicep_R.scale 1.4 1.4 1.4;
+		setDrivenKeyframe -currentDriver "Elbow_R.rotateZ" "Bicep_R.scaleY";
+		setDrivenKeyframe -currentDriver "Elbow_R.rotateZ" "Bicep_R.scaleZ";
+		setAttr FKElbow_R.rotateZ 0;
+		setAttr Bicep_R.scale 1 1 1;
+		setDrivenKeyframe -currentDriver "Elbow_R.rotateZ" "Bicep_R.scaleY";
+		setDrivenKeyframe -currentDriver "Elbow_R.rotateZ" "Bicep_R.scaleZ";
+		select -cl;
+		confirmDialog -t "Success!" -m "Bicep joints added successfully." -b "Okay";
+	}
+}
+
+global proc asCurveControls()
+{
+	if(!`objExists ControlsSetup`) confirmDialog -t "Error!" -m "Advanced skeleton ControlSetup not found." -b "Okay";
+	else
+	{
+		select -r `listRelatives -ad -type "nurbsSurface" ControlsSetup`;
+		string $testSel[] = `ls -sl`;
+		if(size($testSel) < 1) confirmDialog -t "Oops!" -m "No nurbs surface found. Either all controls have already been converted or you are using a newer version." -b "Okay";
+		else
+		{
+			pickWalk -d up;
+			string $sel[] = `ls -sl`;
+			circle -name tempSurfaceCircle -nr 0 0 1 -r 1;
+			DeleteHistory;
+			int $counter = 0;
+			while($counter < size($sel))
+			{
+				float $bBox[] = `exactWorldBoundingBox $sel[$counter]`;
+				float $xRange = $bBox[3] - $bBox[0];
+				float $yRange = $bBox[4] - $bBox[1];
+				float $zRange = $bBox[5] - $bBox[2];
+				float $diameter = $xRange;
+				if ($yRange > $diameter) $diameter = $yRange;
+				if ($zRange > $diameter) $diameter = $zRange;
+				$counter++;
+			}		
+		}
+	}
+}
+
+

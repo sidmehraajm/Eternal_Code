@@ -1,0 +1,18 @@
+class JointProc(object):
+    
+    colors = ('red','green','blue')
+    
+    def __init__(self,name ='Krishna',color = 'green'):
+        self.color = color
+        self.name = name
+        
+    def setColor(self,color):
+        if color in self.colors:
+            self.color = color
+            print self.color
+            
+    def setName(self,name):
+        if name:
+            self.name  = str(name)
+        
+            

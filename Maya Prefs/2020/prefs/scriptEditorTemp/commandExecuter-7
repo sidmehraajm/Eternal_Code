@@ -1,0 +1,23 @@
+va = 5
+for i in range(0,va):
+    
+    val = ((.5/float(va))*(i+1)*2)-((.5/float(va*2))*2)
+    #uVal = ((0.5 / numJoints) * (x + 1) * 2) - ((0.5 / (numJoints * 2)) * 2)
+    print val
+    fol = pm.createNode('transform',n=('Tst_'+str(Value)),ss=1)
+    folShape = pm.createNode('follicle',n  = fol.name()+'Shape',p = fol,ss=1)
+    geo =  pm.PyNode('nurbsPlane1')
+    geo.local >> folShape.inputSurface
+    geo.worldMatrix[0] >> folShape.inputWorldMatrix
+    folShape.outRotate >> fol.rotate
+    folShape.outTranslate >> fol.translate
+    fol.inheritsTransform.set(False)
+    folShape.parameterV.set(0.5)
+    folShape.parameterU.set(val)
+    
+    
+    
+    
+    
+
+    

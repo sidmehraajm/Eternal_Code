@@ -1,0 +1,232 @@
+
+    menuItem
+        -label "Perspective View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "switchModelView persp" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "N" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem173;
+
+    menuItem
+        -label "Side View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "switchModelView side" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "E" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem174;
+
+    menuItem
+        -label "Front View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "switchModelView front" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "S" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem175;
+
+    menuItem
+        -label "Top View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "switchModelView top" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "W" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem176;
+
+    menuItem
+        -label "Left View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "MTviewChange(\"left\", \"-ls\");" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "NW" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -version "2014" 
+        -longDivider 1
+        menuItem177;
+
+    menuItem
+        -label "Back View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "MTviewChange(\"back\", \"-b\");" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "SW" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -version "2014" 
+        -longDivider 1
+        menuItem178;
+
+    menuItem
+        -label "Bottom View" 
+        -divider 0
+        -subMenu 0
+        -tearOff 0
+        -command "MTviewChange(\"bottom\", \"-bo\");" 
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -radialPosition "SE" 
+        -allowOptionBoxes 1
+        -postMenuCommandOnce 0
+        -enableCommandRepeat 1
+        -echoCommand 0
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -version "2014" 
+        -longDivider 1
+        menuItem179;
+
+    menuItem
+        -label "Hotbox Style" 
+        -divider 0
+        -subMenu 1
+        -tearOff 0
+        -optionBox 0
+        -enable 1
+        -visible 1
+        -data 0
+        -allowOptionBoxes 1
+        -enableCommandRepeat 1
+        -italicized 0
+        -boldFont 0
+        -sourceType "mel" 
+        -longDivider 1
+        menuItem180;
+
+        menuItem
+            -label "Zones and Menu Rows" 
+            -divider 0
+            -subMenu 0
+            -tearOff 0
+            -command "hotBox -dh" 
+            -optionBox 0
+            -enable 1
+            -visible 1
+            -data 0
+            -allowOptionBoxes 1
+            -postMenuCommandOnce 0
+            -enableCommandRepeat 1
+            -echoCommand 0
+            -italicized 0
+            -boldFont 0
+            -sourceType "mel" 
+            -longDivider 1
+            menuItem181;
+
+        menuItem
+            -label "Zones Only" 
+            -divider 0
+            -subMenu 0
+            -tearOff 0
+            -command "hotBox -dzo" 
+            -optionBox 0
+            -enable 1
+            -visible 1
+            -data 0
+            -allowOptionBoxes 1
+            -postMenuCommandOnce 0
+            -enableCommandRepeat 1
+            -echoCommand 0
+            -italicized 0
+            -boldFont 0
+            -sourceType "mel" 
+            -longDivider 1
+            menuItem182;
+
+        menuItem
+            -label "Center Zone Only" 
+            -divider 0
+            -subMenu 0
+            -tearOff 0
+            -command "hotBox -dco" 
+            -optionBox 0
+            -enable 1
+            -visible 1
+            -data 0
+            -allowOptionBoxes 1
+            -postMenuCommandOnce 0
+            -enableCommandRepeat 1
+            -echoCommand 0
+            -italicized 0
+            -boldFont 0
+            -sourceType "mel" 
+            -longDivider 1
+            menuItem183;
+
+    setParent -m ..;
+
+setParent -m ..;
+

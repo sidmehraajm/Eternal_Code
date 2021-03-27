@@ -1,0 +1,16 @@
+string $parentjoint = "";
+polySelectSp -ring;
+for($edge in `ls -sl -fl`){
+    select -r $edge;
+    polySelectSp -loop;
+    setToolTo moveSuperContext; 
+    float $centerP[] = `manipMoveContext -q -position Move`;
+    string $newjoint = `joint -p $centerP[0] $centerP[1] $centerP[2]`;
+    if($parentjoint != ""){
+        parent $newjoint $parentjoint;
+        joint -e -zso -oj xyz -sao yup $parentjoint;     
+    }else{
+        parent -w;
+    }
+    $parentjoint = $newjoint;
+}

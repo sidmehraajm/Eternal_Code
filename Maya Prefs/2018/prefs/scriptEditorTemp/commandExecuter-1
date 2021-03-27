@@ -1,0 +1,304 @@
+global proc prismClothSticky()
+{
+	if(`window -q -exists prismClothStickyWindow`) deleteUI prismClothStickyWindow;
+	
+	window -t "Cloth Sticky" -w 350 -h 90 -s 0 prismClothStickyWindow;
+		columnLayout;
+			rowLayout -nc 3;
+				text -w 130 -align left -l "Attach object :";
+				textField -w 140 attachObjectInput;
+				button -w 70 -l "<<" -annotation "Select attchment object and click this button." -c "addAttachObject" attachObjectButton;
+				setParent..;
+			rowLayout -nc 3;
+				text -w 130 -align left -l "Mirror attach object :";
+				textField -w 140 mirrorAttachObjectInput;
+				checkBox -l "Symmetry" symmetryInput;
+				setParent..;
+			rowLayout -nc 3;
+				text -w 130 -align left -l "Name suffix :";
+				textField -w 140 rigSuffixInput;
+				button -w 70 -l "Create Rig" -annotation "After adding attachment object select all the locators and click this button." -c "prismClothStickyRig";
+				setParent..;
+			rowLayout -nc 2;
+				button -l "Attach only" -annotation "Directly attach the selected objects without any joints or controls." -c "prismStickyAttachOnly";
+				text -l ("Symmetry option is ignored.");
+				setParent..;
+			rowLayout -nc 2;
+				button -l "Scale constraint all" -annotation "First selected object will be used as target objest for scale constraints on rest of the selected objests." -c "prismStickyScaleAll";
+				text -l ("Symmetry option is ignored.");
+				setParent..;
+			
+			setParent..;
+			
+	showWindow prismClothStickyWindow;
+	window -e -w 350 -h 130 prismClothStickyWindow;
+}
+
+global proc prismStickyScaleAll()
+{	
+	string $sel[] = `ls -sl`;
+	if (size($sel) < 2) confirmDialog -t "Error!" -m "Invalid selection. Select two or more transform nodes." -b "Okay";
+	else
+	{
+		int $counter = 1;
+		while($counter < size($sel))
+		{
+			select -r $sel[0] $sel[$counter];
+			scaleConstraint -mo;
+			$counter++;
+		}
+		confirmDialog -t "Success!" -m "Scale constraints applied on all objects!" -b "Okay";
+	}
+}
+global proc addAttachObject()
+{
+	string $sel[] = `ls -sl`;
+	string $shapes[] = `listRelatives -s $sel[0]`;
+	textField -e -text $shapes[0] attachObjectInput;
+}
+
+global proc prismClothStickyRig()
+{
+	string $attachObject = `textField -q -text attachObjectInput`;
+	string $mirrorAttachObject = `textField -q -text mirrorAttachObjectInput`;
+	if($mirrorAttachObject == "") $mirrorAttachObject = $attachObject;
+	
+	if($attachObject == "") confirmDialog -t "Error!" -m "Attach object can not be left black. Please enter attachment object's name first." -b "Okay";
+	else
+	{
+		if(`objExists $attachObject`)
+		{
+			string $sel[] = `ls -sl`;
+			if(size($sel) > 0)
+			{
+				string $suffix = `textField -q -text rigSuffixInput`;
+				$suffix = "_"+$suffix;
+				string $mirrorSuffix;
+				string $mirrorControlSuffix;
+				string $controlSuffix = "_cc";
+				int $symmetry = `checkBox -q -v symmetryInput`;
+				if ($symmetry == 1)
+				{	
+					$mirrorSuffix = $suffix+"_R";
+					$mirrorControlSuffix = $controlSuffix+"_R";
+					$suffix = $suffix+"_L";
+					$controlSuffix = $controlSuffix+"_L";				
+				}				
+				int $counter = 0;				
+				if(!`objExists attachmentFollicles`) group -em -name attachmentFollicles;
+				if(!`objExists attachmentJoints`) group -em -name attachmentJoints;
+				if(!`objExists attachmentControls`) group -em -name attachmentControls;				
+				while($counter < size($sel))
+				{
+					if(`objExists "closestPoint"`) delete "closestPoint";
+					createNode -name "closestPoint" closestPointOnMesh;
+					if($symmetry == 1)
+					{
+						if(`objExists "mirrorClosestPoint"`) delete "mirrorClosestPoint";
+						createNode -name "mirrorClosestPoint" closestPointOnMesh;
+					}
+					float $scaleFacor[] = `xform -q -r -scale $sel[$counter]`;
+					select -cl;
+					joint -name ($sel[$counter]+$suffix) -p 0 0 0;
+					setAttr ($sel[$counter]+$suffix+".radius") $scaleFacor[0];
+					select -r $sel[$counter] ($sel[$counter]+$suffix);
+					utilSnapOrientObject;
+					makeIdentity -a 1 -r 1 ($sel[$counter]+$suffix);
+					
+					circle -name ($sel[$counter]+$controlSuffix) -nr 0 0 1 -r $scaleFacor[0];
+					DeleteHistory;
+					select -r ($sel[$counter]+$controlSuffix+".cv[0:7]");
+					move -r -os -wd 0 0 ($scaleFacor[2] * 1.4);
+					select -r $sel[$counter] ($sel[$counter]+$controlSuffix);
+					utilSnapOrientObject;
+					makeIdentity -a 1 -t 1 -s 1 ($sel[$counter]+$controlSuffix);
+					select -r ($sel[$counter]+$controlSuffix);
+					utilCreateOffset("off");					
+					select -r ($sel[$counter]+$controlSuffix);
+					utilCreateOffset("parent");
+					if($symmetry == 1)
+					{
+						mirrorJoint -mirrorBehavior -mirrorYZ -searchReplace "_L" "_R" ($sel[$counter]+$suffix);
+						select -r ($sel[$counter]+$controlSuffix+"_off");
+						utilMirrorObjects(1);
+						select -r ($sel[$counter]+$mirrorControlSuffix+"_off");
+						searchReplaceNames "_L" "_R" "hierarchy";
+						
+						createNode -name ($sel[$counter]+"_L_folShape") follicle;
+						select -r ($sel[$counter]+"_L_folShape");
+						pickWalk -d up;
+						rename ($sel[$counter]+"_L_fol");	
+						createNode -name ($sel[$counter]+"_R_folShape") follicle;
+						select -r ($sel[$counter]+"_R_folShape");
+						pickWalk -d up;
+						rename ($sel[$counter]+"_R_fol");
+						
+						// Connections
+						select -r ($sel[$counter]+$controlSuffix) ($sel[$counter]+$suffix);
+						parentConstraint -mo;
+						select -r ($sel[$counter]+$mirrorControlSuffix) ($sel[$counter]+$mirrorSuffix);
+						parentConstraint -mo;
+						parent ($sel[$counter]+$suffix) ($sel[$counter]+$mirrorSuffix) attachmentJoints;
+						parent ($sel[$counter]+$controlSuffix+"_off") ($sel[$counter]+$mirrorControlSuffix+"_off") attachmentControls;
+						
+						// Follicle connections						
+						connectAttr -f ($attachObject+".outMesh") "closestPoint.inMesh";
+						float $pos[] = `xform -q -ws -translation ($sel[$counter]+$suffix)`;
+						setAttr closestPoint.inPositionX $pos[0];
+						setAttr closestPoint.inPositionY $pos[1];
+						setAttr closestPoint.inPositionZ $pos[2];
+						float $uValue = `getAttr closestPoint.parameterU`;
+						float $vValue = `getAttr closestPoint.parameterV`;
+						
+						connectAttr -f ($attachObject+".outMesh")  ($sel[$counter]+"_L_folShape.inm");
+						connectAttr -f ($attachObject+".worldMatrix[0]")  ($sel[$counter]+"_L_folShape.inputWorldMatrix");
+						setAttr ($sel[$counter]+"_L_folShape.pu") $uValue;
+						setAttr ($sel[$counter]+"_L_folShape.pv") $vValue;
+						connectAttr ($sel[$counter]+"_L_folShape.outTranslate") ($sel[$counter]+"_L_fol.translate");
+						connectAttr ($sel[$counter]+"_L_folShape.outRotate") ($sel[$counter]+"_L_fol.rotate");
+						parent ($sel[$counter]+"_L_fol") attachmentFollicles;
+						select -r ($sel[$counter]+"_L_fol") ($sel[$counter]+$controlSuffix+"_parent");
+						parentConstraint -mo;
+
+						connectAttr -f ($mirrorAttachObject+".outMesh") "mirrorClosestPoint.inMesh";
+						$pos = `xform -q -ws -translation ($sel[$counter]+$mirrorSuffix)`;
+						setAttr mirrorClosestPoint.inPositionX $pos[0];
+						setAttr mirrorClosestPoint.inPositionY $pos[1];
+						setAttr mirrorClosestPoint.inPositionZ $pos[2];
+						$uValue = `getAttr mirrorClosestPoint.parameterU`;
+						$vValue = `getAttr mirrorClosestPoint.parameterV`;
+						
+						connectAttr -f ($mirrorAttachObject+".outMesh")  ($sel[$counter]+"_R_folShape.inm");
+						connectAttr -f ($mirrorAttachObject+".worldMatrix[0]")  ($sel[$counter]+"_R_folShape.inputWorldMatrix");
+						setAttr ($sel[$counter]+"_R_folShape.pu") $uValue;
+						setAttr ($sel[$counter]+"_R_folShape.pv") $vValue;
+						connectAttr ($sel[$counter]+"_R_folShape.outTranslate") ($sel[$counter]+"_R_fol.translate");
+						connectAttr ($sel[$counter]+"_R_folShape.outRotate") ($sel[$counter]+"_R_fol.rotate");
+						parent ($sel[$counter]+"_R_fol") attachmentFollicles;
+						select -r ($sel[$counter]+"_R_fol") ($sel[$counter]+$mirrorControlSuffix+"_parent");
+						parentConstraint -mo;
+					}	
+					else
+					{
+						createNode -name ($sel[$counter]+"_folShape") follicle;
+						select -r ($sel[$counter]+"_folShape");
+						pickWalk -d up;
+						rename ($sel[$counter]+"_fol");	
+
+						// Connections
+						select -r ($sel[$counter]+$controlSuffix) ($sel[$counter]+$suffix);
+						parentConstraint -mo;
+						parent ($sel[$counter]+$suffix) attachmentJoints;
+						parent ($sel[$counter]+$controlSuffix+"_off") attachmentControls;
+						
+						// Follicle connections
+						connectAttr -f ($attachObject+".outMesh") "closestPoint.inMesh";
+						float $pos[] = `xform -q -ws -translation ($sel[$counter]+$suffix)`;
+						setAttr closestPoint.inPositionX $pos[0];
+						setAttr closestPoint.inPositionY $pos[1];
+						setAttr closestPoint.inPositionZ $pos[2];
+						float $uValue = `getAttr closestPoint.parameterU`;
+						float $vValue = `getAttr closestPoint.parameterV`;
+						
+						connectAttr -f ($attachObject+".outMesh")  ($sel[$counter]+"_folShape.inm");
+						connectAttr -f ($attachObject+".worldMatrix[0]")  ($sel[$counter]+"_folShape.inputWorldMatrix");
+						setAttr ($sel[$counter]+"_folShape.pu") $uValue;
+						setAttr ($sel[$counter]+"_folShape.pv") $vValue;
+						connectAttr ($sel[$counter]+"_folShape.outTranslate") ($sel[$counter]+"_fol.translate");
+						connectAttr ($sel[$counter]+"_folShape.outRotate") ($sel[$counter]+"_fol.rotate");
+						parent ($sel[$counter]+"_fol") attachmentFollicles;
+						select -r ($sel[$counter]+"_fol") ($sel[$counter]+$controlSuffix+"_parent");
+						parentConstraint -mo;
+					}
+					$counter++;
+				}
+				select -cl;
+			}
+			else confirmDialog -t "Error!" -m "Please select locators!" -b "Okay";
+		}
+		else confirmDialog -t "Error!" -m "Specified attachment object does not exist. Please enter a valid attachment object" -b "Okay";
+	}
+}
+
+global proc prismStickyAttachOnly()
+{
+	string $attachObject = `textField -q -text attachObjectInput`;
+	string $mirrorAttachObject = `textField -q -text mirrorAttachObjectInput`;
+	if($mirrorAttachObject == "") $mirrorAttachObject = $attachObject;
+	
+	if($attachObject == "") confirmDialog -t "Error!" -m "Attach object can not be left black. Please enter attachment object's name first." -b "Okay";
+	else
+	{
+		if(`objExists $attachObject`)
+		{
+			string $sel[] = `ls -sl`;
+			if(size($sel) > 0)
+			{
+				string $suffix = `textField -q -text rigSuffixInput`;
+				$suffix = "_"+$suffix;
+				string $mirrorSuffix;
+				string $mirrorControlSuffix;
+				string $controlSuffix = "_cc";
+				int $symmetry = `checkBox -q -v symmetryInput`;
+				if ($symmetry == 1)
+				{	
+					$mirrorSuffix = $suffix+"_R";
+					$mirrorControlSuffix = $controlSuffix+"_R";
+					$suffix = $suffix+"_L";
+					$controlSuffix = $controlSuffix+"_L";				
+				}				
+				int $counter = 0;				
+				if(!`objExists attachmentFollicles`) group -em -name attachmentFollicles;							
+				
+				while($counter < size($sel))
+				{
+					if(`objExists "closestPoint"`) delete "closestPoint";
+					
+					createNode -name "closestPoint" closestPointOnMesh;
+					
+					float $scaleFacor[] = `xform -q -r -scale $sel[$counter]`;
+					select -cl;
+					
+					createNode -name ($sel[$counter]+"_folShape") follicle;
+					select -r ($sel[$counter]+"_folShape");
+					pickWalk -d up;
+					rename ($sel[$counter]+"_fol");	
+										
+					// Follicle connections
+					connectAttr -f ($attachObject+".outMesh") "closestPoint.inMesh";
+					spaceLocator -name tempPosLoc -p 0 0 0;
+					select -r $sel[$counter] tempPosLoc;
+					pointConstraint;
+					float $pos[] = `xform -q -ws -translation tempPosLoc`;
+					delete tempPosLoc;					
+					setAttr closestPoint.inPositionX $pos[0];
+					setAttr closestPoint.inPositionY $pos[1];
+					setAttr closestPoint.inPositionZ $pos[2];
+					float $uValue = `getAttr closestPoint.parameterU`;
+					float $vValue = `getAttr closestPoint.parameterV`;
+					
+					connectAttr -f ($attachObject+".outMesh")  ($sel[$counter]+"_folShape.inm");
+					connectAttr -f ($attachObject+".worldMatrix[0]")  ($sel[$counter]+"_folShape.inputWorldMatrix");
+					setAttr ($sel[$counter]+"_folShape.pu") $uValue;
+					setAttr ($sel[$counter]+"_folShape.pv") $vValue;
+					connectAttr ($sel[$counter]+"_folShape.outTranslate") ($sel[$counter]+"_fol.translate");
+					connectAttr ($sel[$counter]+"_folShape.outRotate") ($sel[$counter]+"_fol.rotate");
+					parent ($sel[$counter]+"_fol") attachmentFollicles;
+					select -r ($sel[$counter]+"_fol") $sel[$counter];
+					parentConstraint -mo;
+					
+					$counter++;
+				}
+				if(`objExists "closestPoint"`) delete "closestPoint";
+				confirmDialog -t "Done!" -m "Attached successfully." -b "Okay";
+				select -cl;
+			}
+			else confirmDialog -t "Error!" -m "Please select objects!" -b "Okay";
+		}
+		else confirmDialog -t "Error!" -m "Specified attachment object does not exist. Please enter a valid attachment object" -b "Okay";
+	}
+}
+
+
+
+prismClothSticky()

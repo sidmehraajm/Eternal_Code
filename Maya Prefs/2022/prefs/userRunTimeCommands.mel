@@ -1,0 +1,17 @@
+//Maya Preference 2022 (Release 1)
+//
+//
+
+runTimeCommand
+	-label ""
+	-image ""
+	-tags ""
+	-keywords ""
+	-plugin ""
+	-annotation ""
+	-category "Custom Scripts"
+	-hotkeyCtx ""
+	-commandLanguage "python"
+	-command (" #################################################################\n######################      Rest Ctrl      ########################\n #################################################################\n#Author:Siddarth Mehra\n#Email:siddarthmehraajm@gmail.com\n#Mobile: +91-7728050400(Whatsapp)\n\n#You can set this as Hotkey as 0 or something very useful to zeroout t s r on ctrls \n#change the prifix on line 11 accordingly like '*Ctrl' '*Ctl' '*etc'\n#remove # from line 61 if you want to set scale to 1\n\nimport pymel.core as pm\ntry:\n    sel = pm.ls(sl= 1)\nexcept:\n    sel=pm.ls('*Ctrl',an=True)\n\n    \nfor i in sel:\n    try:\n        pm.setAttr(i+'.translateX',0)\n    except:\n        pass\n    try:\n        pm.setAttr(i+'.translateY',0)\n    except:\n        pass\n    \n    try:\n        pm.setAttr(i+'.translateZ',0)\n    except:\n        pass\n    try:\n        pm.setAttr(i+'.rotateX',0)\n    except:\n        pass\n    \n    try:\n        pm.setAttr(i+'.rotateY',0)\n    except:\n        pass\n    try:\n        pm.setAttr(i+'.rotateZ',0)\n    except:\n        pass\n    \n    def sc():\n        sel=pm.ls('*Ctrl',an=True)\n        for i in sel:\n                \n            \n                \n            try:\n                pm.setAttr(i+'.scaleX',1)\n            except:\n                pass\n            try:\n                pm.setAttr(i+'.scaleY',1)\n            except:\n                pass\n            \n            try:\n                pm.setAttr(i+'.scaleZ',1)\n            except:\n                pass\n    #sc()")
+	Zero;
+
