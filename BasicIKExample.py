@@ -1,3 +1,4 @@
+import pymel.core as pm
 shldJnt = pm.joint(n='LT_Shoulder')
 elbowJnt = pm.joint(n='LT_Elbow')
 handJnt = pm.joint(n='LT_Hand')
