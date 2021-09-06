@@ -1,0 +1,295 @@
+//-----------------------------------------------------------------//
+//	AUTHOR:	MarcinKlusek aka bolekcg
+//
+//	DATE:	October 2017
+//
+//	DESC:	Script by utilize bookmarks aligns nodes in nodeEditor
+//          Some uiControls added to nodeEditor
+//-----------------------------------------------------------------//
+//
+//create bookmark node 
+proc string[] nEAlignCreateBookmark( string $nodeEditorName )
+{
+    //we are not able to get nodeView created by nodeEditor command so we need to get it by reading before and after 
+    string $bookmarksBefore[] = `ls -type "nodeGraphEditorBookmarkInfo"` ;
+    //createBookmark - invisible for nodeEdtiro because it needs name attr other than empty string
+    nodeEditor -e -createInfo "  #" $nodeEditorName;
+    //after creation
+    string $bookmarksAfter[] = `ls -type "nodeGraphEditorBookmarkInfo"` ;
+    //diff
+    string $node[] = `stringArrayRemove $bookmarksBefore $bookmarksAfter` ;
+    if (size($node))
+    {
+        //change .name attr to force bookmark visibility in bookmarkMenu (name attr = node name)
+        setAttr -type "string" ($node[0] +".name") $node[0];
+    }
+    //return created by nodeEditor command bookmark
+    return $node;
+}
+//nEAlignCreateBookmark "nodeEditorPanel1NodeEditorEd";
+//-----------------------------------------------------------------//
+//
+//get nodeEditor nodes position
+//return {$pMinX,$pMinY,$pAveX,$pAveY,$pMaxX,$pMaxY}
+proc float[] nEAlign_getValues( string $bookmarkNode )
+{
+    //---createVars
+    //crete sumX and sumY
+    float $pSumX ; float $pSumY ;
+    float $pMinX ; float $pMinY ;
+    float $pMaxX ; float $pMaxY ;
+    float $pAveX ; float $pAveY ;
+    //---end-createVars
+    //getSelectedNodes
+    string $sel[]= `ls -sl`;
+    //
+    //initialize nodeEditor position variables here to further 
+    float $curPosX ; float $curPosY;
+    //go through each node and get its position in nodeEditor
+    for($i=0; $i<size($sel);++$i)
+    {
+        //
+        //print "\n\n--------------------------------------------------";
+        //print ("\nwe operate now on ---- " +$sel[$i]); 
+        //list all connections to nodeView type - nodeGraphEditorBookmarkInfo
+        string $connection[] = `listConnections -c off -d on -plugs on -exactType on -type "nodeGraphEditorBookmarkInfo" $sel[$i]`;
+        //print " ---- and object has following connections\n\n" ; print $connection; print "";
+        //check all connection to bookmark node 
+        for($j=0;$j<size($connection);++$j)
+        {
+            //if connection string starts with created before bookmark node name get it
+            if( `startsWith $connection[$j] $bookmarkNode` )
+            {
+                //DO CODE HERE
+                //print ("but only-- " +$connection[$j] +" --startsWith-- " +$bookmarkNode +" --so we:\n");
+                // possible return tmpNodeView1.nodeInfo[2].dependNode -!!! be careful to name nodeView dependNode  -!!! we can also use substitute
+                string $posXAttrName = `substituteAllString $connection[$j] "dependNode" "positionX"` ;
+                string $posYAttrName = `substituteAllString $connection[$j] "dependNode" "positionY"` ;
+                //
+                //print ("getting two attributes: - \n");
+                //cur position
+                $curPosX = `getAttr $posXAttrName`;
+                $curPosY = `getAttr $posYAttrName`;
+                //print ($posXAttrName +" - is equal - " +$curPosX +"\n");
+                //print ($posYAttrName +" - is equal - " +$curPosY +"\n");
+                //sum to create average
+                $pSumX += $curPosX ;
+                $pSumY += $curPosY ;
+                //evaluate only in first loop to assign values to min-max
+                if( $i == 0)
+                {
+                    //
+                    //print "\nwe initialize min and max values\n";
+                    $pMinX = $pMaxX = $curPosX;
+                    $pMinY = $pMaxY = $curPosY;
+                }
+                //min-max values ----//condition ? exp1 : exp2 ternaryOperator
+                $pMinX = ($curPosX < $pMinX) ? $curPosX : $pMinX ;
+                $pMaxX = ($curPosX > $pMaxX) ? $curPosX : $pMaxX ;
+                //
+                $pMinY = ($curPosY < $pMinY) ? $curPosY : $pMinY ;
+                $pMaxY = ($curPosY > $pMaxY) ? $curPosY : $pMaxY ;
+            }
+            //print "--------------------------------------------------\n";
+        }
+    }
+    //calculate average values (not really average);)
+    $pAveX = ($pMinX+$pMaxX)*0.5 ;
+    $pAveY = ($pMinY+$pMaxY)*0.5 ;
+    //return values here
+    return {$pMinX,$pMinY,$pAveX,$pAveY,$pMaxX,$pMaxY} ;
+}
+//nEAlign_getValues "tmpNodeView1"
+//-----------------------------------------------------------------//
+//
+//valuses are data returned from nEAlign_getValues
+//mode is alignment type 1-up 2-left 3-horizontal 4-vertical 5-right 6-down
+//values are {$pMinX,$pMinY,$pAveX,$pAveY,$pMaxX,$pMaxY}
+proc nEAlign_setValues( string $bookmarkNode , float $values[] , int $mode )
+{
+    //getSelectedNodes
+    string $sel[]= `ls -sl` ;
+    int $selSize = size($sel) ;
+    
+    //stack distance multiplier could be connected to UI
+    //default node sizes are height=0.28 width=1.35 - get it from "" nodeEditor -q -dotFormat ""
+    //values are {$pMinX,$pMinY,$pAveX,$pAveY,$pMaxX,$pMaxY}
+    float $stackMultiplier = 1.1;
+    float $nodeXSize = 1.35 *100 ;
+    float $nodeYSize = 0.28 *150;
+    //
+    float $curYDistribution = abs($values[5]-$values[1]);
+    float $distYBetweenNode = $curYDistribution/$selSize;
+    //
+    float $curXDistribution = abs($values[4]-$values[0]);
+    float $distXBetweenNode = $curXDistribution/$selSize;
+    //
+    //
+    //
+    //go through each node and get its position in nodeEditor
+    for($i=0; $i<size($sel);++$i)
+    {
+        //
+        //print "\n\n--------------------------------------------------";
+        //print ("\now operate now on ---- " +$sel[$i]); 
+        //list all connections to nodeView type - nodeGraphEditorBookmarkInfo
+        string $connection[] = `listConnections -c off -d on -plugs on -exactType on -type "nodeGraphEditorBookmarkInfo" $sel[$i]`;
+        //print " ---- and object has following connections\n\n" ; print $connection; print "";
+        //check all connection to bookmark node 
+        for($j=0;$j<size($connection);++$j)
+        {
+            //if connection string starts with created before bookmark node name get it
+            if( `startsWith $connection[$j] $bookmarkNode` )
+            {
+                //DO CODE HERE
+                //print ("but only-- " +$connection[$j] +" --startsWith-- " +$bookmarkNode +" --so we:\n");
+                // possible return tmpNodeView1.nodeInfo[2].dependNode -!!! be careful to name nodeView dependNode  -!!! we can also use substitute
+                string $posXAttrName = `substituteAllString $connection[$j] "dependNode" "positionX"` ;
+                string $posYAttrName = `substituteAllString $connection[$j] "dependNode" "positionY"` ;
+                //
+                //print ("setting two attributes: - \n");
+                //
+                //
+                //set position on a basis of $mode variable
+                //mode is alignment type 1-up 2-left 3-horizontal 4-vertical 5-right 6-down
+                //values are {$pMinX,$pMinY,$pAveX,$pAveY,$pMaxX,$pMaxY}
+                switch( $mode )
+                {
+                    case 0:
+                        //up
+                        print "up \n";
+                        setAttr $posYAttrName $values[5] ;
+                        break;
+                    case 1:
+                        //left
+                        print "left \n";
+                        setAttr $posXAttrName $values[0] ;
+                        break;
+                    case 2:
+                        //horiz
+                        print "horiz \n";
+                        setAttr $posXAttrName $values[2] ;
+                        break;
+                    case 3:
+                        //vertic
+                        print "vertic \n";
+                        setAttr $posYAttrName $values[3] ;
+                        break;
+                    case 4:
+                        //right
+                        print "right \n";
+                        setAttr $posXAttrName $values[4] ;
+                        break;
+                    case 5:
+                        //down
+                        print "down \n";
+                        setAttr $posYAttrName $values[1] ;
+                        break;
+                    case 6:
+                        //stack |
+                        print "stack vert \n";
+                        setAttr $posXAttrName $values[2] ;
+                        setAttr $posYAttrName (( $values[3] + ($i * $distYBetweenNode * $stackMultiplier)- $curYDistribution* 0.5) + ($i * $nodeYSize) ) ;
+                        break;
+                    case 7:
+                        //stack -
+                        print "stack hori \n";
+                        setAttr $posYAttrName $values[3] ;
+                        setAttr $posXAttrName (( $values[2] + ($i * $distXBetweenNode * $stackMultiplier)- $curXDistribution* 0.5) + ($i * $nodeXSize) ) ;
+                        break;
+                }
+            }
+            //print "--------------------------------------------------\n";
+        }
+    }
+}
+//nEAlign_setValues "tmpNodeView1" {514.214493 , 1.0} 2
+//-----------------------------------------------------------------//
+//
+//command executed on button pressed
+proc doIt( int $mode , string $nodeEditorPanel)
+{
+    //undo disable
+    undoInfo -stateWithoutFlush off ;
+    //createBookmark
+    string $bookmark[] = `nEAlignCreateBookmark $nodeEditorPanel` ;
+    //get current positions values
+    float $values[] = `nEAlign_getValues $bookmark[0]` ;
+    //set node positions
+    nEAlign_setValues $bookmark[0] $values $mode ;
+    //restore bookmark
+    nodeEditor -e -restoreInfo $bookmark[0] $nodeEditorPanel ;
+    delete $bookmark;
+    //undo enable
+    undoInfo -stateWithoutFlush on ;
+}
+//doIt 1 "nodeEditorPanel1NodeEditorEd"
+//-----------------------------------------------------------------//
+//
+//align arrows UI
+proc nodeEditorUIMod( string $parent )
+{
+    //
+    columnLayout -parent $parent -h 70 bcg_neAlign_01;
+		rowLayout -ct1 "left" -co1 26 -nc 1;
+            iconTextButton -image1 "nudgeUp.png" -c "doIt 0 \"nodeEditorPanel1NodeEditorEd\"" -w 18 -h 18 bcg_neAlign_up;
+            setParent ..;
+        //
+		rowLayout  -nc 3;
+            iconTextButton -image1 "nudgeLeft.png" -c "doIt 1 \"nodeEditorPanel1NodeEditorEd\"" -w 18 -h 18 bcg_neAlign_left;
+                rowLayout -nc 2;
+                button -w 12 -h 18 -label "|" -command "doIt 2 \"nodeEditorPanel1NodeEditorEd\"" bcg_neAlign_vert;
+                button -w 12 -h 18 -label "-" -command "doIt 3 \"nodeEditorPanel1NodeEditorEd\"" bcg_neAlign_hori;
+                setParent..;
+            iconTextButton -image1 "nudgeRight.png" -c "doIt 4 \"nodeEditorPanel1NodeEditorEd\"" -w 18 -h 18 bcg_neAlign_right;
+            setParent ..;
+
+		rowLayout -ct1 "left" -co1 26 -nc 1;
+            iconTextButton -image1 "nudgeDown.png" -c "doIt 5 \"nodeEditorPanel1NodeEditorEd\"" -w 18 -h 18 bcg_neAlign_down;
+            setParent ..;
+        //
+        setParent..;
+    //
+    columnLayout -parent $parent bcg_neAlign_02;
+        button -w 18 -h 24 -label ":" -c "doIt 6 \"nodeEditorPanel1NodeEditorEd\"" ;
+        separator;
+        button -w 18 -h 24 -label "--" -c "doIt 7 \"nodeEditorPanel1NodeEditorEd\"" ;
+}
+//
+//-----------------------------------------------------------------//
+//
+//CREATE FLOATING WINDOW
+//TO BE ON TOP IT NEEDS TO BE A CHILD OF NODE EDITOR
+proc bcg_window ( string $parent  )
+{
+    //delte if exists
+    if ( `window -exists "bcg_window_wnd"` ) deleteUI "bcg_window_wnd" ;
+    //check for nodeEditor window
+    string $UI_win[] = `lsUI -windows`;
+    for($i=0;$i<size($UI_win);++$i)
+    {
+        if($parent == $UI_win[$i])
+        {
+            //window exists and argument could be used
+            //to be on top parent it to nodeEditor window
+            window -sizeable off -parent $parent -h 70 -w 120 "bcg_window_wnd";
+                flowLayout -h 70 -wrap on "bcg_flow";
+                    nodeEditorUIMod "bcg_flow";
+            showWindow "bcg_window_wnd";
+            //created we can exit
+            return;
+        }
+    }
+    print "can't find specified parent\n";
+    //create window without parent
+    //
+    window -sizeable 0 -h 70 -w 350 "bcg_window_wnd";
+        flowLayout -h 70 -wrap on "bcg_flow";
+            nodeEditorUIMod "bcg_flow";
+    showWindow "bcg_window_wnd";
+}
+//bcg_window "nodeEditorPanel1Window"
+//
+////////////////////////////////////
+bcg_window "nodeEditorPanel1";
+////////////////////////////////////

@@ -1,250 +1,112 @@
 global proc string[] zooAttrManUtilsArrayReorder( string $array[], int $entries[], string $dir ) {
 	string $newArray[] = $array;
 	int $gaps[];
-	int $be;
-
-	if( !`size $entries` ) return $array;
+	int $be;	if( !`size $entries` ) return $array;
 	$entries = `sort $entries`;
 	$gaps[0] = $entries[0];
 	for( $n = 0; $n < `size $entries`-1; $n++ ) if( $entries[$n]+1 != $entries[( $n+1 )] ) {
 		$gaps[( `size $gaps` )] = $entries[$n];
 		$gaps[( `size $gaps` )] = $entries[( $n+1 )];
 		}
-	$gaps[( `size $gaps` )] = $entries[( `size $entries`-1 )];
-
-	for( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == "up" ) $newArray = `zooAttrManUtilsArrayShiftUp $newArray $gaps[$n] $gaps[( $n+1 )]`;
-	for( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == "down" ) $newArray = `zooAttrManUtilsArrayShiftDown $newArray $gaps[$n] $gaps[( $n+1 )]`;
-
-	return $newArray;
+	$gaps[( `size $gaps` )] = $entries[( `size $entries`-1 )];	for( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == "up" ) $newArray = `zooAttrManUtilsArrayShiftUp $newArray $gaps[$n] $gaps[( $n+1 )]`;
+	for( $n = 0; $n < `size $gaps`; $n+=2 ) if( $dir == "down" ) $newArray = `zooAttrManUtilsArrayShiftDown $newArray $gaps[$n] $gaps[( $n+1 )]`;	return $newArray;
 	}
-
-
-
-
 global proc string[] zooAttrManUtilsArrayShiftUp( string $array[], int $startIndex, int $endIndex ) {
 	string $newArray[];
 	int $displaced = $startIndex-1;
-	int $num = ( $endIndex-$startIndex )+1;
-
-	if( $startIndex == 0 ) return $array;
-
-	//copy the original array to the newArray variable
-	for( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];
-
-	int $i = $startIndex-1;
-	for( $n = 0; $n < $num; $n++, $i++) $newArray[$i] = $array[( $i+1 )];
-
-	$newArray[$endIndex] = $array[$displaced];
+	int $num = ( $endIndex-$startIndex )+1;	if( $startIndex == 0 ) return $array;	for( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];	int $i = $startIndex-1;
+	for( $n = 0; $n < $num; $n++, $i++) $newArray[$i] = $array[( $i+1 )];	$newArray[$endIndex] = $array[$displaced];
 	return $newArray;
 	}
-
-
-
-//------
-//shifts entries inclusive from the start index, to the end index down (ie away from zero) in an array
-//------
 global proc string[] zooAttrManUtilsArrayShiftDown( string $array[], int $startIndex, int $endIndex ) {
 	string $newArray[];
 	int $displaced = $endIndex+1;
-	int $num = ( $endIndex-$startIndex )+1;
-
-	if( $endIndex >= `size $array`-1 ) return $array;
-
-	//copy the original array to the newArray variable
-	for( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];
-
-	int $i = $startIndex+$num;
-	for( $n = 0; $n < $num; $i--, $n++ ) $newArray[$i] = $array[( $i-1 )];
-
-	$newArray[$startIndex] = $array[$displaced];
+	int $num = ( $endIndex-$startIndex )+1;	if( $endIndex >= `size $array`-1 ) return $array;
+	for( $n = 0; $n < `size $array`; $n++ ) $newArray[$n] = $array[$n];	int $i = $startIndex+$num;
+	for( $n = 0; $n < $num; $i--, $n++ ) $newArray[$i] = $array[( $i-1 )];	$newArray[$startIndex] = $array[$displaced];
 	return $newArray;
 	}
-
-
-
-//------
-//returns the first entry in an array.
-//this is useful for commands that only return a single string, but return an array
-//
-//example: string $constraint = zooAttrManUtilsReturnElement( 0,`parentConstraint -mo $obj2 $obj1` );
-//example: string $parent = zooAttrManUtilsReturnElement( 0,`listRelatives -p $obj2` );
-//------
 global proc string zooAttrManUtilsReturnElement( int $entry, string $array[] ) {
 	if( $entry<0 ) $entry = `size $array` + $entry;
 	return $array[$entry];
 	}
-
-
-
-//------
-//this proc deals with getting the attribute selection from the UI, and passing it to the reorder proc below
-//------
 global proc zooDoReorder( string $dir ) {
 	string $validTypes[] = { "bool", "enum", "long", "double" };
 	string $obj = `text -q -l dwAttrManObjTXT`;
 	string $selAttrs[] = `textScrollList -q -si dwAttrManTSL`;
-	if( !`size $selAttrs` ) return;
-
-	string $attrs[] = `listAttr -k -ud $obj`;
+	if( !`size $selAttrs` ) return;	string $attrs[] = `listAttr -k -ud $obj`;
 	string $validAttrs[];
 	int $toReorder[];
-
-	//filters the list of attributes - the re-ordering process only works on attributes that show up in the channel box
 	for( $n=0; $n<`size $attrs`; $n++ ) {
 		string $type = `addAttr -q -at ( $obj +"."+ $attrs[$n] )`;
 		int $isValid = 0;
 		for( $a in $validTypes ) if( $type == $a ) { $isValid = 1; break; }
 		if( $isValid ) $validAttrs[( `size $validAttrs` )] = $attrs[$n];
 		}
-
-	//gets a list of which attributes are selected, and puts their indicies into an array
 	for( $n=0; $n<`size $validAttrs`; $n++ ) for( $a in $selAttrs ){
 		if( $a == $validAttrs[$n] ) $toReorder[( `size $toReorder` )] = $n;
-		}
-
-	string $newOrder[] = `zooAttrManUtilsArrayReorder $validAttrs $toReorder $dir`;
+		}	string $newOrder[] = `zooAttrManUtilsArrayReorder $validAttrs $toReorder $dir`;
 	zooAttrManReorder $obj $newOrder;
 	dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
 	for( $a in $selAttrs ) textScrollList -e -si $a dwAttrManTSL;
 	}
-
-
-
-//------
-//reorders dynamic attributes on an object
-//NOTE: this proc is taken from zooReorderAttribs - its put here for the sake of simplicity
-//------
 global proc zooAttrManReorder ( string $obj, string $newAttribOrder[] ) {
 	string $selObjs[] = `ls -sl`;
 	for ( $attrib in $newAttribOrder ) {
-		//if the attribute is locked, we'll need to unlock it to rename it
 		int $isAttrLocked = `getAttr -l ( $obj + "." + $attrib )`;
 		if( $isAttrLocked ) setAttr -l 0 ( $obj + "." + $attrib );
-
-		//rename the attribute to a temporary name.  You can't rename it to its own name, so we need to rename it to a proxy name, and then back again
 		string $tempAttrib = `renameAttr ( $obj + "." + $attrib ) "temp"`;
 		renameAttr ( $obj + "." + $tempAttrib ) $attrib;
-
-		//if the attribute WAS locked, lock it again, in order to maximise transparency
 		if( $isAttrLocked ) setAttr -l 1 ( $obj + "." + $attrib );
-		}
-
-	select -r $selObjs;
+		}	select -r $selObjs;
 	select $selObjs;
 	}
-
-
-
-//------
-//this proc deals with getting the new attribute name from the UI, and renaming the attribute
-//------
 global proc zooAttrManDoRename() {
 	string $obj = `text -q -l dwAttrManObjTXT`;
 	string $selAttrs[] = `textScrollList -q -si dwAttrManTSL`;
 	string $oldName = $selAttrs[0];
-	string $newName = `textField -q -tx dwNewAttrName`;
-
-	zooAttrManRenameAttrInPlace $obj $oldName $newName;
-
-	dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
+	string $newName = `textField -q -tx dwNewAttrName`;	zooAttrManRenameAttrInPlace $obj $oldName $newName;	dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
 	textScrollList -e -si $newName dwAttrManTSL;
 	}
-
-
-
-//------
-//renames an attribute without changing its order
-//NOTE: this proc is taken from zooReorderAttribs - its put here for the sake of simplicity
-//------
 global proc zooAttrManRenameAttrInPlace( string $obj, string $oldAttr, string $newAttr ) {
-	string $attrs[] = `listAttr -k -ud $obj`;
-
-	for( $n=0; $n<`size $attrs`; $n++ ) if( $attrs[$n] == $oldAttr ) {
+	string $attrs[] = `listAttr -k -ud $obj`;	for( $n=0; $n<`size $attrs`; $n++ ) if( $attrs[$n] == $oldAttr ) {
 		int $isLocked = `getAttr -l ( $obj + "." + $attrs[$n] )`;
 		setAttr -l 0 ( $obj + "." + $attrs[$n] );
 		renameAttr ( $obj + "." + $attrs[$n] ) $newAttr;
 		$attrs[$n] = $newAttr;
 		setAttr -l $isLocked ( $obj + "." + $attrs[$n] );
-		}
-
-	zooAttrManReorder $obj $attrs;
-	}
-
-
-
-///////////////////////////////////////////////////////////////
-
-//Proc loads the attributes for the selected object into the UI.
-//For now we´re skipping all compound attributes...they´re tricky lil´ bastards...!
-global proc dwAttrMan_LoadAttributes (string $obj, int $keyableCheck)
+		}	zooAttrManReorder $obj $attrs;
+	}global proc dwAttrMan_LoadAttributes (string $obj, int $keyableCheck)
 {
-//string $sel[] = `ls -sl -o`;
 if (! `objExists $obj`)
 	{
 	print "Object invalid or unspecified. Try again.\n";
 	return;
 	}
-
-//Query user-defined attrs, depending on $keyableCheck int.
 string $attrs[];
 if ($keyableCheck)
 	$attrs = `listAttr -ud -k $obj`;
 else
-	$attrs = `listAttr -ud $obj`;
-
-
-//if the attribute is a "vector" (ie the vector type was checked when the attribute was added)
-//then explicitly list all its children
-string $expandedAttrs[];
+	$attrs = `listAttr -ud $obj`;string $expandedAttrs[];
 for( $a in $attrs ) {
 	string $children[] = `attributeQuery -listChildren -n $obj $a`;
 	if( `size $children` ) for( $b in $children ) $expandedAttrs[( `size $expandedAttrs` )] = $b;
 	else $expandedAttrs[( `size $expandedAttrs` )] = $a;
 	}
-//clear $attrs;
-//$attrs = $expandedAttrs;
-//$attrs = `stringArrayRemoveDuplicates $attrs`;
-
-
-//if (! `size $attrs`)
-//	print ($obj + " has no custom attributes.\n");
-
-
-//Load obj name
 text -e -l $obj dwAttrManObjTXT;
-//Remove all from TSL.
 textScrollList -e -ra dwAttrManTSL;
-//Load attrs
 for ($a in $attrs)
-	{
-	//Skip over compound attributes for now.
-	//string $parent = `addAttr -q -parent ($obj + "." + $a)`;
-	//string $parentType = `addAttr -q -attributeType ($obj + "." + $parent)`;
-	//if (($parentType == "double3") || ($parentType == "double2") || ($parentType == "float3") || ($parentType == "float2"))
-	//	continue;
-	string $parent = `addAttr -q -parent ($obj + "." + $a)`;
-	//Only add parent attributes (for compound). Compound attrs should be transferred as a group.
-	//print $parent;
-	if ($parent == $a)
+	{	string $parent = `addAttr -q -parent ($obj + "." + $a)`;	if ($parent == $a)
 		textScrollList -e -a $a dwAttrManTSL;
 	}
 }
-
-///////////////////////////////////////////////////////////////
-
-
-//Proc transfers connections from a given object attribute to a target object attribute.
 global proc int dwAttrMan_TransferConnections(string $sourceObj, 		//Source obj.
 							string $attr, 		//Source attribute.
 							string $targetObj, 	//Target obj.
 							int $isMulti)		//Is the attribute a multi attribute?
 {
-//Get all connection to- and from- the source object attribute.
 string $sourceConnections[] = `listConnections -source 1 -destination 0 -plugs 1 ($sourceObj + "." + $attr)`;
 string $destinationConnections[] = `listConnections -source 0 -destination 1 -plugs 1 ($sourceObj + "." + $attr)`;
-
-
-//If the source obj´s ".message" attribute is connected to the same obj as $sourceConnections, then it is locked and we can´t transfer it.
 string $messageConnections[] = `listConnections -source 0 -destination 1 -plugs 1 ($sourceObj + ".message")`;
 string $messageBuffer[];
 string $destinationBuffer[];
@@ -265,28 +127,12 @@ if (`size $messageConnections`)
 	}
 if ($isLockedByMessage)
 	return $isLockedByMessage;
-
-
-//Disconnect old attributes and make connections for new attribute.
-//SOURCE CONNECTIONS (CONNECTIONS COMING FROM OTHER OBJECTS).
 int $i = 0;
 for ($s in $sourceConnections)
 	{
-	//If the attribute is multi, we have to find the indexes that are connected.
 	if ($isMulti)
-		{
-		//Not sure how important $indexMatters really is... it seems to work fine without specifiying it, so let´s ignore it for now.
-		//if ($indexMatters)
-		//	{
-			disconnectAttr $s ($sourceObj + "." + $attr + "[" + $i + "]");
-			connectAttr -f $s ($targetObj + "." + $attr + "[" + $i + "]");
-		//	}
-		//else if (! $indexMatters)
-		//	{
-		//	disconnectAttr -na $s ($sourceObj + "." + $attr);
-		//	connectAttr -f -na $s ($targetObj + "." + $attr);
-		//	}
-		}
+		{			disconnectAttr $s ($sourceObj + "." + $attr + "[" + $i + "]");
+			connectAttr -f $s ($targetObj + "." + $attr + "[" + $i + "]");		}
 	else
 		{
 		disconnectAttr $s ($sourceObj + "." + $attr);
@@ -294,71 +140,36 @@ for ($s in $sourceConnections)
 		}
 	$i++;
 	}
-//DESTINATION CONNECTIONS (CONNECTIONS GOING TO OTHER OBJECTS).
 $i = 0;
 for ($d in $destinationConnections)
 	{
-	//If the attribute is multi, we have to find the indexes that are connected.
 	if ($isMulti)
-		{
-		//if ($indexMatters)
-		//	{
-			disconnectAttr ($sourceObj + "." + $attr + "[" + $i + "]") $d;
-			connectAttr -f ($targetObj + "." + $attr + "[" + $i + "]") $d;
-		//	}
-		//else if (! $indexMatters)
-		//	{
-		//	disconnectAttr -na ($sourceObj + "." + $a) $d;
-		//	connectAttr -f -na ($targetObj + "." + $a) $d;
-		//	}
-		}
+		{			disconnectAttr ($sourceObj + "." + $attr + "[" + $i + "]") $d;
+			connectAttr -f ($targetObj + "." + $attr + "[" + $i + "]") $d;		}
 	else
 		{
 		disconnectAttr ($sourceObj + "." + $attr) $d;
 		connectAttr -f ($targetObj + "." + $attr) $d;
 		}
 	$i++;
-	}
-
-//Return if the object is locked by its message attribute.
-return $isLockedByMessage;
+	}return $isLockedByMessage;
 }
-
-///////////////////////////////////////////////////////////////
-
-
-//Proc returns 1 if the attribute is a compound type attr, 0 if not. "Compound" attributes require the "-nc" flag, other
-//attribs of compound type do not.
 global proc int dwAttrMan_IsCompoundType(string $sourceObj, string $attribute)
 {
-string $type = `addAttr -q -attributeType ($sourceObj + "." + $attribute)`;
-
-if (($type == "reflectance") || ($type == "spectrum") || ($type == "float2") || ($type == "float3")
+string $type = `addAttr -q -attributeType ($sourceObj + "." + $attribute)`;if (($type == "reflectance") || ($type == "spectrum") || ($type == "float2") || ($type == "float3")
 		 || ($type == "double2") || ($type == "double3") || ($type == "long2") || ($type == "long3")
 		 || ($type == "short2") || ($type == "short3") || ($type == "compound"))
 	return 1;
 else
 	return 0;
 }
-
-
-///////////////////////////////////////////////////////////////
-//Proc returns 1 if the attr requires the "-dataType" flag. 0 if not.
 global proc int dwAttrMan_IsDataType(string $object, string $attr)
 {
-string $type = `addAttr -q -attributeType ($object + "." + $attr)`;
-
-if ($type == "typed")
+string $type = `addAttr -q -attributeType ($object + "." + $attr)`;if ($type == "typed")
 	return 1;
 else
 	return 0;
 }
-
-///////////////////////////////////////////////////////////////
-
-//Proc transfers attributes from the selection in the UI list to the selected obj.
-//All connections to- and from- the attribute are maintained (if user desires), and attributes on original obj are deleted (if user desires).
-//Note: for compound attributes, we will only input the parent attribute into this procedure. That means we need to query the children attrs.
 global proc dwAttrMan_TransferAttributes(string $sourceObj,			  //Source object
 						string $attrs[], 	  //Attr list
 						string $parent,		  //Parent attr (necessary for compound attrs)
@@ -374,48 +185,26 @@ if (! `size $sel`)
 	error "Nothing selected. Select one object and try again.";
 if (`size $sel` > 1)
 	error "Select only one object and try again.";
-
-//Report error if user wants to transfer attribute to same obj.
 if ($sel[0] == $sourceObj)
 	error ("Selected object is the same as the source. Try again.");
-
-//Report error if attribute already exists on target obj. Do this BEFORE transferring anything.
 for ($a in $attrs)
 	{
 	if (`attributeExists $a $sel[0]`)
 		error ("Attribute \"" + $a + "\" conflicts with name of existing attribute on target " + $sel[0] + ". Try again.");
-	}
-
-int $numberOfChildren;
+	}int $numberOfChildren;
 for ($a in $attrs)
 	{
-	//GET ALL THE INFORMATION ABOUT THE ATTRIBUTE.
-	//Get the -attributeType flag. For now we are skipping attributes that require the "-dataType" flag.
 	string $type = `addAttr -q -attributeType ($sourceObj + "." + $a)`;
-	//IF THE ATTRIBUTE IS A COMPOUND ATTRIBUTE, GET ITS CHILDREN.
-
 	string $children[];
 	int $isCompoundType = `dwAttrMan_IsCompoundType $sourceObj $a`;
 	if ($isCompoundType)
 		{
-		//Assign $numberOfChildren only if the attr is a compound type.
 		$numberOfChildren = `addAttr -q -numberOfChildren ($sourceObj + "." + $a)`;
-		//Get list of children attrs.
 		$children = `listAttr ($sourceObj + "." + $a)`;
-		//Remove parent name from $children array.
 		$children = `stringArrayRemove {$a} $children`;
-		//print $children; return;
-		}
-
-	int $keyable = `getAttr -keyable ($sourceObj + "." + $a)`;
-	int $locked = `getAttr -lock ($sourceObj + "." + $a)`;
-	//Let´s ignore the attribute value for now.
-	//$value = `getAttr ($sourceObj + "." + $a)`;
-	string $longName = `addAttr -q -longName ($sourceObj + "." + $a)`;
-	string $shortName = `addAttr -q -shortName ($sourceObj + "." + $a)`;
-
-	//Get range information (if attr is not a string type or a vector type (double3)).
-	int $hasMin; int $hasMax; float $minValue; float $maxValue; int $hasSoftMin;
+		}	int $keyable = `getAttr -keyable ($sourceObj + "." + $a)`;
+	int $locked = `getAttr -lock ($sourceObj + "." + $a)`;	string $longName = `addAttr -q -longName ($sourceObj + "." + $a)`;
+	string $shortName = `addAttr -q -shortName ($sourceObj + "." + $a)`;	int $hasMin; int $hasMax; float $minValue; float $maxValue; int $hasSoftMin;
 	int $hasSoftMax; float $softMinValue; float $softMaxValue;
 	if (($type != "typed") && ($type != "message") && ($type != "fltMatrix") && ($type != "matrix") && (! $isCompoundType))
 		{
@@ -428,9 +217,6 @@ for ($a in $attrs)
 		$softMinValue = `addAttr -q -softMinValue ($sourceObj + "." + $a)`;
 		$softMaxValue = `addAttr -q -softMaxValue ($sourceObj + "." + $a)`;
 		}
-
-
-	//Find out if the attribute is a string attribute.
 	int $isString = 0;
 	string $typedDataType[]; //For some reason querying "-dataType" returns an array (while "-attributeType" returns a string).
 	if ($type == "typed")
@@ -438,46 +224,25 @@ for ($a in $attrs)
 		$typedDataType = `addAttr -q -dataType ($sourceObj + "." + $a)`;
 		if ($typedDataType[0] == "string")
 			$isString = 1;
-		}
-
-	//Find out if the attribute is a multi attribute.
-	int $isMulti = `attributeQuery -n $sourceObj -multi $a`;
+		}	int $isMulti = `attributeQuery -n $sourceObj -multi $a`;
 	int $multiSize = `getAttr -size ($sourceObj + "." + $a)`;
-	int $indexMatters = `addAttr -q -indexMatters ($sourceObj + "." + $a)`;
-
-	//Get the -enumName value if the attribute is an "enum" type.
-	string $enumName;
+	int $indexMatters = `addAttr -q -indexMatters ($sourceObj + "." + $a)`;	string $enumName;
 	if ($type == "enum")
-		$enumName = `addAttr -q -enumName ($sourceObj + "." + $a)`;
-
-	//print ($a + " : " + $type + "\n");return;
-
-	//ADD THE ATTR TO THE SELECTED OBJECT.
-	//We need special cases for "enum" type, "string" type, and for multi attributes.
-	//Criteria for multi attributes.
-	if (! $isMulti)
+		$enumName = `addAttr -q -enumName ($sourceObj + "." + $a)`;	if (! $isMulti)
 		{
 		//Criteria for enum attributes.
 		if ($type != "enum")
 			{
-			//Criteria for string attributes.
 			if (! $isString)
 				{
-				//If there is a specified parent, add the attr using the "-parent" flag.
 				if (`size $parent`)
 					{
-					//print `addAttr -q -numberOfChildren ($sel[0] + "." + $parent)`; return;
 					addAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];
 					}
 				else
-					addAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];
-
-				}
+					addAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -longName $longName -shortName $shortName $sel[0];				}
 			else
-				{
-				//If there is a specified parent, add the attr using the "-parent" flag.
-				//Note: attributes using the "-dataType" flag cannot use the -numberOfChildren flag... cool!
-				if (`size $parent`)
+				{				if (`size $parent`)
 					addAttr -parent $parent -dataType "string" -longName $longName -shortName $shortName $sel[0];
 				else
 					addAttr -dataType "string" -longName $longName -shortName $shortName $sel[0];
@@ -485,7 +250,6 @@ for ($a in $attrs)
 			}
 		else
 			{
-			//If there is a specified parent, add the attr using the "-parent" flag.
 			if (`size $parent`)
 				addAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType "enum" -enumName $enumName -longName $longName -shortName $shortName $sel[0];
 			else
@@ -494,16 +258,11 @@ for ($a in $attrs)
 		}
 	else if ($isMulti)
 		{
-		//If there is a specified parent, add the attr using the "-parent" flag.
 		if (`size $parent`)
 			addAttr -parent $parent -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -m -indexMatters $indexMatters -longName $longName -shortName $shortName $sel[0];
 		else
 			addAttr -numberOfChildren $numberOfChildren -keyable $keyable -attributeType $type -m -indexMatters $indexMatters -longName $longName -shortName $shortName $sel[0];
-		}
-
-	//Now, after transferring the attr: if the attr is a compound type, transfer all its children before continuing.
-	//This is a recursive part because we are calling this same procedure for each child.
-	if ($isCompoundType)
+		}	if ($isCompoundType)
 		{
 		for ($c in $children)
 			dwAttrMan_TransferAttributes($sourceObj,		//Source obj
@@ -511,13 +270,7 @@ for ($a in $attrs)
 							 $a, 			//Parent attribute (same as current attr).
 							 $transferConnections,  //transfer connections?
 							 0);			//Don´t delete attr (we´ll delete the parent attr later).
-		}
-
-
-
-
-	//Edit attribute accordingly. Attributes of type "typed" are string attributes and do not have min-max ranges.
-	if (($type != "typed") && ($type != "message") && ($type != "fltMatrix") && ($type != "matrix") && (! $isCompoundType))
+		}	if (($type != "typed") && ($type != "message") && ($type != "fltMatrix") && ($type != "matrix") && (! $isCompoundType))
 		{
 		if ($hasMin)
 			addAttr -e -minValue $minValue ($sel[0] + "." + $a);
@@ -527,107 +280,45 @@ for ($a in $attrs)
 			addAttr -e -softMinValue $softMinValue ($sel[0] + "." + $a);
 		if ($hasSoftMax)
 			addAttr -e -softMaxValue $softMaxValue ($sel[0] + "." + $a);
-		}
-
-
-
-	//For some reason, this produces a very bizarre error message. Instead, let´s specifiy the -keyable state upon adding the attr (above).
-	//if ($keyable)
-	//	setAttr -keyable 1 ($sel[0] + "." + $a);
-	if ($locked)
+		}	if ($locked)
 		setAttr -lock 1 ($sel[0] + "." + $a);
-
-	//For now we can ignore the value of the attribute.
-	//Set the attribute value. String attributes require special case.
-	//if ($type != "typed")
-	//	setAttr ($sel[0] + "." + $a) $value;
-	//else if ($isString)
-	//	setAttr -type "string" ($sel[0] + "." + $a) $value;
-
-
-	//TRANSFER CONNECTIONS.
 	int $isLockedByMessage = 0;
 	if ($transferConnections)
-		{
-		//For compound attrib members, let´s wait until all children are transferred before we do the connections.
-		//***I learned something really important: the parent (compound) attribute exists ONLY when all the children exist.
-		//Only when they ALL exist (the entire compound group, parent and all children) are any of them editable.
-		//So, first check to see if the attr has a given parent, and if that parent indeed exists. If the parent exists,
-		//it exists because all the children attributes have been added to the group. Only then can we proceed to
-		//transfer connections to/from compound attributes and their children attributes.
-		if ((`size $parent`) && (`attributeExists $parent $sel[0]`))
+		{		if ((`size $parent`) && (`attributeExists $parent $sel[0]`))
 			{
-			//Get the children of the parent.
 			$children = `listAttr ($sel[0] + "." + $parent)`;
-			//Remove parent name from $children array.
 			$children = `stringArrayRemove {$parent} $children`;
 			for ($c in $children)
 				$isLockedByMessage = `dwAttrMan_TransferConnections $sourceObj $c $sel[0] $isMulti`;
 			}
 		else if (! `size $parent`)
 			$isLockedByMessage = `dwAttrMan_TransferConnections $sourceObj $a $sel[0] $isMulti`;
-		}
-
-	//Continue the loop if the attribute is locked by its message attr.
-	if ($isLockedByMessage)
-		continue;
-
-	//DELETE ATTR FROM SOURCE OBJ.
-	if ($deleteOriginals)
+		}	if ($isLockedByMessage)
+		continue;	if ($deleteOriginals)
 		{
-		//We need to unlock it first.
 		if ($locked)
 			setAttr -lock 0 ($sourceObj + "." + $a);
-		//Delete it only if it has no specified parent (ie, not a member of a compound attr group)
 		if (! `size $parent`)
 			deleteAttr ($sourceObj + "." + $a);
 		}
-	}
-
-
-//Refresh TSL to reflect transferred attributes (but only if not a child of a compound attr).
-if (! `size $parent`)
+	}if (! `size $parent`)
 	dwAttrMan_LoadAttributes $sourceObj `checkBox -q -v dwAttrManListKeyableCheck`;
 }
-
-
-
-
-///////////////////////////////////////////////////////////////
-
-
 global proc doHideConXnList() {
 	int $hideState = `control -q -vis dwAttrManConXnForm`;
 	string $buttonLabel = ( $hideState )? "<": ">";
-	int $newPos = ( $hideState )? 100: 50;
-
-	button -e -width 12 -l $buttonLabel dwAttrManButtonCollapseConXn;
-	control -e -vis (!$hideState) dwAttrManConXnForm;
-
-	formLayout -e
+	int $newPos = ( $hideState )? 100: 50;	button -e -width 12 -l $buttonLabel dwAttrManButtonCollapseConXn;
+	control -e -vis (!$hideState) dwAttrManConXnForm;	formLayout -e
 		-ap dwAttrManConXnForm left -3 $newPos
-		//-af dwAttrManConXnForm top 0
-		//-af dwAttrManConXnForm right 0
-		//-ac dwAttrManConXnForm bottom 0 dwAttrManBottomForm
 		dwAttrManFormMaster;
 	}
-
-
-
-
-
-///////////////////////////////////////////////////////////////
-//Proc shows connections in the right-hand TSL in the main UI.
 global proc dwAttrMan_ShowConnections(int $kind)
 {
-//Clear the TSL
 textScrollList -e -ra dwAttrManConXnTSL;
-//Get the full object attribute name.
 string $obj = `text -q -l dwAttrManObjTXT`;
 if (! `objExists $obj`)
 	return;
 string $attr[] = `textScrollList -q -si dwAttrManTSL`;
-//If many attributes are selected, display "..."
 if (`size $attr` > 1)
 	textScrollList -e -a "..." dwAttrManConXnTSL;
 else if (`size $attr` == 1)
@@ -636,81 +327,45 @@ else if (`size $attr` == 1)
 	if ($kind == 1)
 		$connections = `listConnections -s 1 -d 0 -p 1 ($obj + "." + $attr[0])`;
 	else if ($kind == 2)
-		$connections = `listConnections -s 0 -d 1 -p 1 ($obj + "." + $attr[0])`;
-
-	for ($c in $connections)
+		$connections = `listConnections -s 0 -d 1 -p 1 ($obj + "." + $attr[0])`;	for ($c in $connections)
 		{
-		//Get the nodeType.
 		string $nodeBuffer[];
 		tokenize $c "." $nodeBuffer;
 		string $nodeType = `nodeType $nodeBuffer[0]`;
-		//Show the connection name as well as its nodeType.
 		textScrollList -e -a ($c + " (" + $nodeType + ")") dwAttrManConXnTSL;
 		}
 	}
-}
-
-
-///////////////////////////////////////////////////////////////
-//Proc deletes selected attributes.
-global proc dwAttrMan_DeleteAttributes(string $obj, string $attrs[])
+}global proc dwAttrMan_DeleteAttributes(string $obj, string $attrs[])
 {
 if (! `size $attrs`)
-	return;
-
-for ($a in $attrs)
-	deleteAttr ($obj + "." + $a);
-
-//Refresh source TSL
-dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
-//Refresh connection TSL
+	return;for ($a in $attrs)
+	deleteAttr ($obj + "." + $a);dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
 dwAttrMan_ShowConnections `radioButtonGrp -q -sl attrManConnectionsRBG`;
-}
-
-///////////////////////////////////////////////////////////////
-//Procedure selects a connected obj, as listed in the connection TSL.
-global proc dwAttrMan_SelectConnectionObject()
+}global proc dwAttrMan_SelectConnectionObject()
 {
 string $objAttr[] = `textScrollList -q -si dwAttrManConXnTSL`;
 if (! `size $objAttr`)
-	return;
-
-//Tokenize the $objAttrs by ".", make sure the buffer exists, then add it to a final selection string.
-string $objBuffer[];
+	return;string $objBuffer[];
 string $selectionString;
 for ($i = 0; $i < `size $objAttr`; $i++)
 	{
 	tokenize $objAttr[$i] "." $objBuffer;
 	if (`objExists $objBuffer[$i]`)
 		$selectionString += ($objBuffer[$i] + " ");
-	}
-
-if (`size $selectionString`)
+	}if (`size $selectionString`)
 	select -r $selectionString;
-}
-
-///////////////////////////////////////////////////////////////
-
-//Procedure selects the original source obj.
-global proc dwAttrMan_SelectSourceObject()
+}global proc dwAttrMan_SelectSourceObject()
 {
 string $obj = `text -q -l dwAttrManObjTXT`;
 if (! `objExists $obj`)
 	return;
 select -r $obj;
-}
-
-///////////////////////////////////////////////////////////////
-
-
-//Proc sets the source attr´s keyable or not.
-global proc dwAttrMan_SetKeyable()
+}global proc dwAttrMan_SetKeyable()
 {
 string $obj = `text -q -l dwAttrManObjTXT`;
 string $attrs[] = `textScrollList -q -si dwAttrManTSL`;
 for ($a in $attrs)
 	{
-	//If attribute is a compound attr, then set children keyable.
 	if (`dwAttrMan_IsCompoundType $obj $a `)
 		{
 		string $children[] = `listAttr ($obj + "." + $a)`;
@@ -722,67 +377,38 @@ for ($a in $attrs)
 			setAttr -k (! $keyable) ($obj + "." + $c);
 			//print ($c + " ----> " + (! $keyable) + "\n");
 			}
-		//Another bizarre anomoly: I must set the compound parent´s "keyability" to the *opposite* of the children (???)
 		setAttr -k ($keyable) ($obj + "." + $a);
 		//print ($a + " ----> " + ($keyable) + "\n");
-		}
-
-	if (`dwAttrMan_IsDataType $obj $a`)
+		}	if (`dwAttrMan_IsDataType $obj $a`)
 		{
 		warning ($obj + "." + $a + " is a dataType attribute. Attributes that require the \"-dataType\" flag cannot be keyable.");
 		continue;
-		}
-
-	if (`getAttr -k ($obj + "." + $a)` == 0)
+		}	if (`getAttr -k ($obj + "." + $a)` == 0)
 		setAttr -k 1 ($obj + "." + $a);
 	else
 		setAttr -k 0 ($obj + "." + $a);
 	}
-//Refresh TSL.
 dwAttrMan_LoadAttributes $obj `checkBox -q -v dwAttrManListKeyableCheck`;
-}
-
-
-///////////////////////////////////////////////////////////////
-//Returns the exact attribute type, regardless whether it is an -at or a -dt type.
-global proc string dwAttrManGetAttrTypeGeneral(string $object, string $attribute)
+}global proc string dwAttrManGetAttrTypeGeneral(string $object, string $attribute)
 {
-string $type = `addAttr -q -attributeType ($object + "." + $attribute)`;
-
-if ($type == "typed")
+string $type = `addAttr -q -attributeType ($object + "." + $attribute)`;if ($type == "typed")
 	{
 	//Data typed attrs return an array for their -dataType
 	string $dataType[] = `addAttr -q -dataType ($object + "." + $attribute)`;
 	return $dataType[0];
-	}
-
-else
+	}else
 	return $type;
-}
-
-
-///////////////////////////////////////////////////////////////
-//Returns 1 if the attribute is a multi attribute, 0 if not
-global proc int dwAttrManIsMulti(string $object, string $attribute)
+}global proc int dwAttrManIsMulti(string $object, string $attribute)
 {
-string $isMulti = `addAttr -q -multi ($object + "." + $attribute)`;
-
-return $isMulti;
+string $isMulti = `addAttr -q -multi ($object + "." + $attribute)`;return $isMulti;
 }
-
-///////////////////////////////////////////////////////////////
-
 global proc attrManHelp()
 {
 if (`window -ex attrManHelpUI`)
-	deleteUI attrManHelpUI;
-
-window -t "AttributeMan Help" -wh 450 350 attrManHelpUI;
+	deleteUI attrManHelpUI;window -t "AttributeMan Help" -wh 450 350 attrManHelpUI;
 	string $form = `formLayout`;
 		string $scroll = `scrollLayout`;
-			columnLayout;
-
-				rowColumnLayout -nc 2 -cw 1 75 -cw 2 300;
+			columnLayout;				rowColumnLayout -nc 2 -cw 1 75 -cw 2 300;
 					text -label "Authors: " -font boldLabelFont;
 					text -label "Hamish McKenzie:  www.macaronikazoo.com";
 					text -label "";
@@ -791,11 +417,7 @@ window -t "AttributeMan Help" -wh 450 350 attrManHelpUI;
 					text -label "";
 					text -label "Created:" -font boldLabelFont;
 					text -label "May 5-18, 2004";
-					setParent..;
-
-				text -label "" -h 30;
-
-
+					setParent..;				text -label "" -h 30;
 				text -label "   About: " -font boldLabelFont;
 				string $noteText = "  This tool allows the user to manage custom object attributes, providing the following\n";
 				$noteText += "   functionality:  reordering of attributes, renaming attributes, and transferring attributes\n";
@@ -828,63 +450,33 @@ window -t "AttributeMan Help" -wh 450 350 attrManHelpUI;
 				$noteText += "   no known fix for this, so just try to avoid it.   \n";
 				$noteText += "   \n";
 				$noteText += "   Comments etc. can be sent to mel@macaroniKazoo.com or dwalden74@hotmail.com. \n";
-				text -label $noteText -align left;
-
-				text -label "" -h 10;
-
-
+				text -label $noteText -align left;				text -label "" -h 10;
 				setParent..;
 			setParent..;
 		string $closeButton = `button -label "Close Window" -c "deleteUI attrManHelpUI"`;
-		setParent..;
-
-	formLayout -e
+		setParent..;	formLayout -e
 		-attachForm $scroll left 0
 		-attachForm $scroll top 0
 		-attachForm $scroll right 0
-		-attachControl $scroll bottom 0 $closeButton
-
-		-attachForm $closeButton left 0
+		-attachControl $scroll bottom 0 $closeButton		-attachForm $closeButton left 0
 		-attachNone $closeButton top
 		-attachForm $closeButton right 0
 		-attachForm $closeButton bottom 0
-		$form;
-
-showWindow attrManHelpUI;
-}
-
-///////////////////////////////////////////////////////////////
-
-//Proc creates main UI.
-global proc attributeMan()
+		$form;showWindow attrManHelpUI;
+}global proc attributeMan()
 {
 if (`window -ex dwAttrManWin`)
-	deleteUI dwAttrManWin;
-
-window -t "AttributeMan" -menuBar true dwAttrManWin;
+	deleteUI dwAttrManWin;window -t "AttributeMan" -menuBar true dwAttrManWin;
 menu -label "Help" -tearOff true attributeMangerHelpMenu;
-	menuItem -l "AttributeMan Help" -c "attrManHelp";
-
-//Master form layout; contains three children formLayouts ($sourceForm, $conXnform, and $bottomForm)
-string $masterForm = `formLayout dwAttrManFormMaster`;
-
-
-//Source object formLayout.
-string $sourceForm = `formLayout sourceObjForm`;
-
-	string $sourceText = `text -l "Source Object:"`;
+	menuItem -l "AttributeMan Help" -c "attrManHelp";string $masterForm = `formLayout dwAttrManFormMaster`;
+string $sourceForm = `formLayout sourceObjForm`;	string $sourceText = `text -l "Source Object:"`;
 	string $objText = `text -l "" -font boldLabelFont -align left dwAttrManObjTXT`;
 		popupMenu -p $objText -b 3;
-			menuItem -l "Select" -c "dwAttrMan_SelectSourceObject";
-
-	string $TSL = `textScrollList
+			menuItem -l "Select" -c "dwAttrMan_SelectSourceObject";	string $TSL = `textScrollList
 			-ams 1
 			-sc ("textField -e -tx (zooAttrManUtilsReturnElement(0,`textScrollList -q -si dwAttrManTSL`)) dwNewAttrName; \
 				dwAttrMan_ShowConnections `radioButtonGrp -q -sl attrManConnectionsRBG`;")
 			dwAttrManTSL`;
-
-		//PopupMenu for main TSL.
-		//Show the attribute type via a popup menu.
 		popupMenu -p $TSL -b 3 -postMenuCommand "{string $obj = `text -q -l dwAttrManObjTXT`; \
 								if (`objExists $obj`) { \
 									string $attr[] = `textScrollList -q -si dwAttrManTSL`; \
@@ -901,22 +493,10 @@ string $sourceForm = `formLayout sourceObjForm`;
 			menuItem -l "Attribute Type: " attrMan_AttrTypeMI;
 			menuItem -d 1;
 			menuItem -l "Toggle keyable" -c "dwAttrMan_SetKeyable";
-			menuItem -l "Delete attribute" -c "dwAttrMan_DeleteAttributes `text -q -l dwAttrManObjTXT` `textScrollList -q -si dwAttrManTSL`";
-
-	string $moveUpBTN = `button -l "Move Up" -c ( "zooDoReorder up" )`;
+			menuItem -l "Delete attribute" -c "dwAttrMan_DeleteAttributes `text -q -l dwAttrManObjTXT` `textScrollList -q -si dwAttrManTSL`";	string $moveUpBTN = `button -l "Move Up" -c ( "zooDoReorder up" )`;
 	string $moveDownBTN = `button -l "Move Down" -c ( "zooDoReorder down" )`;
-
-	//Button form is a child of $sourceForm.
-	//string $buttForm = `formLayout`;
-	//	string $upButt = `symbolButton -i "arrowup.xpm" -width 15 -c( "zooDoReorder up" )`;
-	//	string $dnButt = `symbolButton -i "arrowdown.xpm" -width 15 -c( "zooDoReorder down" )`;
-	//setParent ..;
-
 	string $collapseButton = `button -l ">" -width 13 -c( "doHideConXnList" ) dwAttrManButtonCollapseConXn`;
 setParent ..;
-
-
-//Show connections formLayout.
 string $conXnform = `formLayout -vis 0 dwAttrManConXnForm`;
 	string $connectionsTXT = `text
 					-l "Show Connections:"
@@ -938,9 +518,6 @@ string $conXnform = `formLayout -vis 0 dwAttrManConXnForm`;
 		popupMenu -p $conXnTSL -b 3;
 			menuItem -l "Select object" -c "dwAttrMan_SelectConnectionObject";
 setParent ..;
-
-
-//Bottom formLayout.
 string $bottomForm = `formLayout dwAttrManBottomForm`;
 	string $renameTF = `textField -cc( "zooAttrManDoRename" ) dwNewAttrName`;
 	string $keyableCheck = `checkBox
@@ -962,9 +539,7 @@ string $bottomForm = `formLayout dwAttrManBottomForm`;
 						-l "Transfer connections"
 						-v 1
 						-en 0
-						dwAttrManConnectionsCheck`;
-
-	string $loadButton = `button -l "Load Obj" -c "{string $sel[] = `ls -sl -o`; \
+						dwAttrManConnectionsCheck`;	string $loadButton = `button -l "Load Obj" -c "{string $sel[] = `ls -sl -o`; \
 							dwAttrMan_LoadAttributes $sel[0] `checkBox -q -v dwAttrManListKeyableCheck`; \
 							textField -e -tx \"\" dwNewAttrName; \
 							textScrollList -e -ra dwAttrManConXnTSL;}"`;
@@ -975,148 +550,81 @@ string $bottomForm = `formLayout dwAttrManBottomForm`;
 									`checkBox -q -v dwAttrManConnectionsCheck` \
 									`checkBox -q -v dwAttrManDeleteSourceAttrsCheck`;"`;
 setParent ..;
-
-//Edit button form
-/*formLayout -e
-	-an $upButt left
-	-af $upButt top 0
-	-af $upButt right 0
-	-ap $upButt bottom 0 50
-
-	-an $dnButt left
-	-ac $dnButt top 0 $upButt
-	-af $dnButt right 0
-	-af $dnButt bottom 0
-	$buttForm;
-*/
-//Edit source form.
 formLayout -e
 	-af $sourceText left 0
 	-af $sourceText top 0
 	-an $sourceText right
-	-an $sourceText bottom
-
-	-ac $objText left 5 $sourceText
+	-an $sourceText bottom	-ac $objText left 5 $sourceText
 	-af $objText top 0
 	-af $objText right 0
-	-an $objText bottom
-
-	-af $TSL left 0
+	-an $objText bottom	-af $TSL left 0
 	-ac $TSL top 0 $sourceText
 	-ac $TSL right 5 $collapseButton
-	-ac $TSL bottom 5 $moveUpBTN
-
-	-af $moveUpBTN left 5
+	-ac $TSL bottom 5 $moveUpBTN	-af $moveUpBTN left 5
 	-an $moveUpBTN top
 	-ap $moveUpBTN right 5 50
-	-af $moveUpBTN bottom 0
-
-	-ac $moveDownBTN left 5 $moveUpBTN
+	-af $moveUpBTN bottom 0	-ac $moveDownBTN left 5 $moveUpBTN
 	-an $moveDownBTN top
 	-ac $moveDownBTN right 10 $collapseButton
 	-af $moveDownBTN bottom 0
-
-	//-an $buttForm left
-	//-ac $buttForm top 0 $sourceText
-	//-ac $buttForm right 3 $collapseButton
-	//-af $buttForm bottom 0
-
 	-an $collapseButton left
 	-ac $collapseButton top 0 $sourceText
 	-af $collapseButton right 0
 	-af $collapseButton bottom 0
-	$sourceForm;
-
-//Edit connection form
-formLayout -e
+	$sourceForm;formLayout -e
 	-af $connectionsTXT left 3
 	-af $connectionsTXT top 0
 	-af $connectionsTXT right 0
-	-an $connectionsTXT bottom
-
-	-af $conXnRBG left 3
+	-an $connectionsTXT bottom	-af $conXnRBG left 3
 	-ac $conXnRBG top 0 $connectionsTXT
 	-af $conXnRBG right 0
-	-an $conXnRBG bottom
-
-	-af $conXnTSL left 3
+	-an $conXnRBG bottom	-af $conXnTSL left 3
 	-ac $conXnTSL top 5 $conXnRBG
 	-af $conXnTSL right 0
 	-af $conXnTSL bottom 0
-	$conXnform;
-
-//Edit bottom form.
-formLayout -e
+	$conXnform;formLayout -e
 	-af $renameTF left 0
 	-an $renameTF top
 	-af $renameTF right 0
-	-ac $renameTF bottom 0 $keyableCheck
-
-	-af $keyableCheck left 0
+	-ac $renameTF bottom 0 $keyableCheck	-af $keyableCheck left 0
 	-an $keyableCheck top
 	-af $keyableCheck right 0
-	-ac $keyableCheck bottom 0 $separator
-
-	-af $separator left 0
+	-ac $keyableCheck bottom 0 $separator	-af $separator left 0
 	-an $separator top
 	-af $separator right 0
-	-ac $separator bottom 0 $spacerTXT
-
-	-af $spacerTXT left 0
+	-ac $separator bottom 0 $spacerTXT	-af $spacerTXT left 0
 	-an $spacerTXT top
 	-af $spacerTXT right 0
-	-ac $spacerTXT bottom 0 $transferOptionsTXT
-
-	-af $transferOptionsTXT left 0
+	-ac $spacerTXT bottom 0 $transferOptionsTXT	-af $transferOptionsTXT left 0
 	-an $transferOptionsTXT top
 	-af $transferOptionsTXT right 0
-	-ac $transferOptionsTXT bottom 0 $deleteOriginalsCheck
-
-	-af $deleteOriginalsCheck left 0
+	-ac $transferOptionsTXT bottom 0 $deleteOriginalsCheck	-af $deleteOriginalsCheck left 0
 	-an $deleteOriginalsCheck top
 	-af $deleteOriginalsCheck right 0
-	-ac $deleteOriginalsCheck bottom 0 $transferConnectionsCheck
-
-	-af $transferConnectionsCheck left 0
+	-ac $deleteOriginalsCheck bottom 0 $transferConnectionsCheck	-af $transferConnectionsCheck left 0
 	-an $transferConnectionsCheck top
 	-af $transferConnectionsCheck right 0
-	-ac $transferConnectionsCheck bottom 0 $loadButton
-
-	-af $loadButton left 0
+	-ac $transferConnectionsCheck bottom 0 $loadButton	-af $loadButton left 0
 	-an $loadButton top
 	-ap $loadButton right 0 50
-	-af $loadButton bottom 0
-
-	-ac $transferButton left 0 $loadButton
+	-af $loadButton bottom 0	-ac $transferButton left 0 $loadButton
 	-an $transferButton top
 	-af $transferButton right 0
 	-af $transferButton bottom 0
 	$bottomForm;
-
-
-//Edit master form
 int $spacer = 3;
 formLayout -e
 	-af $sourceForm left $spacer
 	-af $sourceForm top $spacer
 	-ac $sourceForm right $spacer $conXnform
-	-ac $sourceForm bottom $spacer $bottomForm
-
-	-ap $conXnform left -2 100
+	-ac $sourceForm bottom $spacer $bottomForm	-ap $conXnform left -2 100
 	-af $conXnform top $spacer
 	-af $conXnform right $spacer
 	-ac $conXnform bottom $spacer $bottomForm
-	//-ap $conXnform left 0 50
-	//-af $conXnform top 0
-	//-af $conXnform right 0
-	//-af $conXnform bottom 0
-
 	-af $bottomForm left $spacer
 	-an $bottomForm top
 	-af $bottomForm right $spacer
 	-af $bottomForm bottom $spacer
 	$masterForm;
-
-
 showWindow dwAttrManWin;
 }
