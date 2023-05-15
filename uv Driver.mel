@@ -1,0 +1,39 @@
+//////////////////////////////////////////////////////////////////
+global proc uvDriver()
+{
+    string $uvName;
+    string $uvDriver   = ` promptDialog -title " UV Driver"
+                                        -message "Uv Driver Name:"
+                                        -button "OK" -button "Cancel"
+                                        -defaultButton "OK" -cancelButton "Cancel"
+                                        -dismissString "Cancel"` ;
+    if ($uvDriver == "OK")
+     {
+        $uvName = `promptDialog -query -text` ;
+        string $seleObj[] = `ls -sl` ;
+        string $uvMesh[] = `nurbsPlane -p 0 0 0 -ax 1 0 0 -w 5 -lr 1 -d 1 -u 1 -v 1 -ch 1 -n ($uvName + "_UV_Geo")`; 
+        string $uvLoc[] = `spaceLocator -p 0 0 0 -n ($uvName + "_UV_Loc")` ;
+        string $uvCpos    = `createNode closestPointOnSurface -n ($uvName + "_UV_Cpos")`;
+        string $uvPoSInfo = `createNode pointOnSurfaceInfo -n ($uvName + "_UV_PoSInfo")` ;
+        string $geoConst[] = `geometryConstraint -weight 1 $uvMesh[0] $uvLoc[0]` ; 
+        connectAttr -f ($uvMesh[0] + "Shape.worldSpace[0]") ($uvCpos + ".inputSurface") ;
+        connectAttr -f ($uvLoc[0] + ".translateX") ($uvCpos + ".inPositionX") ; 
+        connectAttr -f ($uvLoc[0] + ".translateY") ($uvCpos + ".inPositionY") ; 
+        connectAttr -f ($uvLoc[0] + ".translateZ") ($uvCpos + ".inPositionZ") ;
+        connectAttr -f ($uvCpos + ".parameterU") ($uvPoSInfo + ".parameterU") ; 
+        connectAttr -f ($uvCpos + ".parameterV") ($uvPoSInfo + ".parameterV") ;
+        connectAttr -f ($uvMesh[0] + "Shape.worldSpace[0]") ($uvPoSInfo + ".inputSurface") ; 
+        string $uvGrp                   = `group -em -n ($uvName + "_UV_Driver")` ;
+        string $uvGeoGrp = ` group -em -n ($uvName + "_UV_Geo_Group")` ;
+        string $uvLocGrp = ` group -em -n ($uvName + "_UV_Loc_Group")` ;
+        parent $uvGeoGrp $uvLocGrp $uvGrp ;
+        parent $uvMesh[0] $uvGeoGrp ;
+        parent $uvLoc[0] $uvLocGrp ;
+     } 
+    else
+    {         
+            print " \" Please enter the UV Driver Name\"........................... ";
+    }
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
+uvDriver();

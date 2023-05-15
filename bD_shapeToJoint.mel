@@ -1,0 +1,27 @@
+// Created by www.bjelDark.com
+
+// Attaching shape(s) of selected node to the selected joint (1st select node with shape(s), then joint)
+
+
+global proc bD_shapeToJoint()
+{
+    string $sel[] = `ls -sl`;
+    
+    if(`size($sel)` == 1)
+        error "You have selected only one object !";
+    
+    if (`objectType -isType "joint" $sel[0]`)
+        error "First select shape(s), then select joint !";
+     
+    string $cShapeArray[] = `listRelatives -c $sel[0]`;
+    int $size = size ($cShapeArray);
+
+        for ($each in $cShapeArray)
+            {
+            parent -add -shape $each $sel[1];
+            rename $each ($sel[1] + "Shape");
+            }
+        
+    print ("You have succesfully attached " + $sel[0] + " shape(s) to " + $sel[1] + ".");
+    delete $sel[0];
+}

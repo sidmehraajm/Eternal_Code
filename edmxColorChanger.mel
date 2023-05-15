@@ -1,0 +1,102 @@
+
+/////////////////// coloriing ctrls //////////
+		global proc coloringCtrls ()
+{
+	string $ctrlSel[] = `ls -sl`;
+    int $Os = `size($ctrlSel)`;
+for ( $i=0; $i < $Os; $i++ )
+	{
+			setAttr ($ctrlSel[$i] + ".overrideEnabled") 1;
+			int $color = `colorIndexSliderGrp -q -v conColor`;
+			if($color > 0)
+				setAttr ($ctrlSel[$i] + ".overrideColor") ($color - 1); 
+				
+	}
+}	
+	
+	
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	global proc updateSlider (int $color)
+{
+
+    colorIndexSliderGrp  -e -value $color conColor;
+
+}
+   //////////////////////////////////////////////////////////////////////////////////////////////////////////
+		
+	
+	global proc colorChanger ()
+{
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////
+	//
+	//								MAIN WINDOW
+	//
+	if (`window -q -ex colorChangerWindow`) deleteUI colorChangerWindow;
+
+	window -s 0 -title "EDMX Color Changer" -w 280 -h 200 colorChangerWindow;
+		menuBarLayout;
+			menu -label "About";
+ 				menuItem -label "About" -c ("confirmDialog -title \"About Color Changer\" -message \" Simple select all ctrls that you want to change color.\\n Then choose your color and click the button\\n \\n Copyright 2011 / 2012 Edmx, All rights reserved \\n Developed by : Henrique ´Edmx´ Montanari \\n \\n www.edmx.com.br \" -button \"Close\"");
+				menuItem -l "EDMX..." -c ("showHelp -a \"http://www.edmx.com.br/\"; ") -ann ("Visit website.") ;
+							menu -en 0 -label "version 1.5          www.edmx.com.br";
+
+				columnLayout ;
+				setParent..;setParent..;
+	frameLayout -l " Pick the Color" 
+				-w 280
+				-h 180
+				-collapsable false fmColor;
+				gridLayout -numberOfRows 4 -numberOfColumns 8 -cellWidthHeight 35 20;
+				iconTextButton -bgc .627 .627 .627 -command "updateSlider 0";
+				iconTextButton -bgc .467 .467 .467 -command "updateSlider 1";
+				iconTextButton -bgc .000 .000 .000 -command "updateSlider 2";
+				iconTextButton -bgc .247 .247 .247 -command "updateSlider 3";
+				iconTextButton -bgc .498 .498 .498 -command "updateSlider 4";
+				iconTextButton -bgc 0.608 0 0.157 -command "updateSlider 5";
+				iconTextButton -bgc 0 0.016 0.373 -command "updateSlider 6";
+				iconTextButton -bgc 0 0 1 -command "updateSlider 7";
+				iconTextButton -bgc 0 0.275 0.094 -command "updateSlider 8";
+				iconTextButton -bgc  0.145 0 0.263 -command "updateSlider 9";
+				iconTextButton -bgc 0.78 0 0.78 -command "updateSlider 10";
+				iconTextButton -bgc 0.537 0.278 0.2 -command "updateSlider 11";
+				iconTextButton -bgc 0.243 0.133 0.122 -command "updateSlider 12";
+				iconTextButton -bgc 0.6 0.145 0 -command "updateSlider 13";
+				iconTextButton -bgc 1 0 0 -command "updateSlider 14";
+				iconTextButton -bgc 0 1 0  -command "updateSlider 15";
+				iconTextButton -bgc 0 0.255 0.6 -command "updateSlider 16";
+				iconTextButton -bgc 1 1 1 -command "updateSlider 17";
+				iconTextButton -bgc 1 1 0 -command "updateSlider 18";
+				iconTextButton -bgc 0.388 0.863 1 -command "updateSlider 19";
+				iconTextButton -bgc 0.263 1 0.635 -command "updateSlider 20";
+				iconTextButton -bgc 1 0.686 0.686 -command "updateSlider 21";
+				iconTextButton -bgc 0.89 0.675 0.475 -command "updateSlider 22";
+				iconTextButton -bgc 1 1 0.384 -command "updateSlider 23";
+				iconTextButton -bgc 0 0.6 0.325 -command "updateSlider 24";
+				iconTextButton -bgc 0.627 0.412 0.188 -command "updateSlider 25";
+				iconTextButton -bgc 0.62 0.627 0.188 -command "updateSlider 26";
+				iconTextButton -bgc 0.408 0.627 0.188 -command "updateSlider 27";
+				iconTextButton -bgc 0.188 0.627 0.365 -command "updateSlider 28";
+				iconTextButton -bgc 0.188 0.627 0.627 -command "updateSlider 29";
+				iconTextButton -bgc 0.188 0.404 0.627 -command "updateSlider 30";
+				iconTextButton -bgc 0.435 0.188 0.627 -command "updateSlider 31";
+	setParent..;		
+frameLayout -l " Selected Color" 
+				-w 300
+				-h 30
+				-collapsable false selColor;
+	
+		columnLayout -adj 1;		
+	colorIndexSliderGrp  -min 0 -max 31 -value 0 conColor;
+	setParent..;
+	setParent..;
+				button -l "click to change color of selected ctrls" -w 255-bgc .9 .9 .9 -c coloringCtrls;
+			setParent..;
+
+	window -e -w 260 -h 140 colorChangerWindow;
+	showWindow colorChangerWindow;
+};
+colorChanger;
+
+
+

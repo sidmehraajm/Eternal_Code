@@ -1,0 +1,143 @@
+////////////////////////////////////////////////////////////////////////////////
+global proc addPolyVertexColor()
+{
+    string $colorPalette;
+    int $colorIndex;
+    if(` window -q -ex polyVertexColorUI`) deleteUI polyVertexColorUI;
+    window -title "ADDPolyColor " -wh 150 50 -s 1 -tlc 100 100 polyVertexColorUI;
+    window -q -wh polyVertexColorUI;
+  columnLayout -adj 1;
+  rowLayout -adj 1 -numberOfColumns 2 -columnAttach 2 "left" 0;
+    frameLayout -labelVisible false -borderStyle "in" -collapsable false -collapse false; 
+    int $cellHeight = 20, $cellWidth = 5;
+    int $rows = 2, $columns = 16;
+    $colorPalette = ` palettePort
+        -dimensions     $columns $rows
+            
+        -width        ($columns * $cellWidth)
+        -height       ($rows * $cellHeight)
+        
+        -topDown       true 
+        -colorEditable false
+        -setCurCell    0
+        colorPalette`;
+
+    float $colorComponentArray[];
+    for ($index = 1; $index <= 31; $index++) { 
+      $colorComponentArray = ` colorIndex -query $index`;
+      palettePort -edit -rgbValue $index 
+        $colorComponentArray[0] 
+        $colorComponentArray[1] 
+        $colorComponentArray[2] 
+        $colorPalette;
+    }
+        
+    palettePort -edit -rgbValue 0 0.60 0.60 0.60 $colorPalette;
+    columnLayout -adj 1;
+         button -label "Add slected Color" -c "Addd();";
+       button -label "Add Random Color" -c "RandomColor();" ; 
+       //button -label "Delete slected Color" -c "DeletepolyColor();" ;
+    setParent..; 
+    text -l ""
+
+    showWindow polyVertexColorUI;
+}
+
+
+global proc RandomColor()
+{
+    float $colorComponentArray[];
+    clear($colorComponentArray); 
+    string $selection[] = `ls -sl -fl`; 
+    select -cl;
+    //print `size($selection)`;
+    if (`size($selection)` !=0)
+    {  
+    //$colorIndex = `palettePort -query -setCurCell ColorPalette`;
+    
+    //$colorComponentArray = ` colorIndex -query ($colorIndex)`; 
+    //print $colorComponentArray ;
+    for ($each in $selection)
+        {
+            int $colorIndex = ` rand 0 31`;
+            //print ($colorIndex+1); 
+            if ($colorIndex==0)
+            {
+                $colorIndex=3;
+            }
+            $colorComponentArray = `colorIndex -query ($colorIndex)`;
+            //polyColorPerVertex -r $colorComponentArray[0] -g $colorComponentArray[1] -b $colorComponentArray[2] -a 1 -cdo $each; 
+            $myShader = `shadingNode -asShader lambert` ;
+            setAttr ($myShader+".color") -type double3 $colorComponentArray[0] $colorComponentArray[1] $colorComponentArray[2] ; 
+            select $each;
+            hyperShade -assign $myShader;
+            select -cl;
+
+        }
+    } 
+    else
+    {
+        warning ("Select Geometry to assign Color");
+    }
+}
+
+global proc Addd()
+{
+    float $colorComponentArray[];
+    clear($colorComponentArray); 
+    string $selection[] = `ls -sl -fl`; 
+    select -cl;
+
+    //print `size($selection)`; 
+    if (`size($selection)`!=0)
+    {
+    $colorIndex = `palettePort -query -setCurCell ColorPalette`; 
+    //print($colorIndex+1);
+    if ($colorIndex==0)
+    {
+        $colorIndex=3;
+    }
+    $colorComponentArray = `colorIndex -query ($colorIndex)`; 
+    print $colorComponentArray ;
+    for ($each in $selection)
+        {
+            //polyColorPerVertex -r $colorComponentArray[0] -g $colorComponentArray[1] -b $colorComponentArray[2] -a 1 -cdo $each;
+            $myShader = `shadingNode -asShader lambert` ;
+            //print ($myShader+"*******");
+            setAttr ($myShader+".color") -type double3 $colorComponentArray[0] $colorComponentArray[1] $colorComponentArray[2] ; 
+            select $each;
+            hyperShade -assign $myShader;
+            select -cl;
+        }
+    }
+    else
+    {
+        warning ("Select Geometry to assign Color");
+    }
+}
+
+global proc DeletepolyColor() 
+{
+    string $sel[] = `ls -sl -fl`; 
+    if (`size($sel)` !=0)
+    {
+            for($each in $sel)
+            {
+                    $hist = `listHistory $each`;
+                    for($history in $hist )
+            {  
+                if(` nodeType $history` == "polyColorPerVertex")
+                    {
+                        delete $history;
+                    }
+
+            }
+        }
+    } 
+    else
+    {
+        warning ("Select Geometry to Delete Color");
+    }
+
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

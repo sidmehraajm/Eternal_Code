@@ -1,0 +1,246 @@
+/* This file downloaded from Highend3d.com
+''  
+''  Highend3d.com File Information:
+''  
+''    Script Name: SD_PolyColorPerVertex
+''    Author: rawhed 
+''    Last Updated: May 06, 2007
+''    Update/Change this file at:
+''    http://Highend3d.com/maya/downloads/plugins/modeling/misc/1354.html
+''  
+''  Please do not alter any information above this line
+''  it is generated dynamically by Highend3d.com and will
+''  be changed automatically on any updates.
+*/
+
+
+global proc DoButton(int $op,int $mode,string $coarse, string $random,string $undo,string $vertex)
+{
+	float $ammount=0;
+	float $randomVal=0;
+	
+	if ($coarse!="0")
+		$ammount = `floatSliderGrp -q -v $coarse`;
+	if ($random!="0")
+		$randomVal = `floatSliderGrp -q -v $random`;
+		
+	int $isUndo = `checkBox -q -v $undo`;
+	int $isVertex = `checkBox -q -v $vertex`;
+	
+	if ($mode==1)
+		$ammount=-$ammount;
+	
+	string $opStr;
+	string $randStr;
+	if ($op==0)
+	{
+		$opStr="-rel -r "+$ammount;
+		$randStr="-rr "+$randomVal;
+	}
+	if ($op==1)
+	{
+		$opStr="-rel -g "+$ammount;
+		$randStr="-rg "+$randomVal;
+	}
+	if ($op==2)
+	{
+		$opStr="-rel -b "+$ammount;
+		$randStr="-rb "+$randomVal;
+	}
+	if ($op==3)
+	{
+		$opStr="-c "+$ammount;
+		$randStr="-rc "+$randomVal;
+	}
+	if ($op==4)
+	{
+		$opStr="-rel -s "+$ammount;
+		$randStr="-rs "+$randomVal;
+	}
+	if ($op==5)
+	{
+		$opStr="-rel -v "+$ammount;
+		$randStr="-rv "+$randomVal;
+	}
+	if ($op==6)
+	{
+		$opStr="-rel -a "+$ammount;
+		$randStr="-ra "+$randomVal;
+	}
+	if ($op==7)
+	{
+		$opStr="-blur "+$ammount;
+		$randStr="";
+	}
+	if ($op==8)
+	{
+		$opStr="-erode "+$ammount;
+		$randStr="";
+	}
+	if ($op==9)
+	{
+		$opStr="-dilate "+$ammount;
+		$randStr="";
+	}
+	if ($op==10)
+	{
+		$ammount*=360.0;
+		$opStr="-rel -h "+$ammount;
+		$randStr="-rh "+$randomVal;
+	}
+	string $cmd;
+	$cmd=($opStr+" "+$randStr);
+	
+	if ($isUndo==0)
+	{
+		$cmd+=" -nun";
+	}
+	if ($isVertex==1)
+	{
+		$cmd+=" -nvf";
+	}
+
+	eval("SD_polyColorPerVertex "+$cmd);
+}
+ 
+global proc SD_vertexColorTEST()
+{
+	global string $VTwin = "SD_vertexColor";
+
+  	if (`window -ex $VTwin`) 
+   	{
+      	deleteUI $VTwin;
+	}
+	
+	window -wh 300 220 -t "SD_vertexColor v2.0" -mnb 1 -mxb 0 -s 1 -rtf 1 $VTwin;
+
+	columnLayout -w 300 -columnWidth 300 -adjustableColumn 2 -cal "center" -rowSpacing 1 -cat "left" 5 MainColumn;
+
+	rowLayout -numberOfColumns 1;
+		$SL_coarse=`floatSliderGrp -l "Amount" -field true  -cw3 60 35 50 -cc "" -pre 2 -v 0.1 -min 0 -max 1`;
+	setParent..;
+
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_dored=`button -w 40 -h 25 -label "Red"`;
+		$BN_unred=`button -w 40 -h 25 -label "unRed"`;
+		$SL_rared=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+	
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_dogrn=`button -w 40 -h 25 -label "Grn"`;
+		$BN_ungrn=`button -w 40 -h 25 -label "unGrn"`;
+		$SL_ragrn=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+
+
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_doblu=`button -w 40 -h 25 -label "Blu"`;
+		$BN_unblu=`button -w 40 -h 25 -label "unBlu"`;
+		$SL_rablu=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+
+
+
+
+
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_docon=`button -w 40 -h 25 -label "Con"`;
+		$BN_uncon=`button -w 40 -h 25 -label "unCon"`;
+		$SL_racon=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;		
+	setParent..;
+
+
+	 
+	 
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_dohue=`button -w 40 -h 25 -label "Hue"`;
+		$BN_unhue=`button -w 40 -h 25 -label "unHue"`;
+		$SL_rahue=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_dosat=`button -w 40 -h 25 -label "Sat"`;
+		$BN_unsat=`button -w 40 -h 25 -label "unSat"`;
+		$SL_rasat=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_dolum=`button -w 40 -h 25 -label "Lum"`;
+		$BN_unlum=`button -w 40 -h 25 -label "unLum"`;
+		$SL_ralum=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+
+	rowLayout -numberOfColumns 3 -columnWidth3 40 40 150;
+		$BN_doalp=`button -w 40 -h 25 -label "Alp"`;
+		$BN_unalp=`button -w 40 -h 25 -label "unAlp"`;
+		$SL_raalp=`floatSliderGrp -l "Random" -field true -cw3 70 35 200 -cc "" -pre 2 -v 0 -min 0 -max 1`;
+	setParent..;
+	
+	rowColumnLayout -numberOfRows 1;
+		button -w 80 -h 25 -label "Undo" -command "undo";
+		$BN_blur=`button -w 80 -h 25 -label "Blur"`;
+		$BN_erode=`button -w 80 -h 25 -label "Erode"`;
+		$BN_dilate=`button -w 80 -h 25 -label "Dilate"`;
+	setParent..;
+	
+	rowColumnLayout -numberOfRows 1;
+		$CB_undo=`checkBox -label "undo" -align "left" -v 1`;
+		$CB_vertex=`checkBox -label "vertex" -align "left" -v 0`;
+	setParent..;
+	
+	string $doCommand;
+
+	$doCommand=("DoButton 0 0 "+$SL_coarse+" "+$SL_rared+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_dored;
+	$doCommand=("DoButton 0 1 "+$SL_coarse+" "+$SL_rared+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_unred;
+
+	$doCommand=("DoButton 1 0 "+$SL_coarse+" "+$SL_ragrn+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_dogrn;
+	$doCommand=("DoButton 1 1 "+$SL_coarse+" "+$SL_ragrn+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_ungrn;
+
+	$doCommand=("DoButton 2 0 "+$SL_coarse+" "+$SL_rablu+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_doblu;
+	$doCommand=("DoButton 2 1 "+$SL_coarse+" "+$SL_rablu+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_unblu;
+
+	$doCommand=("DoButton 3 0 "+$SL_coarse+" "+$SL_racon+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_docon;
+	$doCommand=("DoButton 3 1 "+$SL_coarse+" "+$SL_racon+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_uncon;
+
+
+	$doCommand=("DoButton 10 0 "+$SL_coarse+" "+$SL_rahue+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_dohue;
+	$doCommand=("DoButton 10 1 "+$SL_coarse+" "+$SL_rahue+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_unhue;
+	
+	$doCommand=("DoButton 4 0 "+$SL_coarse+" "+$SL_rasat+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_dosat;
+	$doCommand=("DoButton 4 1 "+$SL_coarse+" "+$SL_rasat+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_unsat;
+
+	$doCommand=("DoButton 5 0 "+$SL_coarse+" "+$SL_ralum+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_dolum;
+	$doCommand=("DoButton 5 1 "+$SL_coarse+" "+$SL_ralum+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_unlum;
+
+	$doCommand=("DoButton 6 0 "+$SL_coarse+" "+$SL_raalp+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_doalp;
+	$doCommand=("DoButton 6 1 "+$SL_coarse+" "+$SL_raalp+" "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_unalp;
+
+	$doCommand=("DoButton 7 0 "+$SL_coarse+" 0 "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_blur;
+	$doCommand=("DoButton 8 0 "+$SL_coarse+" 0 "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_erode;
+	$doCommand=("DoButton 9 0 "+$SL_coarse+" 0 "+$CB_undo+" "+$CB_vertex);
+	button -edit -command $doCommand $BN_dilate;
+	
+setParent..;
+
+showWindow $VTwin;
+}
+
+SD_vertexColorTEST;

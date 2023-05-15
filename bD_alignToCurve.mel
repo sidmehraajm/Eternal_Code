@@ -1,0 +1,214 @@
+//  Created by www.bjelDark.com
+
+//  Creates proxy locators and attach them to curve via pointOnCurveInfo node. Then getting position of each locator and moving each vertex to it.
+//  Afterwards, locators are deleted; if "Delete curve" checkBox is on, curve will be deleted also.
+//  First select curve and click "Add" (or type exact name of curve). 
+//  Then select vertices you want to align to selected curve, choose distribution type and click "ALIGN TO CURVE".
+//  Vertices will be repositioned by chosen distribution method along curve.
+
+
+global proc bD_alignVertexToCurve()
+{
+    string $selVtx[] = `ls -sl -fl`;
+    
+    $selVtx = `filterExpand -sm 31 -sm 28`;
+    string $selCurve = `textField -q -tx alignCurveTextField`;
+    
+    int $vertexNo = `size($selVtx)`;
+    int $endTime = (($vertexNo - 1) * 10);
+               
+    if (catch (`select $selCurve`))
+        {
+            confirmDialog -bgc 0.8 0.5 0 -t "Invalid curve" -m ("Curve named " + $selCurve + " doesn't exist.") -b "OK";
+            error " Curve doesn't exist ! ";
+        }
+    
+    if ($vertexNo < 1)
+        {
+            confirmDialog -bgc 0.8 0.5 0 -t "Invalid selection" -m ("No vertices selected - select at last one vertex.") -b "OK";
+            error " Invalid selection ! ";
+        }
+    
+    string $curveShapeArray[] = `listRelatives -c $selCurve`;
+    string $curveShape = $curveShapeArray[0];
+
+    for ($x=1; $x<$vertexNo+1; $x++)
+        {
+            string $proxyLoc[] = `spaceLocator -n ("proxyPoCLoc_0" + $x) -p 0 0 0`;
+            createNode pointOnCurveInfo -n ("tempPoC_0" + $x);
+            setAttr ("tempPoC_0" + $x + ".turnOnPercentage") 1;
+            connectAttr ($curveShape + ".worldSpace") ("tempPoC_0" + $x + ".inputCurve");
+            connectAttr ("tempPoC_0" + $x + ".result.position") ($proxyLoc[0] + ".translate");
+        }
+        
+    string $curveTangent = `optionMenu -q -v interpolationOptionMenu`;
+
+    string $animLoc[] = `spaceLocator -n "proxyAnim_loc" -p 0 0 0`;
+    setAttr ($animLoc[0] + ".localScaleX") 0;
+    setAttr ($animLoc[0] + ".localScaleY") 0;
+    setAttr ($animLoc[0] + ".localScaleZ") 0;
+    
+    switch ($curveTangent)
+    {
+        case "linear":
+            setKeyframe -v 0 -time 0 -itt $curveTangent -ott $curveTangent -at translateX;
+            setKeyframe -v 1 -time $endTime -itt $curveTangent -ott $curveTangent -at translateX;
+            break;
+            
+        case "flat":
+            setKeyframe -v 0 -time 0 -itt $curveTangent -ott $curveTangent -at translateX;
+            setKeyframe -v 1 -time $endTime -itt $curveTangent -ott $curveTangent -at translateX;
+            break;
+            
+        case "favour start":
+            setKeyframe -v 0 -time 0 -itt "flat" -ott "flat" -at translateX;
+            setKeyframe -v 1 -time $endTime -itt "linear" -ott "linear" -at translateX;
+            break;
+            
+        case "favour end":
+            setKeyframe -v 0 -time 0 -itt "linear" -ott "linear" -at translateX;
+            setKeyframe -v 1 -time $endTime -itt "flat" -ott "flat" -at translateX;
+            break;
+            
+        case "favour middle":
+            setKeyframe -v 0 -time 0 -itt "linear" -ott "linear" -at translateX;
+            setKeyframe -v 0.5 -time ($endTime / 2) -itt "flat" -ott "flat" -at translateX;
+            setKeyframe -v 1 -time $endTime -itt "linear" -ott "linear" -at translateX;
+            break;
+    }
+    
+    string $animCurve = `connectionInfo -sfd ($animLoc[0] + ".tx")`;
+    
+    if (`size($animCurve)` == 0)
+        error "No anim data ! ";
+    
+    for ($x=0; $x<$vertexNo; $x++)
+    {
+        string $PoC = ("tempPoC_0" + ($x + 1) + ".parameter");
+        float $timer = ($x * 10);
+        string $timeRange = ($timer + ".0:" + $timer);
+        float $values[] = `keyframe -t $timeRange -q -eval ($animLoc[0] + ".tx")`; 
+        setAttr $PoC $values[0];
+        print $values[0];
+    }
+
+    select -cl;
+    string $selLoc[] = `select "proxyPoCLoc_0*"`;
+    string $selLoc[] = `ls -sl -typ "transform"`;
+
+    for ($x=0; $x<$vertexNo; $x++)
+        {
+            float $pos[] = `xform -q -ws -t $selLoc[$x]`;
+            xform -ws -t $pos[0] $pos[1] $pos[2] $selVtx[$x];
+        }
+    
+    delete $selLoc;
+    
+    if (`checkBox -q -v deleteAlignCurveCheckBox`)
+        delete $selCurve;
+
+    delete "proxyAnim_loc";
+    select -cl;
+}
+
+global proc bD_addAlignCurve()
+{
+    string $selCurve[] = `ls -sl`;    
+    
+    //  Checks selection size; need only 1 object selected
+    if (size($selCurve) == 0)
+    {
+        confirmDialog -t "Invalid Selection" -b "OK" -bgc 0.8 0.5 0 -m "You have not selected anything ! Select only one curve !";
+        error " SELECT ONLY ONE CURVE ! ";
+    }
+    
+    if (size($selCurve) > 1)
+    {
+        confirmDialog -t "Invalid Selection" -b "OK" -bgc 0.8 0.5 0 -m "You have selected more than one object ! Select only one curve !";
+        error " SELECT ONLY ONE CURVE ! ";
+    }
+    
+    if (size($selCurve) == 1)
+    {
+        string $selCurveType[] = `listRelatives -s $selCurve[0]`;
+        
+        if (`size ($selCurveType)` != 0)
+        {
+            //  Checks if selection isn't actually curve
+            if (!`objectType -isType "nurbsCurve" $selCurveType[0]` && !`objectType -isType "bezierCurve" $selCurveType[0]`)
+            {
+                confirmDialog -t "Invalid Selection" -b "OK" -bgc 0.8 0.5 0 -m "You have not selected curve ! Select only one curve !";
+                error "You must select curve !";
+            }
+            
+            //  If it is curve, add it's name to text field
+            else
+            {
+                textField -e -text $selCurve[0] alignCurveTextField;
+            }
+        }
+        
+        //  If selection has no child(ren) of shapes type
+        else
+        {
+            confirmDialog -t "Invalid Selection" -b "OK" -bgc 0.8 0.5 0 -m "You have not selected curve ! Select only one curve !";
+            error "You must select curve !"; 
+        } 
+    }
+}
+
+global proc bD_homePage()
+{
+    launch -web "https://www.bjeldark.com";
+}
+
+global proc bD_alignToCurve()
+{
+    if (`window -exists bD_alignToCurveWindow`)
+        deleteUI bD_alignToCurveWindow;
+    if (`windowPref -exists bD_alignToCurveWindow`)
+        windowPref -r bD_alignToCurveWindow;
+        
+        //windowPref -q -wh bD_alignToCurveWindow;
+    
+    window -wh 400 202 -s 0 -rtf 1 -mxb 0 -t "Align to Curve" bD_alignToCurveWindow;
+        
+        string $column = `columnLayout -adjustableColumn true columnLayoutRoot`;
+            separator -h 5 -style "in";
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                text "Type name of curve (or select it and click Add) : ";
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in";
+            rowColumnLayout -nc 2 -columnWidth 100 8 -adj 1 -columnAttach 1 "both" 5 -columnAttach 2 "both" 5 -p $column;
+               textField alignCurveTextField;
+               button -bgc 0 0.28 0 -l "Add" -c "bD_addAlignCurve" addCurveButton;
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in"; 
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                text " SELECT ALL VERTICES YOU WANT TO ALIGN TO CURVE ";
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in"; 
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                optionMenu -label "Vertex distribution : " interpolationOptionMenu;
+                    menuItem -label "linear";
+                    menuItem -label "flat";
+                    menuItem -label "favour start";
+                    menuItem -label "favour end";
+                    menuItem -label "favour middle";            
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in";
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                checkBox -l " Delete curve " -v 1 deleteAlignCurveCheckBox;
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in";
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                button -bgc 0 0.3 0 -l "ALIGN TO CURVE" -c "bD_alignVertexToCurve" alignToCurveButton;
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in";
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+               button -bgc 0 0 0.2 -l "www.bjelDark.com" -c "bD_homePage" homePageButton;
+            rowLayout -columnAttach 1 "both" 5 -adj 1 -p $column;
+                separator -h 5 -style "in"; 
+
+    showWindow bD_alignToCurveWindow;   
+}
