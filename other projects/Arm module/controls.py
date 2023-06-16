@@ -3,20 +3,50 @@ import pymel.core as pm
 
 
 class controls():
-    def create_control(self, curveType = 'Square', basename = 'temp',zgrps = 1,pos = None, sub_controls =0, cons_from = None,cons_to =None ,cons_typ_mtx = True ,color = ['.4','.5','.7'], inheritTr= 1):
+    '''
+    control class for making and editing controls
+    Examples - 
+    import controls as c
+    cc = c.controls()
+    cc.create_control(basename = 'Krishna',zgrps =2,curveType= 'Sphere Dumbbell')
+
+
+
+    '''
+    def create_control(self, curveType = 'Square', basename = 'temp',zgrps = 1,pos = None, sub_controls =0, cons_from = None,cons_to =None ,cons_typ_mtx = True , inheritTr= 1, color = [.4,.5,.7], line_thickness = 1.5):
         '''
-        Avilable control types - ['Circle', 'Half Circle', 'Square', 'Triangle', 'Sphere', 'Half Sphere','Box', 'Pyramid', 'Diamond', 'Circle Pin','Square Pin', 
-        'Curved Four Arrows', 'Curved Four Arrows Thin', 'Two Arrows', 'Two Arrows Thin', 'Curved Two Arrows', 'Curved Two Arrows Thin', 'One Arrow', 
-        'Sphere Pin', 'Circle Dumbbell', 'Square Dumbbell', 'Sphere Dumbbell', 'Cross', 'Cross Thin', 'Locator', 'Four Arrows', 'Four Arrows Thin',
-        'One Arrow Thin', 'Circle One Arrow',  'Circle Two Arrows', 'Circle Three Arrows', 'Circle Four Arrows', 'Sphere Four Arrows', 'Gear']
+        #
+        #
+        #
+        Avilable curve types - 
+        
+        ['Circle', 'Half Circle', 'Square', 'Triangle', 'Sphere', 'Half Sphere','Box', 'Pyramid', 'Diamond', 'Circle Pin','Square Pin','Curved Four Arrows', 
+                'Curved Four Arrows Thin', 'Two Arrows', 'Two Arrows Thin', 'Curved Two Arrows', 'Curved Two Arrows Thin', 'One Arrow', 'Sphere Pin',
+                'Circle Dumbbell', 'Square Dumbbell', 'Sphere Dumbbell', 'Cross', 'Cross Thin', 'Locator', 'Four Arrows', 'Four Arrows Thin',
+                'One Arrow Thin','Circle One Arrow',  'Circle Two Arrows', 'Circle Three Arrows', 'Circle Four Arrows', 'Sphere Four Arrows', 'Gear']
         
         basename - name for the controller and groups
         zgrps - number of zero groups
         pos - takes a matrix(pymel matrix prefered) and moves the first zero group to given position 
+        TODO sub_controls
+        
         cons_from - parent object for constrainting 
         cons_to - object to send the output constraint from control
-        color - takes rgb 
+        cons_typ_mtx - if true the constraint will be matrix else parent & scale will be used
         
+        inheritTr -  inherit transform for the topmost zero/control group 
+
+        color - takes rgb default is ['.4','.5','.7']
+                - blue .06, .5, .4
+                - red  .4 , .07, .1
+                - yellow .9, .9, .4
+                - green  .5, .9, .4
+                - white 1, 1, 1
+        
+        line_thickness - sets the line thickness for the control shape by default 1.5
+        #
+        #
+        #
         '''
 
         baseMtx = pm.datatypes.Matrix()
@@ -26,6 +56,7 @@ class controls():
         ctl = shape.bsDrawCurve(curve = curveType,name = basename+'_ctrl')
         cgrp = pm.createNode('transform', name  =basename+'_ctrl_group')
         pm.parent(ctl,cgrp)
+        last_output_node = None
 
         #extra group creation
         extra_grps = []
@@ -66,7 +97,22 @@ class controls():
                 except ValueError:
                     print("Pos attribute is not a matrix, mtx example = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]")
          
-                
+        #TODO sub_controls shapes
+        sub_ctrls = []
+        if sub_controls > 0:
+            for i in range(1,sub_controls+1):
+                tr_node = pm.createNode('transform', name  = '%s_0%d_sub_ctrl'%(basename,i))
+                if i == 1:
+                    pass
+                else:
+                    pm.parent(tr_node,tr_node.replace(str(i),str(i-1)))
+                sub_ctrls.append(tr_node)
+
+            pm.parent(sub_ctrls[0],ctl)
+            last_output_node = sub_ctrls[-1]
+        else:
+            last_output_node = ctl
+
         #cons_from
         if cons_from != None:
             if cons_typ_mtx is True:
@@ -128,7 +174,7 @@ class controls():
                     pm.scaleConstraint(parent,chpy,mo=1)
 
         
-        #color 
+        #color & line width
         shapes = pm.listRelatives(ctl,s=1)
         for i in shapes:
             i.overrideEnabled.set(1)
@@ -136,16 +182,23 @@ class controls():
             i.overrideColorR.set(color[0])
             i.overrideColorG.set(color[1])
             i.overrideColorB.set(color[2])
-
-            
-
+            i.lineWidth.set(line_thickness)
 
 
-
-            
+        #ctl_output
+        ctl_output = pm.createNode('transform',n = basename+'_ctrl_output')
+        ctl_output.v.set(0)
+        pm.parent(ctl_output,last_output_node)
         
+        #inherit Transform for first group of the control
+        extra_grps[0].inheritsTransform.set(inheritTr)
 
-        return ctl, extra_grps[0]
+        return ctl_output, extra_grps[0]
+    
+    
+
+
+    
 class BSControlsUtils():
 
 
@@ -174,6 +227,48 @@ class BSControlsUtils():
             pass
         v = cmds.rename(crv,name)
         return v
+    
+    def shape_scale_adjust(self,ctrl = [], value = 1.1): 
+        '''
+        
+        ctrl takes transforms as a list 
+        value when above 1 increases when below 1 decreases the size of the nurb curve
+
+        '''
+        v = value
+        ctrl_base = ctrl
+        
+        for c in ctrl_base:
+            shapes = pm.listRelatives(c,s=1)
+            TmpTrans = []
+            newShp = []
+                
+            for i in shapes:
+                tmtr  = pm.createNode('transform',n=('temp'+i))
+                pm.parent(i,tmtr,r =True, s = True)
+                
+                #nshape = pm.duplicate(i,n=('temp'+i))
+                pm.xform(tmtr,s=(v,v,v))
+                pm.makeIdentity(tmtr, apply=True, t=1, r=1, s=1 )
+                newShp.append(i)
+                TmpTrans.append(tmtr)
+                
+            pm.select(cl=True)
+            
+        
+        
+            for i in newShp:
+                
+                pm.select(i)
+                pm.rename(i,c+'_Shape_00')
+                pm.select(c , add=True)
+                pm.parent(r=True,s=True)
+                pm.delete(TmpTrans)
+                pm.select(c)
+            
+
+
+
 class BSControlsData():
     '''
     If you wish to add more control curve options to the menu, simply add a new name into the "controlNames" list and a corresponding key in the dictionary
