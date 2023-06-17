@@ -1,6 +1,6 @@
 import maya.cmds as cmds
 import pymel.core as pm
-
+import random
 
 class controls():
     '''
@@ -28,7 +28,7 @@ class controls():
         basename - name for the controller and groups
         zgrps - number of zero groups
         pos - takes a matrix(pymel matrix prefered) and moves the first zero group to given position 
-        TODO sub_controls
+        sub_controls - takes number of sub controls
         
         cons_from - parent object for constrainting 
         cons_to - object to send the output constraint from control
@@ -97,21 +97,44 @@ class controls():
                 except ValueError:
                     print("Pos attribute is not a matrix, mtx example = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]")
          
-        #TODO sub_controls shapes
+        # sub_controls 
         sub_ctrls = []
+        pm.addAttr(ctl, ln = 'sub_vis',at = 'bool', dv =0)
+
         if sub_controls > 0:
             for i in range(1,sub_controls+1):
-                tr_node = pm.createNode('transform', name  = '%s_0%d_sub_ctrl'%(basename,i))
+                tr_node = pm.PyNode(shape.bsDrawCurve(curve = curveType,name = '%s_0%d_sub_ctrl'%(basename,i)))
+                shape.shape_scale_adjust([tr_node],1-(i/10))
+                shapes = pm.listRelatives(tr_node,s=1)
+                cPy = pm.PyNode(ctl)
+                cPy.sub_vis>>tr_node.v
+                cPy.sub_vis.setKeyable(1)
+
+                tr_node.v.lock()
+                tr_node.v.setKeyable(0)
+
+                for sh in shapes:
+                    sh.overrideEnabled.set(1)
+                    sh.overrideRGBColors.set(1)
+                    sh.overrideColorR.set(random.uniform(.3,.7))
+                    sh.overrideColorG.set(random.uniform(.3,.7))
+                    sh.overrideColorB.set(random.uniform(.3,.7))
+                    sh.lineWidth.set(1.1)
+
                 if i == 1:
                     pass
                 else:
-                    pm.parent(tr_node,tr_node.replace(str(i),str(i-1)))
+                    print (tr_node)
+                    
+                    pm.parent(tr_node,str(tr_node).replace(str(i),str(i-1)))
                 sub_ctrls.append(tr_node)
 
             pm.parent(sub_ctrls[0],ctl)
             last_output_node = sub_ctrls[-1]
         else:
             last_output_node = ctl
+       
+
 
         #cons_from
         if cons_from != None:
