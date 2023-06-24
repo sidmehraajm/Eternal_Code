@@ -1,79 +1,92 @@
 import maya.cmds as cmds
 import pymel.core as pm
 import random
-
+import common.utils as ut
+import common.transforms as trs
 class controls():
     '''
     control class for making and editing controls
     Examples - 
     import controls as c
     cc = c.controls()
-    cc.create_control(basename = 'Krishna',zgrps =2,curveType= 'Sphere Dumbbell')
-
-
-
+    #creating control -
+    cc.create_control(basename = 'Krishna',zgrps =2,curveType= 'Sphere',sub_controls =4)
+    #scaling control just need any group from the module -
+    cc.scale_control_module(obj = 'Krishna_01_zero_group',val = .8)
     '''
-    def create_control(self, curveType = 'Square', basename = 'temp',zgrps = 1,pos = None, sub_controls =0, cons_from = None,cons_to =None ,cons_typ_mtx = True , inheritTr= 1, color = [.4,.5,.7], line_thickness = 1.5):
+    def create_control(self, curveType = 'Square', basename = 'temp',zgrps = 1,pos = None, sub_controls =1, cons_from = None,cons_to =None ,cons_typ_mtx = True , inheritTr= 1, color = [.4,.5,.7], line_thickness = 1.5, create_joint = False, jnt_grp = True):
         '''
         #
         #
         #
         Avilable curve types - 
-        
         ['Circle', 'Half Circle', 'Square', 'Triangle', 'Sphere', 'Half Sphere','Box', 'Pyramid', 'Diamond', 'Circle Pin','Square Pin','Curved Four Arrows', 
                 'Curved Four Arrows Thin', 'Two Arrows', 'Two Arrows Thin', 'Curved Two Arrows', 'Curved Two Arrows Thin', 'One Arrow', 'Sphere Pin',
                 'Circle Dumbbell', 'Square Dumbbell', 'Sphere Dumbbell', 'Cross', 'Cross Thin', 'Locator', 'Four Arrows', 'Four Arrows Thin',
                 'One Arrow Thin','Circle One Arrow',  'Circle Two Arrows', 'Circle Three Arrows', 'Circle Four Arrows', 'Sphere Four Arrows', 'Gear']
-        
         basename - name for the controller and groups
         zgrps - number of zero groups
         pos - takes a matrix(pymel matrix prefered) and moves the first zero group to given position 
         sub_controls - takes number of sub controls
-        
         cons_from - parent object for constrainting 
         cons_to - object to send the output constraint from control
         cons_typ_mtx - if true the constraint will be matrix else parent & scale will be used
-        
         inheritTr -  inherit transform for the topmost zero/control group 
-
         color - takes rgb default is ['.4','.5','.7']
                 - blue .06, .5, .4
                 - red  .4 , .07, .1
                 - yellow .9, .9, .4
                 - green  .5, .9, .4
                 - white 1, 1, 1
-        
         line_thickness - sets the line thickness for the control shape by default 1.5
         #
         #
         #
         '''
-
         baseMtx = pm.datatypes.Matrix()
-
+        utz = ut.utilites()
         #create control and base group
         shape = BSControlsUtils()
-        ctl = shape.bsDrawCurve(curve = curveType,name = basename+'_ctrl')
+        
+        ctl = pm.PyNode(shape.bsDrawCurve(curve = curveType,name = basename+'_ctrl'))
+        ctl.v.setLocked(1)
+        ctl.v.setKeyable(0)   
+        
+        utz.object_tag(ctl,'control')
+        
         cgrp = pm.createNode('transform', name  =basename+'_ctrl_group')
+        if jnt_grp:
+
+            jnt_grp = pm.createNode('transform', name  =basename+'_ctrl_jnt_grp')
+            utz.object_tag(jnt_grp)
+        
+        jnt_grp.v.set(0)
+        jnt_grp.v.setLocked(1)
+        jnt_grp.v.setKeyable(0)
+
+        pm.parent(jnt_grp,cgrp)
+
+
+        utz.object_tag(cgrp,'control_grp')
         pm.parent(ctl,cgrp)
         last_output_node = None
-
         #extra group creation
         extra_grps = []
         if zgrps>0:
             for i in range(1,zgrps+1):
+                
                 tr_node = pm.createNode('transform', name  = '%s_0%d_zero_group'%(basename,i))
+                extra_grps.append(tr_node)
+                utz.object_tag(tr_node)
                 if i == 1:
                     pass
                 else:
-                    pm.parent(tr_node,tr_node.replace(str(i),str(i-1)))
-                extra_grps.append(tr_node)
-
+                    
+                    pm.parent(tr_node,extra_grps[i-2])
+                #extra_grps.append(tr_node)
             pm.parent(cgrp,extra_grps[-1])
         elif zgrps==0:
             extra_grps = [cgrp]
-
-        
         #set position of the toppest zero group
         if pos == None:
             Posmtx = pm.datatypes.Matrix()
@@ -83,7 +96,6 @@ class controls():
             posTyp = type(pos)
             if objTyp == posTyp:
                 extra_grps[0].offsetParentMatrix.set(pos)
-                
             else:
                 try:
                     mtx = pm.datatypes.Matrix(pos)
@@ -93,26 +105,23 @@ class controls():
                     extra_grps[0].setTranslation(tr)
                     extra_grps[0].setRotation(rt)
                     extra_grps[0].setScale(sc)
-
                 except ValueError:
                     print("Pos attribute is not a matrix, mtx example = [[1.0, 0.0, 0.0, 0.0], [0.0, 1.0, 0.0, 0.0], [0.0, 0.0, 1.0, 0.0], [0.0, 0.0, 0.0, 1.0]]")
-         
         # sub_controls 
         sub_ctrls = []
         pm.addAttr(ctl, ln = 'sub_vis',at = 'bool', dv =0)
-
         if sub_controls > 0:
             for i in range(1,sub_controls+1):
                 tr_node = pm.PyNode(shape.bsDrawCurve(curve = curveType,name = '%s_0%d_sub_ctrl'%(basename,i)))
+                sub_ctrls.append(tr_node)
+                utz.object_tag(tr_node,'control')
                 shape.shape_scale_adjust([tr_node],1-(i/10))
                 shapes = pm.listRelatives(tr_node,s=1)
                 cPy = pm.PyNode(ctl)
                 cPy.sub_vis>>tr_node.v
                 cPy.sub_vis.setKeyable(1)
-
                 tr_node.v.lock()
                 tr_node.v.setKeyable(0)
-
                 for sh in shapes:
                     sh.overrideEnabled.set(1)
                     sh.overrideRGBColors.set(1)
@@ -120,83 +129,60 @@ class controls():
                     sh.overrideColorG.set(random.uniform(.3,.7))
                     sh.overrideColorB.set(random.uniform(.3,.7))
                     sh.lineWidth.set(1.1)
-
                 if i == 1:
                     pass
                 else:
                     print (tr_node)
-                    
-                    pm.parent(tr_node,str(tr_node).replace(str(i),str(i-1)))
-                sub_ctrls.append(tr_node)
-
+                    pm.parent(tr_node,sub_ctrls[i-2])
+                
             pm.parent(sub_ctrls[0],ctl)
             last_output_node = sub_ctrls[-1]
         else:
             last_output_node = ctl
-       
-
-
         #cons_from
         if cons_from != None:
             if cons_typ_mtx is True:
                 parent = pm.PyNode(cons_from)
                 child = extra_grps[0]
-                
                 cons_mtx = pm.createNode('multMatrix',n ='%s_TO_%s_mtx_con'%(str(parent),str(child)))
-                
                 pMtx = parent.worldMatrix.get()
                 cMtx = child.worldMatrix.get()
-
                 mm = pMtx.inverse()*cMtx
                 cons_mtx.matrixIn[0].set(mm)
-
                 parent.worldMatrix>>cons_mtx.matrixIn[1]
                 cons_mtx.matrixSum>>child.offsetParentMatrix
-
             else:
                 parent = pm.PyNode(cons_from)
                 child = extra_grps[0]
-
                 pm.parentConstraint(parent,child,mo=1)
                 pm.scaleConstraint(parent,child,mo=1)
-           
         #cons_to
         if cons_to != None:
             if cons_typ_mtx is True:
                 parent = pm.PyNode(ctl)
                 if type(cons_to) is list:
                     child = cons_to
-                    
                 else:
                     child = [cons_to]
-                    
                 for ch in child:
                     chpy = pm.PyNode(ch)
-                    
                     cons_mtx = pm.createNode('multMatrix',n ='%s_TO_%s_mtx_con'%(str(parent),str(chpy)))
-                    
                     pMtx = parent.worldMatrix.get()
                     cMtx = chpy.worldMatrix.get()
-
                     mm = pMtx.inverse()*cMtx
                     cons_mtx.matrixIn[0].set(mm)
-
                     parent.worldMatrix>>cons_mtx.matrixIn[1]
                     cons_mtx.matrixSum>>chpy.offsetParentMatrix
-
             else:
                 parent = pm.PyNode(ctl)
                 if type(cons_to) is list:
                     child = cons_to
-                    
                 else:
                     child = [cons_to]
                 for ch in child:
                     chpy = pm.PyNode(ch)
                     pm.parentConstraint(parent,chpy,mo=1)
                     pm.scaleConstraint(parent,chpy,mo=1)
-
-        
         #color & line width
         shapes = pm.listRelatives(ctl,s=1)
         for i in shapes:
@@ -206,25 +192,49 @@ class controls():
             i.overrideColorG.set(color[1])
             i.overrideColorB.set(color[2])
             i.lineWidth.set(line_thickness)
-
-
+        if create_joint:
+            pass
         #ctl_output
         ctl_output = pm.createNode('transform',n = basename+'_ctrl_output')
+        utz.object_tag(ctl_output)
         ctl_output.v.set(0)
         pm.parent(ctl_output,last_output_node)
-        
         #inherit Transform for first group of the control
         extra_grps[0].inheritsTransform.set(inheritTr)
-
-        return ctl_output, extra_grps[0]
+        #crerate control message attr for shape scales
+        all_controls = [pm.PyNode(ctl)]+sub_ctrls
+        pm.addAttr(cgrp,at ='compound',ln = 'controls',multi =1,numberOfChildren=len(all_controls))
+        ######creating attributes and connecting them differently because of some reason they dont work in the same loop
+        for i in all_controls:
+            if '|' in str(i):
+                i2 = i.split('|')[-1]
+            else:
+                i2 = str(i)
+            pm.addAttr(cgrp,ln = i2,at = 'message',parent = 'controls')
+        #### connect 
+        for i in all_controls:
+            if '|' in str(i):
+                i2 = i.split('|')[-1]
+            else:
+                i2 = str(i)
+            pm.connectAttr(i.message,'%s.controls[0].%s'%(cgrp,i2))
+        
+        pm.select(cl=1)
+        return cgrp,ctl_output, extra_grps[0]
     
-    
+    def scale_control_module(self,obj,val=1):
+        children = pm.listRelatives(obj,ad=1, typ = 'transform')
+        ctrl_grp = None
+        shape = BSControlsUtils()
+        for i in children:
+            if pm.getAttr(i.obj_type) == 'control_grp':
+                ctrl_grp = i
+        if ctrl_grp:
+            connections = pm.listConnections(ctrl_grp.controls)
+            for cn in connections:
+                shape.shape_scale_adjust([cn],val)
 
-
-    
 class BSControlsUtils():
-
-
     # Function to draw nurbs curves from dictionary data and user input.
     def bsDrawCurve(self, curve = 'Circle', thickness = 1,name = 'temp_ctrl'):
         # Exception for Circle shape.
@@ -232,7 +242,6 @@ class BSControlsUtils():
             crv = cmds.circle(d=3, r=2, nr=[0,1,0], ch=False)
         else:
             crv = cmds.curve(d=1, p=BSControlsData.cvTuples[curve])
-
         # Exception for adding an additional shape node to the Gear curve.
         if curve == 'Gear':
             circle = cmds.circle(r=0.9, nr=[0,1,0])
@@ -240,7 +249,6 @@ class BSControlsUtils():
             circleShape = cmds.rename(circleShape, crv + 'CircleShape')
             cmds.parent(circleShape, crv, add=True, s=True)
             cmds.delete(circle)
-
         # Only adjusting the lineWidth attribute only if a value greater than 1.0 is input.
         if thickness > 1.0:
             crvShape = cmds.listRelatives(crv, s=True)
@@ -250,70 +258,51 @@ class BSControlsUtils():
             pass
         v = cmds.rename(crv,name)
         return v
-    
     def shape_scale_adjust(self,ctrl = [], value = 1.1): 
         '''
-        
         ctrl takes transforms as a list 
         value when above 1 increases when below 1 decreases the size of the nurb curve
-
         '''
         v = value
         ctrl_base = ctrl
-        
         for c in ctrl_base:
             shapes = pm.listRelatives(c,s=1)
             TmpTrans = []
             newShp = []
-                
             for i in shapes:
                 tmtr  = pm.createNode('transform',n=('temp'+i))
                 pm.parent(i,tmtr,r =True, s = True)
-                
                 #nshape = pm.duplicate(i,n=('temp'+i))
                 pm.xform(tmtr,s=(v,v,v))
                 pm.makeIdentity(tmtr, apply=True, t=1, r=1, s=1 )
                 newShp.append(i)
                 TmpTrans.append(tmtr)
-                
             pm.select(cl=True)
-            
-        
-        
             for i in newShp:
-                
                 pm.select(i)
                 pm.rename(i,c+'_Shape_00')
                 pm.select(c , add=True)
                 pm.parent(r=True,s=True)
                 pm.delete(TmpTrans)
                 pm.select(c)
-            
-
-
-
 class BSControlsData():
     '''
     If you wish to add more control curve options to the menu, simply add a new name into the "controlNames" list and a corresponding key in the dictionary
     with the list of tuples for CV coordinates. To easily get the list of tuples for a controller, select all of the CVs of a linear nurbs curve and run 
     the following script in a Python tab in the script editor. Then, select "tupleList" in the script editor and press Ctrl + Enter. You can copy paste 
     the printout into a new dictionary key at the bottom of the list.
-
     sel = cmds.ls(sl=True)
     trans = cmds.xform(sel, q=True, t=True)
     list = [trans[i:i+3] for i in range(0, len(trans), 3)]
     tupleList = [tuple(i) for i in list]
     '''
-
     # List of all control curve names.
     controlNames = ['Circle', 'Half Circle', 'Square', 'Triangle', 'Sphere', 'Half Sphere','Box', 'Pyramid', 'Diamond', 'Circle Pin','Square Pin', 
         'Sphere Pin', 'Circle Dumbbell', 'Square Dumbbell', 'Sphere Dumbbell', 'Cross', 'Cross Thin', 'Locator', 'Four Arrows', 'Four Arrows Thin',
         'Curved Four Arrows', 'Curved Four Arrows Thin', 'Two Arrows', 'Two Arrows Thin', 'Curved Two Arrows', 'Curved Two Arrows Thin', 'One Arrow', 
         'One Arrow Thin', 'Circle One Arrow',  'Circle Two Arrows', 'Circle Three Arrows', 'Circle Four Arrows', 'Sphere Four Arrows', 'Gear']
-
     # Control curve CV tuples dictionary.
     cvTuples = {}
-
     # Control curve CV dictionary keys.
     cvTuples['Half Circle'] = [
         (1.2246467991473532e-16, 1.2246467991473532e-16, -2.0), 
@@ -338,7 +327,6 @@ class BSControlsData():
         (0.3901806440322567, 1.2011155542966538e-16, -1.9615705608064582), 
         (7.330873434585712e-16, 1.2246467991473515e-16, -1.9999999999999973)
     ]
-
     cvTuples['Square'] = [
         (-2.001501540839854, 0.0, -2.001501540839854),
         (-2.001501540839854, 0.0, 2.001501540839854),
@@ -1626,5 +1614,3 @@ class BSControlsData():
         (-0.6178520249074192, 0.0, -1.8770031626614314),
         (-0.1831451367158871, 0.0, -1.9688981435835975)
     ]
-        
-
